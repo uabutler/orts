@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truman State MSCS Override Request System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Truman State Math, Science, and Computer Science Departments</h1>
+        <h2>Override Request System</h2>
+        <div id="meta">
+            <p id="greeting"> Hello Diane!</p>
+            <p id="logOut"><u>Log Out</u></p>
+            <p id="archive"><u>Visit Archives</u></p>
+        </div>
+    </header>
+
+    <main>
+
+        <section id="tableView">
+            <p id="pagesShown"> Items Per Page: </p>
+            <select name="itemsPerPage" id="itemsPerPage">
+              <option value="">3</option>
+              <option value="">10</option>
+              <option value="">25</option>
+              <option value="">100</option>
+              <option value="">All</option>
+            </select>
+            <select id="bulkActions">
+              <option value="">Bulk Actions</option>
+              <option value="">Approve</option>
+              <option value="">Deny</option>
+              <option value="">Send to Chair</option>
+              <option value="">Mark Entered in Banner</option>
+              <option value="">Mark Awaiting Action</option>
+              <option value="">Archive</option>
+            </select>
+
+            <table id="overrideData">
+                <tr>
+                    <td class="noBorder"> </td>
+                    <td class="noBorder"></td>
+                    <td class="noBorder"><input type="text" name="last" id="lastName" placeholder="Last"></td>
+                    <td class="noBorder"><input type="text" name="first" id="firstName" placeholder="First"></td>
+                    <td class="noBorder"> <select class="filter"> <option value=""></option><option value="">May 1800</option> <option value="">December 1860</option> <option value="">December 2021</option></select></td>
+                    <td class="noBorder"><input type="text" name="banner" id="banner" placeholder="Banner ID"></td>
+                    <td class="noBorder"> <input type="text" name="crn" id="crn" placeholder="CRN"></td>
+                    <td class="noBorder"> <select class="filter"> <option value=""></option><option value="">CS</option><option value="">MATH</option><option value="">STAT</option></select></td>
+                    <td class="noBorder"> <input type="text" name="num" id="num" placeholder="#"></td>
+                    <td class="noBorder">
+                        <select class="filter"> 
+                          <option value=""></option>
+                          <option value="">Approved: Not In Banner</option>
+                          <option value="">Awaiting Action</option>
+                        </select>
+                    </td>
+                    <td class="noBorder"> </td>
+                </tr>
+                <tr>
+                    <th> <input type="checkbox" name="all" id="all"> </th>
+                    <th> Last Modified </th>
+                    <th> <a href="mainByLastName.html">Last</a> </th>
+                    <th> First </th>
+                    <th> Grad Month </th>
+                    <th> Banner ID </th>
+                    <th> CRN </th>
+                    <th> Dept </th>
+                    <th> # </th>
+                    <th> Status </th>
+                    <th> View </th>
+                </tr>
+                <tr id="toSelect">
+                    <td> <input type="checkbox" /></td>
+                    <td> 11/11/2020 </td>
+                    <td> Doe </td>
+                    <td> John </td>
+                    <td> December 2021 </td>
+                    <td> 001217139 </td>
+                    <td> 11542 </td>
+                    <td> CS </td>
+                    <td> 495 </td>
+                    <td> Awaiting Action </td>
+                    <td> <button id="showHide">View</button> </td>
+                </tr>
+                <tr>
+                    <td> <input type="checkbox" /> </td>
+                    <td> 10/03/2020 </td>
+                    <td> Matthews </td>
+                    <td> Robert </td>
+                    <td> May 1800 </td>
+                    <td> 003456789 </td>
+                    <td> 2345 </td>
+                    <td> MATH </td>
+                    <td> 263 </td>
+                    <td> Approved: Not In Banner </td>
+                    <td> <button>View</button> </td>
+                </tr>
+                <tr>
+                    <td> <input type="checkbox" /> </td>
+                    <td> 10/01/2020 </td>
+                    <td> Garvey </td>
+                    <td> Alan </td>
+                    <td> December 1860 </td>
+                    <td> 002345678 </td>
+                    <td> 4567 </td>
+                    <td> STAT </td>
+                    <td> 220 </td>
+                    <td> Awaiting Action </td>
+                    <td> <button>View</button> </td>
+                </tr>
+            </table>
+
+            <p id="pageCount">
+                <1 2 ... 9 10>
+            </p>
+            <p id="pageMessage"> Showing 1 to 3 of 30 entries </p>
+
+        </section>
+
+        <section id="detailView">
+            <div id="top">
+
+                <section id="makeDecision">
+
+                    <h1>Current Status: Awaiting Action</h1>
+                    <button type="submit">Approve</button>
+                    <button type="button">Deny</button>
+                    <button type="button">Send to Chair</button>
+                    <button type="button">Mark Entered in Banner</button>
+                    <button disabled>Mark Awaiting Action</button>
+                    <button type="button">Archive</button>
+
+                </section>
+            </div id="top">
+
+            <div id="bottom">
+
+                <div id="studentComm">
+
+                    <section id="overrideType">
+                        <h1>Override Type(s)</h1>
+                        <ul>
+                            <li>Capacity</li>
+                        </ul>
+                    </section>
+
+                    <section id="explanation">
+
+                        <h1>Explanation</h1>
+                        <p>Next semester is my penultimate, and it is recommended by my advisor to take this course then.</p>
+
+                    </section>
+
+                    <section id="files">
+
+                        <h1>Files</h1>
+                        <u>transcript.pdf</u>
+
+                    </section>
+
+                    <section id="requestMoreInformation">
+
+                        <h1>Request More Information</h1>
+                        <form>
+                            <textarea rows="5" cols="30" placeholder="Special Instructions for the Student"></textarea>
+                        </form>
+                        <br>
+                        <button>Send</button>
+
+                    </section>
+                </div>
+
+                <div id="adminComm">
+                    <section id="notes">
+
+                        <h1>Admin Notes</h1>
+                        <form>
+                            <textarea rows="18" cols="30">This student needs this class to graduate and meets all prerequisites.</textarea>
+                        </form>
+                        <br>
+                        <button>Save</button>
+
+                    </section>
+                </div>
+
+            </div id="bottom">
+        </section>
+
+    </main>
+
+    <footer>
+
+    </footer>
+
+    <script>
+        window.onload = function() {
+            document.getElementById("all").onclick = function(){
+                var boxes = document.querySelectorAll("input[type=checkbox]");
+                if (document.getElementById("all").checked){
+                    for(var i = 0; i < boxes.length; i++){
+                        boxes[i].checked = true;
+                    }
+                } else {
+                    for(var i = 0; i < boxes.length; i++){
+                        boxes[i].checked = false;
+                    }
+                }
+            }
+            if (document.getElementById("detailView").classList.contains("visible")) {
+                document.getElementById("showHide").innerHTML = "Hide";
+                document.getElementById("toSelect").classList.add("selected");
+            } else {
+                document.getElementById("showHide").innerHTML = "View";
+            }
+            document.getElementById("showHide").onclick = function() {
+                document.getElementById("detailView").classList.toggle("visible");
+                document.getElementById("toSelect").classList.toggle("selected");
+                if (document.getElementById("detailView").classList.contains("visible")) {
+                    document.getElementById("showHide").innerHTML = "Hide";
+                } else {
+                    document.getElementById("showHide").innerHTML = "View";
+                }
+            };
+        };
+    </script>
+
+</body>
+
+</html>
