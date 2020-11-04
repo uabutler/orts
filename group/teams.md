@@ -4,7 +4,7 @@
 
 + Justin Galang
 + Brandon Ingli
-+ Zengxun Ma
++ Zhengxun Ma
 + Zoe Moore
 + Alex Hoang
 
