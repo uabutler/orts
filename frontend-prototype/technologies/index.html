@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brandon Ingli's Projects</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+  <!-- Select2 plugin -->
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
+	<!-- Select2 plugin -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+  <style>
+    .selected, .selected td {
+      background-color: yellow !important;
+    }
+
+    .select2 {
+      width:100%!important;
+    }
+
+    #example thead tr:nth-child(1) th input[type=text]{
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #example thead tr:nth-child(1) th{
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Brandon Ingli's Projects</h1>
+  <table id="example" class="stripe cell-border" style="width:100%">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Link</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+</table>
+
+<script>
+  $(document).ready(function() {
+
+    var BASEURL = "https://portfolio.brandoningli.com/api";
+
+    // Setup - clone the header row
+    $('#example thead tr').clone(true).appendTo( '#example tfoot' ); // .. to the table footer
+    $('#example thead tr').clone(true).appendTo( '#example thead' ); // .. and to the table head again (for a second row to put filters on)
+
+    var table = $('#example').DataTable( {
+        //stateSave: true, // save paging position, ordering state, etc through localStorage. Doesn't save filter text but stores filtered view
+        dom: 'lrtip', // What DT elements in what order?
+        pageLength: 5, // Default Page Length
+        lengthMenu: [ [5, 6, 7, 10, -1], [5, 6, 7, 10, "All"] ], // Available Page Lengths
+        // orderCellsTop: true, // if true, top header row has filters, otherwise bottom header row does
+        fixedHeader: true, // Sticky Header/Footer depending on situation
+        ajax: { // AJAX call to get data for the table; All returned data is stored as part of the row
+          url: BASEURL + "/projects",
+          dataSrc: "" // Where the data array is; "" means it's a top-level array
+        },
+        columnDefs:[ // Define each of the cols, where to get data, and how to render it
+          {
+            targets: 0,
+            data: null,
+            defaultContent: "<input type='checkbox' />",
+            sortable: false,
+          },
+          {
+            targets: 1,
+            data: "name"
+          },
+          {
+            targets: 2,
+            data: "description"
+          },
+          {
+            targets: 3,
+            data: "date",
+            render: function(d,t,r) {
+              return d === null ? "Ongoing" : d;
+            }
+          },
+          {
+            targets: 4,
+            data: null, // Use the defaultContent instead
+            defaultContent: "<button class='link'>Show</button>",
+            sortable: false
+          }
+        ],
+        order: [[3, "desc"]], // Default column sorting
+        initComplete: function () { // Once table is initialized...
+            // Add the filters
+            var filterRow = $("#example thead tr:eq(0)");
+            this.api().columns().every( function (i) {
+              // Text box search
+              if (i == 1 || i == 2){
+                    var cell = $(filterRow).find("th:eq("+i+")");
+                    var title = $(cell).text();
+
+                    // Append the input field
+                    $( '<input type="text" id="filter-'+title+'" placeholder="'+title+'" />' ).appendTo(cell.empty());
+            
+                    // Search behavior for that input field
+                    $( 'input[type=text]', cell ).on( 'keyup change', function () {
+                        if ( table.column(i).search() !== this.value ) {
+                            table
+                                .column(i)
+                                .search( this.value )
+                                .draw();
+                        }
+                    } );
+                } 
+              // Multiselect Drop-down via select2 library
+              else if(i == 3){
+                var title = this.header(); // value in the header row
+                
+                //replace spaces with dashes
+                title = $(title).html().replace(/[\W]/g, '-');
+
+                var column = this;
+
+                // Append the underlying HTML select element
+                var select = $('<select id="filter-' + title + '" class="select2"></select>')
+                    .appendTo( $(filterRow.find('th:eq('+(i)+')').empty() )) // .. to the right row
+                    .on( 'change', function () {
+                      // Store the selected values
+
+                      //Get the "text" property from each selected data 
+                      //regex escape the value and store in array
+                      var data = $.map( $(this).select2('data'), function( value, key ) {
+                        return value.text ? '^' + $.fn.dataTable.util.escapeRegex(value.text) + '$' : null;
+                                });
+                      
+                      //if no data selected use ""
+                      if (data.length === 0) {
+                        data = [""];
+                      }
+                      
+                      //join array into string with regex or (|)
+                      var val = data.join('|');
+                      
+                      //search for the option(s) selected
+                      column
+                            .search( val ? val : '', true, false )
+                            .draw();
+                    } );
+
+                // sort the values ascending
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+(d === null ? "Ongoing" : d)+'">'+(d === null ? "Ongoing" : d)+'</option>' );
+                } );
+              
+                //Invoke Select2
+                $('#filter-' + title).select2({
+                  multiple: true,
+                  closeOnSelect: true,
+                  placeholder: title,
+                  width: '100%',
+                });
+                
+                //initially clear select otherwise first option is selected
+                // can also set default value(s) here
+                // ex .val(["2020-08", "2020-07"])
+                $('.select2').val(null).trigger('change');
+              }
+              // Blank out filter row
+              else{
+                $(filterRow).find('th:eq('+(i)+')').empty();
+              }
+            } );
+        }
+    } ); // end DT construction
+
+    // Alert with the project URL when the link button is pressed
+    // Notice how all returned values are associated with the row's data
+    $('#example tbody').on( 'click', 'button.link', function () {
+      $(this).parents('tr').toggleClass('selected'); // Highlight the row yellow / unhighlight
+      if ($(this).parents('tr').hasClass("selected")){
+        $(this).text("Undo");
+        alert( table.row( $(this).parents('tr') ).data().link );
+      } else {
+        $(this).text("Show");
+      }
+      
+    } );
+} );
+</script>
+</body>
+</html>
