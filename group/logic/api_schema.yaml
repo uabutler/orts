@@ -1,0 +1,132 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Override Request API
+servers:
+  url: http://example.com/api/v1
+paths:
+  /requests/{requestId}:
+    get:
+      summary: Return a single request by ID 
+      parameters:
+        name: requestId
+        in: path
+        required: true
+        description: The ID of the request to return
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Request
+  /requests:
+    get:
+      summary: Returns all requests
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Requests
+        default:
+          description: unexpected error
+    post:
+      summary: Create a new override request
+      requestBody:
+        description: Request information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewRequest"
+      responses:
+        '201':
+          description: Created
+components:
+  schemas:
+    Request:
+      properties:
+        # last-modified
+          # Some sort of date object? 
+          # Not sure how that looks
+        last-name:
+          type: string
+          example: "Smith"
+        first-name:
+          type: string
+          example: "John"
+        grad-month:
+          type: string
+          example: "May 2021"
+        banner-id:
+          type: string
+          example: "001234567"
+        crn:
+          type: string
+          example: "1234"
+        department:
+          type: string
+          example: "CS"
+        class-number:
+          type: string
+          example: "370"
+        status:
+          type: string
+          example: "Approved"
+        email:
+          type: string
+          example: "jsmith@truman.edu"
+        major:
+          type: string
+          example: "Computer Science"
+    Requests:
+      properties:
+        type: array
+        items:
+          $ref: "#/components/schemas/Request
+    NewRequest:
+      properties:
+        # last-modified
+          # Some sort of date object? 
+          # Not sure how that looks
+        last-name:
+          type: string
+          example: "Smith"
+        first-name:
+          type: string
+          example: "John"
+        grad-month:
+          type: string
+          example: "May 2021"
+        banner-id:
+          type: string
+          example: "001234567"
+        crn:
+          type: string
+          example: "1234"
+        department:
+          type: string
+          example: "CS"
+        class-number:
+          type: string
+          example: "370"
+        status:
+          type: string
+          example: "Approved"
+        email:
+          type: string
+          example: "jsmith@truman.edu"
+        major:
+          type: string
+          example: "Computer Science"
+
+          
+          
+  
+      
+      
