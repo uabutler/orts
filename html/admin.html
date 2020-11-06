@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
     <script src="assets/js/common.js"></script>
     <script src="assets/js/admin.js"></script>
-    <script src="assets/js/jquery-3.5.1.min.js"></script>
     <!-- DataTables -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.22/b-1.6.5/fh-3.1.7/datatables.min.css"/>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/b-1.6.5/fh-3.1.7/datatables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/datatables.min.css"/>
+    <script type="text/javascript" src="assets/js/datatables.min.js"></script>
     <!-- Select2 plugin -->
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/select2.min.css">
+    <script src="assets/js/select2.min.js"></script>
     <title>Admin | Truman State MSCS Override Request System</title>
 </head>
 
@@ -23,7 +23,27 @@
     </header>
     <main>
         <section id="requestTable">
-
+          <table id="requests" class="stripe cell-border">
+            <thead>
+              <tr>
+                <th><input type="checkbox" name="selectAll" id="selectAll" disabled></th>
+                <th>Status</th>
+                <th>Received</th>
+                <th>Last Modified</th>
+                <th>Last</th>
+                <th>First</th>
+                <th>Grad Month</th>
+                <th>Banner ID</th>
+                <th>Sem.</th>
+                <th>CRN</th>
+                <th>Dept</th>
+                <th>#</th>
+                <th>View</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
         </section>
         <section id="requestInformation">
 
