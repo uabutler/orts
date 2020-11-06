@@ -111,10 +111,23 @@ $(document).ready(function() {
               }); // selectAll
           
               $(".viewRequest").click(function(){
-                var data = table.row($(this.closest("tr"))).data();
-                $("#requestInformation").toggleClass("visible");
-                $(this).text($("#requestInformation").hasClass("visible") ? HIDE_TEXT : VIEW_TEXT);
-              });
+                const theRow = $(this).closest("tr");
+                const data = table.row(theRow).data();
+                const wasSelected = $(theRow).hasClass("selected");
+                if(wasSelected){
+                  theRow.removeClass("selected");
+                  $(this).text(VIEW_TEXT);
+                  $("#requestInformation").removeClass("visible");
+                } else {
+                  $("#requests tbody tr").each(function(){
+                    $(this).removeClass("selected");
+                    $(this).find("button.viewRequest").text(VIEW_TEXT);
+                  });
+                  theRow.addClass("selected");
+                  $(this).text(HIDE_TEXT);
+                  $("#requestInformation").addClass("visible");
+                }
+              }); // viewRequest
             } // initComplete
     }); // var table
 

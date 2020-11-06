@@ -53,8 +53,12 @@ main {
     width: 98%!important;
 }
 
+tr {
+  transition: background-color 0.25s linear;
+}
+
 tr.selected {
-    background: #FFFF99;
+    background-color: #FFFF99 !important;
 }
 
 #requestInformation.visible {
