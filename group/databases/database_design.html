@@ -45,7 +45,7 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">email</td>
-                    <td class="tg-0lax">varchar(320)</td>
+                    <td class="tg-0lax">varchar(64)</td>
                     <td class="tg-0lax">UNIQUE, NOT NULL</td>
                   </tr>
                   <tr>
@@ -74,6 +74,7 @@
             <div><b>1.1.2.</b> We anticipate the <code>email</code> field will be frequently used to search the table. For this reason, we will likely use it with an index. Since the user's email is used during the login process, we will always have that information availible, so require its value not be null.</div>
             <div><b>1.1.3.</b> The <code>banner_id</code> will be a string for compatibility with the API schema created by the logic team. It is a 9-digit value.</div>
             <div><b>1.1.4.</b> The <code>grad_month</code> will be stored in MM/YYYY format for compatibility with the API schema created by the logic team.</div>
+            <div><b>1.1.4.</b> It should be noted that, in all of these tables, the <code>email</code> is stored as the local username since all email addresses are on the truman.edu domain.</div>
 
             <br>
             <div><b>1.2. Majors and Minors Tables</b></div>
@@ -214,7 +215,7 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">email</td>
-                    <td class="tg-0lax">varchar(320)</td>
+                    <td class="tg-0lax">varchar(64)</td>
                     <td class="tg-0lax">UNIQUE, NOT NULL</td>
                   </tr>
                   <tr>
@@ -230,6 +231,7 @@
                 </tbody>
                 </table>
             <div><b>2.1.1.</b> It should be noted that 1.1.2 is also relavent here.</div>
+            <div><b>2.1.2.</b> The <code>email</code> field needs to be globally unique. That is, aside from being unique in this table, there also shouldn't be duplicate values in the student and faculty tables. This creates a one-to-one coorespondence that we can use to uniquely identify any user on the system.</div>
 
             <h3>3. Override Requests</h3>
             <div><b>3.1. Override Requests Helper Tables</b></div>
@@ -377,6 +379,41 @@
                 </table>
 
             <div><b>3.2.1.</b> The <code>crn</code> is a 4-digit value encouded as a string for compatibility with the API schema created by the logic team.</div>
+
+            <h3>4. Notifications</h3>
+            <div><b>4.1. Notification Table</b></div>
+                <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Column Name</th>
+                    <th class="tg-0lax">Data Type</th>
+                    <th class="tg-0lax">Attributes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="tg-0lax">id</td>
+                    <td class="tg-0lax">int</td>
+                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">sender_email</td>
+                    <td class="tg-0lax">varchar(64)</td>
+                    <td class="tg-0lax">NOT NULL</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">receiver_email</td>
+                    <td class="tg-0lax">varchar(64)</td>
+                    <td class="tg-0lax">NOT NULL</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">body</td>
+                    <td class="tg-0lax">text</td>
+                    <td class="tg-0lax"></td>
+                  </tr>
+                </tbody>
+                </table>
+            <div><b>4.1.1.</b> Here, we use emails to indicate the sender and receiver. Either of these can be any user in the system, students or faculty. Recall from 2.1.2 that emails are globally unique, so this is sufficient to indicate which user in the system is related to the message.</div>
 
         </div>
     </body>
