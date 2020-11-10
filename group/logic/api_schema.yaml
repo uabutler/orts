@@ -1,0 +1,191 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Override Request API
+servers:
+  - url: http://example.com/api/v1
+paths:
+  /requests/{requestId}:
+    get:
+      summary: Return a single request by ID 
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: The ID of the request to return
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Request"
+        '404':
+          description: A user with the specified ID was not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /requests:  
+    get:
+      summary: Returns all requests
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Requests"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a new override request
+      requestBody:
+        description: Request information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewRequest"
+      responses:
+        '201':
+          description: Created
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Request:
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        last-modified:
+          type: string
+          pattern: '^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$'
+          example: "11/07/2020 22:30:47"
+        last-name:
+          type: string
+          example: "Smith"
+        first-name:
+          type: string
+          example: "John"
+        grad-month:
+          type: string
+          pattern: '^\d{2}\/\d{4}$'
+          example: "05/2021"
+        banner-id:
+          type: string
+          pattern: '^001\d{6}$'
+          example: "001234567"
+        crn:
+          type: string
+          pattern: '^\d{4}\$'
+          example: "1234"
+        department:
+          type: string
+          example: "CS"
+        class-number:
+          type: integer
+          format: int32
+          example: 370
+        semester:
+          type: string
+          example: "202060"
+        types:
+          type: array
+          items:
+            type: string
+          example: ["Capacity", "Prerequisites", "Other"]
+        status:
+          type: string
+          example: "Approved"
+        email:
+          type: string
+          pattern: '\@truman\.edu$'
+          example: "jsmith@truman.edu"
+        major:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics"]
+        minor:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics"]
+    Requests:
+      type: array
+      items:
+        $ref: "#/components/schemas/Request"
+    NewRequest:
+      properties:
+        last-name:
+          type: string
+          example: "Smith"
+        first-name:
+          type: string
+          example: "John"
+        grad-month:
+          type: string
+          pattern: '^\d{2}\/\d{4}$'
+          example: "05/2021"
+        banner-id:
+          type: string
+          pattern: '^001\d{6}$'
+          example: "001234567"
+        crn:
+          type: string
+          pattern: '^\d{4}\$'
+          example: "1234"
+        department:
+          type: string
+          example: "CS"
+        class-number:
+          type: integer
+          format: int64
+          example: 370
+        semester:
+          type: string
+          example: "202060"
+        types:
+          type: array
+          items:
+            type: string
+          example: ["Capacity", "Prerequisites", "Other"]
+        email:
+          type: string
+          pattern: '\@truman\.edu$'
+          example: "jsmith@truman.edu"
+        major:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics"]
+        minor:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics"]
+    Error:
+      properties:
+        code:
+          type: integer
+          format: int64
+          example: 12
+        message:
+          type: string
+          example: "This was an error twelve."

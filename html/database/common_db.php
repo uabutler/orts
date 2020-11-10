@@ -5,17 +5,18 @@
  */
 
 // The database storing the information for students
-$student_tbl = "test_tbl";
-$major_tbl;
-$minor_tbl;
-$student_major_tbl;
-$student_minor_tbl;
-$student_tbl;
-$department_tbl;
-$class_tbl;
-$status_tbl;
-$request_tbl;
-$notification_tbl;
+$student_tbl = "students";
+$major_tbl = "majors";
+$minor_tbl = "minors";
+$student_major_tbl = "student_majors";
+$student_minor_tbl = "student_minors";
+$faculty_tbl = "faculty";
+$department_tbl = "departments";
+$class_tbl = "classes";
+$semester_tbl = "semesters";
+$section_tbl = "sections";
+$request_tbl = "requests";
+$notification_tbl = "notifications";
 
 /**
  * This funciton returns a connection to the MySQL DB
