@@ -105,7 +105,7 @@ components:
           type: array
           items:
             type: string
-            example: ["Capacity", "Prerequisites", "Other"]
+          example: ["Capacity", "Prerequisites", "Other"]
         status:
           type: string
           example: "Approved"
@@ -117,12 +117,12 @@ components:
           type: array
           items:
             type: string
-            example: ["Computer Science", "Statistics"]
+          example: ["Computer Science", "Statistics"]
         minor:
           type: array
           items:
             type: string
-            example: ["Computer Science", "Statistics"]
+          example: ["Computer Science", "Statistics"]
     Requests:
       type: array
       items:
@@ -161,10 +161,7 @@ components:
           type: array
           items:
             type: string
-            example: ["Capacity", "Prerequisites", "Other"]
-        status:
-          type: string
-          example: "Approved"
+          example: ["Capacity", "Prerequisites", "Other"]
         email:
           type: string
           pattern: '\@truman\.edu$'
@@ -173,12 +170,12 @@ components:
           type: array
           items:
             type: string
-            example: ["Computer Science", "Statistics"]
+          example: ["Computer Science", "Statistics"]
         minor:
           type: array
           items:
             type: string
-            example: ["Computer Science", "Statistics"]
+          example: ["Computer Science", "Statistics"]
     Error:
       properties:
         code:
