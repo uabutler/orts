@@ -14,7 +14,11 @@ $(document).ready(function() {
             },
             {
                 targets: 1,
-                data: "last-modified"
+                data: "last-modified",
+                render: function(data, type, row){
+                    var d = new Date(data+"-0:00");
+                    return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+                }
             },
             {
                 targets: 2,
@@ -34,7 +38,14 @@ $(document).ready(function() {
         ],
         order: [
             [1, "desc"]
-        ]
+        ],
+        initComplete: function(){
+            $("#requestsTable tbody tr").each(function(){
+                var cell = $(this).find("td:eq(2)");
+                var d = new Date(cell.text() + "-0:00");
+                cell.attr("data-sort", d.getTime() / 1000);
+            });
+        }
     }); // var activetable
 
     var archiveTable = $("#studentArchivedRequestsTable").DataTable({
@@ -52,7 +63,11 @@ $(document).ready(function() {
             },
             {
                 targets: 1,
-                data: "last-modified"
+                data: "last-modified",
+                render: function(data, type, row){
+                    var d = new Date(data+"-0:00");
+                    return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+                }
             },
             {
                 targets: 2,
@@ -72,7 +87,14 @@ $(document).ready(function() {
         ],
         order: [
             [1, "desc"]
-        ]
+        ],
+        initComplete: function(){
+            $("#requestsTable tbody tr").each(function(){
+                var cell = $(this).find("td:eq(2)");
+                var d = new Date(cell.text() + "-0:00");
+                cell.attr("data-sort", d.getTime() / 1000);
+            });
+        }
     }); // var archivetable
 
     

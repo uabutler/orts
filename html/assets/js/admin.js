@@ -29,7 +29,11 @@ $(document).ready(function() {
             },
             {
                 targets: 2,
-                data: "last-modified"
+                data: "last-modified",
+                render: function(data, type, row){
+                    var d = new Date(data+"-0:00");
+                    return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+                }
             },
             {
                 targets: 3,
@@ -75,6 +79,11 @@ $(document).ready(function() {
             [2, "desc"]
         ],
         initComplete: function() {
+                $("#requestsTable tbody tr").each(function(){
+                    var cell = $(this).find("td:eq(2)");
+                    var d = new Date(cell.text() + "-0:00");
+                    cell.attr("data-sort", d.getTime() / 1000);
+                });
                 $("#requestsTable thead tr:eq(0) th").each(function() { $(this).empty() });
                 var textBoxCols = [2, 3, 4, 6, 8, 10];
                 var selectCols = [1, 5, 7, 9];
