@@ -33,4 +33,18 @@ function connectDB()
   return new PDO($dsn, $user, $passwd);
 }
 
+/**
+ * This function takes in a multi-dim array where each smaller array has a single elements and return a
+ * one-dim array.
+ */
+function flattenResult(array $result)
+{
+  $out = [];
+
+  foreach($result as $row)
+    array_push($out, $row[0]);
+
+  return $out;
+}
+
 ?>
