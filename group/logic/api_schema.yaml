@@ -152,6 +152,14 @@ components:
           type: integer
           format: int64
           example: 370
+        semester:
+          type: string
+          example: "202060"
+        types:
+          type: array
+          items:
+            type: string
+            example: ["Capacity", "Prerequisites", "Other"]
         status:
           type: string
           example: "Approved"
