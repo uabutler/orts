@@ -1,0 +1,148 @@
+# Adapted from https://dzone.com/articles/a-sample-openapi-30-file-to-get-started
+openapi: "3.0.3"
+info:
+    version: 1.0.0 # API Version
+    title: My App # API Name
+servers:
+    - url: http://myapp.com/api/v1 # Base URL
+paths: # These will define the endpoints
+    /companies: # endpoint path
+        get: # Using the HTTP GET method
+            summary: List all companies
+            operationId: listCompanies # An internal, unique identifier
+            parameters: # Data to be passed
+                - name: region
+                  in: query # or path if defined in the path; see later example
+                  description: Three-letter ISO code for region
+                  required: false
+                  schema: # How the data is structured
+                    type: string
+            responses:
+                200: # HTTP 200 OK
+                    description: An array of companies
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Companies" # refer to the schema we define below
+                default: 
+                    description: unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+        post: # HTTP Post
+            summary: Create a new company
+            operationId: createCompany
+            requestBody:
+                description: Company information
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/NewCompany"
+            responses:
+                201: # HTTP 201 Created
+                    description: Null response 
+                    # Don't return any actual content when the status code tells all
+                default:
+                    description: unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error" # This is the power of defining schemas once
+    /companies/{companyId}:
+        get:
+            summary: Info for a specific company
+            operationId: companyById
+            parameters:
+                - name: companyId
+                  in: path
+                  required: true
+                  description: The ID of the company to retrieve
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                200:
+                    description: Expected response to valid request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Company"
+                default:
+                    description: unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+components:
+    schemas: # Reusable schemas
+        Company:
+            required:
+                - id
+                - name
+                - address
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                    example: 10
+                name:
+                    type: string
+                    example: "My Company LTD"
+                address:
+                    $ref: "#/components/schemas/Address"
+                phone:
+                    type: string
+                    example: "(234) 567-8901"
+        NewCompany:
+            required:
+                - name
+                - address
+            properties:
+                name:
+                    type: string
+                    example: "My Company LTD"
+                address:
+                    $ref: "#/components/schemas/Address"
+                phone:
+                    type: string
+                    example: "(234) 567-8901"
+        Companies:
+            type: array
+            items:
+                $ref: "#/components/schemas/Company"
+        Address:
+            required:
+                - streetAddress
+                - city
+                - state
+                - zip
+            properties:
+                streetAddress:
+                    type: string
+                    example: "100 east normal street"
+                city:
+                    type: string
+                    example: "Kirksville"
+                state:
+                    type: string
+                    example: "MO"
+                zip:
+                    type: string
+                    example: "63501"
+        Error:
+            required:
+                - code
+                - message
+            properties:
+                code:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                    maximum: 999
+                    example: 12
+                message:
+                    type: string
+                    example: "This was an error twelve."
