@@ -1,11 +1,7 @@
 $(document).ready(function() {
     var activeTable = $("#studentActiveRequestsTable").DataTable({
-        dom: "lfrtip",
-        pageLength: 10,
-        lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
-        ],
+        dom: "lfrt",
+        paging: false,
         fixedHeader: true,
         columnDefs: [
             {
@@ -22,12 +18,8 @@ $(document).ready(function() {
     }); // var activetable
 
     var archiveTable = $("#studentArchivedRequestsTable").DataTable({
-        dom: "lfrtip",
-        pageLength: 10,
-        lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
-        ],
+        dom: "lfrt",
+        paging: false,
         fixedHeader: true,
         columnDefs: [
             {
