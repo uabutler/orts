@@ -1,0 +1,147 @@
+{
+    "source": "mockoon:1.10.0",
+    "data": [
+        {
+            "type": "environment",
+            "item": {
+                "uuid": "",
+                "lastMigration": 12,
+                "name": "Override Request API",
+                "endpointPrefix": "api/v1",
+                "latency": 0,
+                "port": 3000,
+                "routes": [
+                    {
+                        "uuid": "",
+                        "documentation": "Return a single request by ID",
+                        "method": "get",
+                        "endpoint": "requests/:requestId",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"id\": 1,\n  \"last-modified\": \"11/07/2020 22:30:47\",\n  \"last-name\": \"Smith\",\n  \"first-name\": \"John\",\n  \"grad-month\": \"05/2021\",\n  \"banner-id\": \"001234567\",\n  \"crn\": \"1234\",\n  \"department\": \"CS\",\n  \"class-number\": 370,\n  \"semester\": \"202060\",\n  \"types\": [\n    \"Capacity\",\n    \"Prerequisites\",\n    \"Other\"\n  ],\n  \"status\": \"Approved\",\n  \"email\": \"jsmith@truman.edu\",\n  \"major\": [\n    \"Computer Science\",\n    \"Statistics\"\n  ],\n  \"minor\": [\n    \"Computer Science\",\n    \"Statistics\"\n  ]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "Ok",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "",
+                                "latency": 0,
+                                "statusCode": 404,
+                                "label": "A user with the specified ID was not found",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "Returns all requests",
+                        "method": "get",
+                        "endpoint": "requests",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "[\n  {\n    \"id\": 1,\n    \"last-modified\": \"11/07/2020 22:30:47\",\n    \"last-name\": \"Smith\",\n    \"first-name\": \"John\",\n    \"grad-month\": \"05/2021\",\n    \"banner-id\": \"001234567\",\n    \"crn\": \"1234\",\n    \"department\": \"CS\",\n    \"class-number\": 370,\n    \"semester\": \"202060\",\n    \"types\": [\n      \"Capacity\",\n      \"Prerequisites\",\n      \"Other\"\n    ],\n    \"status\": \"Approved\",\n    \"email\": \"jsmith@truman.edu\",\n    \"major\": [\n      \"Computer Science\",\n      \"Statistics\"\n    ],\n    \"minor\": [\n      \"Computer Science\",\n      \"Statistics\"\n    ]\n  }\n]",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "Ok",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "Create a new override request",
+                        "method": "post",
+                        "endpoint": "requests",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "",
+                                "latency": 0,
+                                "statusCode": 201,
+                                "label": "Created",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true
+                    }
+                ],
+                "proxyMode": false,
+                "proxyHost": "",
+                "https": false,
+                "cors": true,
+                "headers": [
+                    {
+                        "key": "Access-Control-Allow-Origin",
+                        "value": "*"
+                    },
+                    {
+                        "key": "Access-Control-Allow-Methods",
+                        "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+                    },
+                    {
+                        "key": "Access-Control-Allow-Headers",
+                        "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+                    }
+                ],
+                "proxyReqHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ],
+                "proxyResHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ]
+            }
+        }
+    ]
+}

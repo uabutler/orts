@@ -12,12 +12,56 @@ $(document).ready(function() {
             [10, 25, 50, 100, "All"]
         ],
         fixedHeader: true,
+        ajax: {
+            url: BASE_URL+"/requests",
+            dataSrc: ""
+        },
         columnDefs: [{
                 targets: 0,
                 data: null,
                 defaultContent: "<input type='checkbox' class='requestSelect' disabled />",
                 sortable: false,
                 searchable: false
+            },
+            {
+                targets: 1,
+                data: "status"
+            },
+            {
+                targets: 2,
+                data: "last-modified"
+            },
+            {
+                targets: 3,
+                data: "last-name"
+            },
+            {
+                targets: 4,
+                data: "first-name"
+            },
+            {
+                targets: 5,
+                data: "grad-month"
+            },
+            {
+                targets: 6,
+                data: "banner-id"
+            },
+            {
+                targets: 7,
+                data: "semester"
+            },
+            {
+                targets: 8,
+                data: "crn"
+            },
+            {
+                targets: 9,
+                data: "department"
+            },
+            {
+                targets: 10,
+                data: "class-number"
             },
             {
                 targets: 11,

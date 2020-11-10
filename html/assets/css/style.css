@@ -26,8 +26,8 @@ main#adminPage {
 
 #requestsTable tbody td:nth-child(1),
 #requestsTable tbody td:nth-child(13),
-#studentActiveRequestsTable tbody td:nth-child(6),
-#studentArchivedRequestsTable tbody td:nth-child(6) {
+#studentActiveRequestsTable tbody td:nth-child(5),
+#studentArchivedRequestsTable tbody td:nth-child(5) {
     text-align: center;
 }
 
