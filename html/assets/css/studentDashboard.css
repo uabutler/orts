@@ -1,22 +1,22 @@
-#infoTable {
+table {
 	border-collapse: collapse;
 	width: 100%;
 }
 
-#infoTable th, #infoTable td {
+table th, table td {
 	border: 1px solid #ddd;
 	padding: 8px;
 }
 
-#infoTable tr:nth-child(even) {
+table tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
 
-#infoTable tr:hover {
+table tr:hover {
 	background-color: #ddd;
 }
 
-#infoTable th {
+table th {
 	background-color: #ab59c2;
 	color: white;
 	padding-top: 12px;

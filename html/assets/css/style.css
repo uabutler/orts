@@ -4,7 +4,7 @@ main#adminPage {
     flex-wrap: none;
 }
 
-#requestTable {
+#requests {
     width: 100%;
     transition: width 0.5s linear;
 }
@@ -15,26 +15,28 @@ main#adminPage {
   overflow: hidden;
 }
 
-#requests {
+#requestsTable {
     width: 100% !important;
 }
 
-#requests table input[type=text] {
+#requestsTable table input[type=text] {
     margin: 0;
     padding: 0;
 }
 
-#requests tbody td:nth-child(1),
-#requests tbody td:nth-child(13) {
+#requestsTable tbody td:nth-child(1),
+#requestsTable tbody td:nth-child(13),
+#studentActiveRequestsTable tbody td:nth-child(6),
+#studentArchivedRequestsTable tbody td:nth-child(6) {
     text-align: center;
 }
 
-#requests thead tr:nth-child(1) th input[type=text] {
+#requestsTable thead tr:nth-child(1) th input[type=text] {
     width: 100%;
     box-sizing: border-box;
 }
 
-#requests thead tr:nth-child(1) th {
+#requestsTable thead tr:nth-child(1) th {
     padding-left: 5px;
     padding-right: 5px;
 }

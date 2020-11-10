@@ -4,6 +4,12 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/studentDashboard.js"></script>
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="assets/datatables/datatables.min.css"/>
+    <script type="text/javascript" src="assets/datatables/datatables.min.js"></script>
     <link rel="stylesheet" href="assets/css/studentDashboard.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <!--Local CSS-->
@@ -15,16 +21,16 @@
       <h1>Override Request System</h1>
       <h3>Welcome </h3>
       <section id="navTabs">
-	<a href="studentDashboard.html">Student Dashboard</a>
-	<a href="studentForm.html">Override Request Form</a>
+        <a href="studentDashboard.html">Student Dashboard</a>
+        <a href="studentForm.html">Override Request Form</a>
       </section>
     </header>
     <main>
       <section id="actReqTitle">
-	<h2>Active Requests</h2>
+        <h2>Active Requests</h2>
       </section>
-       <section id="infoTable">
-          <table id="requests" class="stripe cell-border">
+       <section id="activeRequests">
+          <table id="studentActiveRequestsTable" class="stripe cell-border">
             <thead>
               <tr>
                 <th>Status</th>
@@ -42,11 +48,11 @@
        <section id="requestInformation">
 
        </section>
-       <section id="preReqTitle">
-	<h2>Archived Requests</h2>
+       <section id="archivedRequests">
+          <h2>Archived Requests</h2>
        </section>
        <section id="infoTable">
-          <table id="requests" class="stripe cell-border">
+          <table id="studentArchivedRequestsTable" class="stripe cell-border">
             <thead>
               <tr>
                 <th>Status</th>

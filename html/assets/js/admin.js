@@ -1,13 +1,10 @@
 $(document).ready(function() {
-    const VIEW_TEXT = "View";
-    const HIDE_TEXT = "Hide";
-
     // Clone the header row into the footer and to make a row for later filters
-    $("#requests thead tr").clone(true).appendTo("#requests tfoot")
-    $("#requests tfoot tr th:eq(0)").empty();
-    $("#requests thead tr").clone(true).appendTo("#requests thead");
+    $("#requestsTable thead tr").clone(true).appendTo("#requestsTable tfoot")
+    $("#requestsTable tfoot tr th:eq(0)").empty();
+    $("#requestsTable thead tr").clone(true).appendTo("#requestsTable thead");
 
-    var table = $("#requests").DataTable({
+    var table = $("#requestsTable").DataTable({
         dom: "lrtip",
         pageLength: 10,
         lengthMenu: [
@@ -25,7 +22,7 @@ $(document).ready(function() {
             {
                 targets: 12,
                 data: null,
-                defaultContent: "<button class='viewRequest'>View</button>",
+                defaultContent: "<button class='viewRequest'>"+VIEW_TEXT+"</button>",
                 sortable: false,
                 searchable: false
             }
@@ -34,12 +31,12 @@ $(document).ready(function() {
             [2, "asc"]
         ],
         initComplete: function() {
-                $("#requests thead tr:eq(0) th").each(function() { $(this).empty() });
+                $("#requestsTable thead tr:eq(0) th").each(function() { $(this).empty() });
                 var textBoxCols = [2, 3, 4, 5, 7, 9, 11];
                 var selectCols = [1, 6, 8, 10];
                 this.api().columns().every(function(i) {
-                    var cell = $("#requests thead tr:eq(0) th:eq(" + i + ")");
-                    var title = $("#requests thead tr:eq(1) th:eq(" + i + ")").text();
+                    var cell = $("#requestsTable thead tr:eq(0) th:eq(" + i + ")");
+                    var title = $("#requestsTable thead tr:eq(1) th:eq(" + i + ")").text();
                     var titleRegexSafe = title.replace(/[\W]/g, '-');
                     if (textBoxCols.includes(i)) {
                         // Create Text Input Field
@@ -119,7 +116,7 @@ $(document).ready(function() {
                   $(this).text(VIEW_TEXT);
                   $("#requestInformation").removeClass("visible");
                 } else {
-                  $("#requests tbody tr").each(function(){
+                  $("#requestsTable tbody tr").each(function(){
                     $(this).removeClass("selected");
                     $(this).find("button.viewRequest").text(VIEW_TEXT);
                   });
