@@ -5,7 +5,7 @@ $(document).ready(function() {
         fixedHeader: true,
         columnDefs: [
             {
-                targets: 5,
+                targets: 4,
                 data: null,
                 defaultContent: "<button class='studentEditRequest'>"+EDIT_TEXT+"</button>",
                 sortable: false,
@@ -13,7 +13,7 @@ $(document).ready(function() {
             }
         ],
         order: [
-            [2, "desc"]
+            [1, "desc"]
         ]
     }); // var activetable
 
@@ -23,7 +23,7 @@ $(document).ready(function() {
         fixedHeader: true,
         columnDefs: [
             {
-                targets: 5,
+                targets: 4,
                 data: null,
                 defaultContent: "<button class='studentEditRequest'>"+EDIT_TEXT+"</button>",
                 sortable: false,
@@ -31,7 +31,7 @@ $(document).ready(function() {
             }
         ],
         order: [
-            [2, "desc"]
+            [1, "desc"]
         ]
     }); // var archivetable
 
