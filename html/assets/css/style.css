@@ -15,6 +15,10 @@ main#adminPage {
   overflow: hidden;
 }
 
+#requestInformation.visible{
+    width: 70%;
+  }
+
 #requestsTable {
     width: 100% !important;
 }
@@ -25,7 +29,7 @@ main#adminPage {
 }
 
 #requestsTable tbody td:nth-child(1),
-#requestsTable tbody td:nth-child(13),
+#requestsTable tbody td:nth-child(12),
 #studentActiveRequestsTable tbody td:nth-child(5),
 #studentArchivedRequestsTable tbody td:nth-child(5) {
     text-align: center;
