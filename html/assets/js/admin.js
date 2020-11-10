@@ -3,6 +3,7 @@ $(document).ready(function() {
     $("#requestsTable thead tr").clone(true).appendTo("#requestsTable tfoot")
     $("#requestsTable tfoot tr th:eq(0)").empty();
     $("#requestsTable thead tr").clone(true).appendTo("#requestsTable thead");
+    $("#requestsTable thead tr:eq(0) th").each(function() { $(this).empty() });
 
     var table = $("#requestsTable").DataTable({
         dom: "lrtip",
@@ -84,7 +85,6 @@ $(document).ready(function() {
                     var d = new Date(cell.text() + "-0:00");
                     cell.attr("data-sort", d.getTime() / 1000);
                 });
-                $("#requestsTable thead tr:eq(0) th").each(function() { $(this).empty() });
                 var textBoxCols = [2, 3, 4, 6, 8, 10];
                 var selectCols = [1, 5, 7, 9];
                 this.api().columns().every(function(i) {

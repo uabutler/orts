@@ -10,23 +10,21 @@
     <!-- DataTables -->
     <link rel="stylesheet" type="text/css" href="assets/datatables/datatables.min.css"/>
     <script type="text/javascript" src="assets/datatables/datatables.min.js"></script>
-    <link rel="stylesheet" href="assets/css/studentDashboard.css">
+    <!-- <link rel="stylesheet" href="assets/css/studentDashboard.css"> -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!--Local CSS-->
-    <title>Student Dashboard | Truman State MSCS Override Request System</title>
+    <title>Student Dashboard | Truman State MSCS Overrides</title>
   </head>
 
   <body>
     <header>
-      <h1>Override Request System</h1>
-      <h3>Welcome </h3>
-      <section id="navTabs">
-        <a href="studentDashboard.html">Student Dashboard</a>
+      <nav>
+        <div class="navTitle">Truman State MSCS Overrides</div>
+        <a href="studentDashboard.html" class="currentPage">Student Dashboard</a>
         <a href="studentForm.html">Override Request Form</a>
-	<div id="logout">
-		<a  href="">Log Out</a>
-	</div>
-      </section>
+        <a href="" class="right">Log Out</a>
+        <div class="right navTitle" id="userName">John Doe</div>
+      </nav>
     </header>
     <main>
        <section id="activeRequests">
@@ -45,6 +43,7 @@
             <tfoot></tfoot>
           </table>
        </section>
+       <div class="bar"></div>
        <section id="archivedRequests">
           <h2>Archived Requests</h2>
           <table id="studentArchivedRequestsTable" class="stripe cell-border">
