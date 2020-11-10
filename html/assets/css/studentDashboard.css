@@ -47,3 +47,7 @@ table th {
 	background-color: #ab59c2;
 	color: white;
 }
+
+#logout {
+	float: right;
+}
