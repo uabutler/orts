@@ -1,0 +1,49 @@
+#infoTable {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#infoTable th, #infoTable td {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+#infoTable tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+#infoTable tr:hover {
+	background-color: #ddd;
+}
+
+#infoTable th {
+	background-color: #ab59c2;
+	color: white;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: center;
+}
+
+#navTabs {
+	background-color: #333;
+	overflow: hidden;
+}
+
+#navTabs a {
+	float: left;
+	color: #f2f2f2;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+#navTabs a:hover {
+	background-color: #ddd;
+	color: black;
+}
+
+.navTabs a:active {
+	background-color: #ab59c2;
+	color: white;
+}
