@@ -33,3 +33,5 @@ phpCAS::forceAuthentication();
 $username = phpCAS::getUser();
 
 // the rest of what you want index.html to do ...
+?>
+<h1>Hello, world!</h1>
