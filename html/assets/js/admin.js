@@ -20,7 +20,7 @@ $(document).ready(function() {
                 searchable: false
             },
             {
-                targets: 12,
+                targets: 11,
                 data: null,
                 defaultContent: "<button class='viewRequest'>"+VIEW_TEXT+"</button>",
                 sortable: false,
@@ -28,12 +28,12 @@ $(document).ready(function() {
             }
         ],
         order: [
-            [2, "asc"]
+            [2, "desc"]
         ],
         initComplete: function() {
                 $("#requestsTable thead tr:eq(0) th").each(function() { $(this).empty() });
-                var textBoxCols = [2, 3, 4, 5, 7, 9, 11];
-                var selectCols = [1, 6, 8, 10];
+                var textBoxCols = [2, 3, 4, 6, 8, 10];
+                var selectCols = [1, 5, 7, 9];
                 this.api().columns().every(function(i) {
                     var cell = $("#requestsTable thead tr:eq(0) th:eq(" + i + ")");
                     var title = $("#requestsTable thead tr:eq(1) th:eq(" + i + ")").text();

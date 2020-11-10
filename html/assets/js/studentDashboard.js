@@ -17,7 +17,7 @@ $(document).ready(function() {
             }
         ],
         order: [
-            [2, "asc"]
+            [2, "desc"]
         ]
     }); // var activetable
 
@@ -39,7 +39,7 @@ $(document).ready(function() {
             }
         ],
         order: [
-            [2, "asc"]
+            [2, "desc"]
         ]
     }); // var archivetable
 
