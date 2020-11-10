@@ -1,4 +1,4 @@
-main {
+main#adminPage {
     display: flex;
     flex-direction: row;
     flex-wrap: none;
