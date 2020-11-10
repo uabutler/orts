@@ -71,8 +71,8 @@ components:
       properties:
         last-modified:
           type: string
-          pattern: '^\d{1,2}\/\d{1,2}\/\d{4}$'
-          example: "11/7/2020"
+          pattern: '^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$'
+          example: "11/07/2020 22:30:47"
         last-name:
           type: string
           example: "Smith"
@@ -81,19 +81,22 @@ components:
           example: "John"
         grad-month:
           type: string
-          example: "May 2021"
+          pattern: '^\d{2}\/\d{4}$'
+          example: "05/2021"
         banner-id:
           type: string
+          pattern: '^001\d{6}$'
           example: "001234567"
         crn:
           type: string
+          pattern: '^\d{4}\$'
           example: "1234"
         department:
           type: string
           example: "CS"
         class-number:
           type: integer
-          format: int64
+          format: int32
           example: 370
         semester:
           type: string
@@ -108,6 +111,7 @@ components:
           example: "Approved"
         email:
           type: string
+          pattern: '\@truman\.edu$'
           example: "jsmith@truman.edu"
         major:
           type: array
@@ -120,16 +124,11 @@ components:
             type: string
             example: ["Computer Science", "Statistics"]
     Requests:
-      properties:
-        type: array
-        - items:
-            $ref: "#/components/schemas/Request"
+      type: array
+      items:
+        $ref: "#/components/schemas/Request"
     NewRequest:
       properties:
-        last-modified:
-          type: string
-          pattern: '^\d{1,2}\/\d{1,2}\/\d{4}$'
-          example: "11/7/2020"
         last-name:
           type: string
           example: "Smith"
@@ -138,12 +137,15 @@ components:
           example: "John"
         grad-month:
           type: string
-          example: "May 2021"
+          pattern: '^\d{2}\/\d{4}$'
+          example: "05/2021"
         banner-id:
           type: string
+          pattern: '^001\d{6}$'
           example: "001234567"
         crn:
           type: string
+          pattern: '^\d{4}\$'
           example: "1234"
         department:
           type: string
@@ -165,6 +167,7 @@ components:
           example: "Approved"
         email:
           type: string
+          pattern: '\@truman\.edu$'
           example: "jsmith@truman.edu"
         major:
           type: array
@@ -185,9 +188,3 @@ components:
         message:
           type: string
           example: "This was an error twelve."
-
-          
-          
-  
-      
-      
