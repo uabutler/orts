@@ -22,11 +22,21 @@ class Course
   public $department; // string
   public $course_num; // int
   public $title; // string
+
+  function __construct(string $department
 }
 
+/**
+ * Add a course to the database.
+ */
 function addCourse(Course $course)
 {
+  global $class_tbl;
 
+  $pdo = connectDB();
+
+  // Insert basic course info
+  //$smt = $pdo->prepare("INSERT INTO $class_tbl (
 }
 
 function searchCourse($department, $course_num): Course
