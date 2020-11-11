@@ -36,9 +36,9 @@
         <h2>User Profile</h2>
         <form action="" id="profileForm">
           <div class="formElement">
-            <label for="firstname lastname">Name: </label>
-            <input placeholder="First" type="text" name="firstname" id="firstname" required="required">
-            <input placeholder="Last" type="text" name="lastname" id="lastname" required="required">
+            <label>Name: </label>
+            <label for="firstname" class="hide">First Name</label><input placeholder="First" type="text" name="firstname" id="firstname" required="required">
+            <label for="lastname" class="hide">Last Name</label><input placeholder="Last" type="text" name="lastname" id="lastname" required="required">
           </div>
           <div class="formElement">
             <label for="bannerid">Banner ID: </label>
@@ -49,13 +49,15 @@
             <input type="email" name="email" id="email" required="required" disabled>
           </div>
           <div class="formElement">
-            <label for="gradmonth gradyear">Expected Graduation: </label>
+            <label>Expected Graduation: </label>
+            <label for="gradmonth" class="hide">Graduation Month</label>
             <select name="gradmonth" id="gradmonth" required="required">
               <option value="default">&nbsp;</option>
               <option value="05">May</option>
               <option value="08">August</option>
               <option value="12">December</option>
             </select>
+            <label for="gradyear" class="hide">Graduation Year</label>
             <input type="number" name="gradyear" id="gradyear" placeholder="3015" required="required">
           </div>
           <div class="formElement">

@@ -186,3 +186,7 @@ div.formElement {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+label.hide{
+    display: none;
+}
