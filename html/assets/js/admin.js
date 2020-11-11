@@ -162,7 +162,6 @@ $(document).ready(function() {
           
               $(".viewRequest").click(function(){
                 const theRow = $(this).closest("tr");
-                const data = table.row(theRow).data();
                 const wasSelected = $(theRow).hasClass("selected");
                 if(wasSelected){
                   // Hide the detailed view
