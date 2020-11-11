@@ -31,7 +31,7 @@ $(document).ready(function() {
             {
                 targets: 4,
                 data: null,
-                defaultContent: "<button class='studentEditRequest'>"+EDIT_TEXT+"</button>",
+                defaultContent: "<button disabled class='studentEditRequest'>"+EDIT_TEXT+"</button>",
                 sortable: false,
                 searchable: false
             }
@@ -80,7 +80,7 @@ $(document).ready(function() {
             {
                 targets: 4,
                 data: null,
-                defaultContent: "<button class='studentEditRequest'>"+EDIT_TEXT+"</button>",
+                defaultContent: "<button disabled class='studentEditRequest'>"+EDIT_TEXT+"</button>",
                 sortable: false,
                 searchable: false
             }
