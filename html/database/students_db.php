@@ -1,5 +1,5 @@
 <?php
-include 'common_db.php';
+include_once 'common_db.php';
 
 /**
  * These are objects to wrap the data stored in the databases

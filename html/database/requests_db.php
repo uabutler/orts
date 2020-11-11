@@ -1,6 +1,6 @@
 <?php
-include 'classes_db.php';
-include 'students_db.php';
+include_once 'classes_db.php';
+include_once 'students_db.php';
 
 class OverrideRequest
 {
