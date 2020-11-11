@@ -127,6 +127,9 @@ components:
           items:
             type: string
           example: ["Computer Science", "Statistics"]
+        explanation:
+          type: string
+          example: "I need this course to graduate"
     Requests:
       type: array
       items:
@@ -180,6 +183,9 @@ components:
           items:
             type: string
           example: ["Computer Science", "Statistics"]
+        explanation:
+          type: string
+          example: "I need this course to graduate"
     Error:
       properties:
         code:
