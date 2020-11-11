@@ -15,7 +15,10 @@
         <h2>Department of Mathematics, Computer Science, and Statistics</h2>
     </center>
     <hr>
-    <p><u>STUDENT INFORMATION:</u></p>
+    <p>
+        <div id="termAndCond"><a href="overrideRequestTermsAndConditions.html" target="popup">Terms and Conditions</a></div>
+        <u>STUDENT INFORMATION:</u>
+    </p>
     <form action="cgi-bin/override.pl" method="post">
         <p>
             <label for="name">Name: LAST, FIRST </label> &emsp;
@@ -29,7 +32,7 @@
             <!--REQUIRES API ENDPOINT INFORMATION-->
             <!--OPTIONS IN DROPDOWN ARE ONLY FOR DEMO-->
             <form action="/action_page.php">
-                <input list="majors" name="browser">
+                <input list="majors" type="inputText" name="browser">
                 <datalist id="majors">
                   <option value="Computer Science">
                   <option value="Mathematics">
@@ -38,7 +41,7 @@
             </form>
            
             <label for="grad">Expected Grad Date (semester and year): </label>
-            <input required="required" name="grad" type="text" value="" id="grad" onkeypress="return event.keyCode!=13">
+            <input required="required" name="grad" type="inputText" value="" id="grad" onkeypress="return event.keyCode!=13">
         </p>
     
         <p>
@@ -75,12 +78,12 @@
 
                 <tr>
                     <td>REQUESTED COURSE:</td>
-                    <td><input name="crn" type="text" value="" size="6" onkeypress="return event.keyCode!=13"></td>
+                    <td><input name="crn" type="inputText" value="" size="6" onkeypress="return event.keyCode!=13"></td>
                     <td>
                         <!--REQUIRES API ENDPOINT INFORMATION-->
                         <!--OPTIONS IN DROPDOWN ARE ONLY FOR DEMO-->
                         <form action="/action_page.php">
-                            <input list="majors" type="text" name="department" size="5">
+                            <input list="majors" type="inputText" name="department" size="5">
                             <datalist id="majors">
                               <option value="Computer Science(CS)">
                               <option value="Mathematics(MATH)">
@@ -88,9 +91,9 @@
                             </datalist>
                         </form>
                     </td>
-                    <td><input name="courseNum" type="text" value="" size="8" onkeypress="return event.keyCode!=13"></td>
-                    <td><input name="section" type="text" value="" size="4" onkeypress="return event.keyCode!=13"></td>
-                    <td><input name="title" type="text" value="" onkeypress="return event.keyCode!=13"></td></tr>
+                    <td><input name="courseNum" type="inputText" value="" size="8" onkeypress="return event.keyCode!=13"></td>
+                    <td><input name="section" type="inputText" value="" size="4" onkeypress="return event.keyCode!=13"></td>
+                    <td><input name="title" type="inputText" value="" onkeypress="return event.keyCode!=13"></td></tr>
             </tbody>
         </table>
         <p>Reason for request: Check one or more of the reasons listed below, and then give a <u>THOROUGH</u> explanation.</p>
@@ -109,7 +112,7 @@
             <textarea name="explanation" cols="70" rows="10" id="explanation"></textarea>
         </p>
         <p>
-            <input name="submit" type="submit" value="Submit" id="submit">
+            <input name="submit" type="submit" value="Submit" disabled="disabled" id="submit">
         </p>
     </form>
 </body>
