@@ -231,3 +231,8 @@ label.hide{
 .message {
     margin-left: 40px;
 }
+
+.soon {
+    font-style: italic;
+    font-size: small;
+}

@@ -165,15 +165,30 @@ $(document).ready(function() {
                 const data = table.row(theRow).data();
                 const wasSelected = $(theRow).hasClass("selected");
                 if(wasSelected){
+                  // Hide the detailed view
                   theRow.removeClass("selected");
                   $(this).text(VIEW_TEXT);
                   $("#requestInformation").removeClass("visible");
                 } else {
+                  // Highlight the row
                   $("#requestsTable tbody tr").each(function(){
                     $(this).removeClass("selected");
                     $(this).find("button.viewRequest").text(VIEW_TEXT);
                   });
                   theRow.addClass("selected");
+
+                  // Insert Data
+                  const data = table.row(theRow).data();
+                  $("#status").text(data.status);
+                  $("#overrideType").empty();
+                  $(data.types).each(function(){
+                    $("#overrideType").append("<li>" + this + "</li>");
+                  });
+                  $("#explanation").text(data.explanation);
+                  //TODO: Files
+                  //TODO: Messages to student
+                  //TODO: Admin Messages
+
                   $(this).text(HIDE_TEXT);
                   $("#requestInformation").addClass("visible");
                 }
