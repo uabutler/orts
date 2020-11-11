@@ -89,7 +89,7 @@ $pdo->exec("CREATE TABLE $request_tbl (" .
   "section_id int NOT NULL," .
   "status enum('Received', 'Approved', 'Provisionally Approved', 'Denied', 'Requires Faculty Approval') NOT NULL," .
   "type enum('Closed Class', 'Prerequisite', 'Other') NOT NULL," .
-  "explaination text)");
+  "explanation text)");
 
 // Notifications table
 echo "  $notification_tbl\n";
