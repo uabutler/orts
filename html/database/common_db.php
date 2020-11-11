@@ -47,4 +47,16 @@ function flattenResult(array $result)
   return $out;
 }
 
+function getEnums($table, $field, $pdo=null)
+{
+  if(is_null($pdo))
+    $pdo = connectDB();
+    
+  $smt = $pdo->prepare("SHOW COLUMNS FROM $table WHERE Field=:field");
+  $smt->bindParam(":field", $field, PDO::PARAM_STR);
+  $smt->execute();
+
+  return explode("','",substr($smt->fetch(PDO::FETCH_ASSOC)['Type'],6,-2));
+}
+
 ?>

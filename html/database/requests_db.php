@@ -12,6 +12,18 @@ class OverrideRequest
   public $explaination; // string
 }
 
+function listStatuses()
+{
+  global $request_tbl;
+  return getEnums($request_tbl, "status");
+}
+
+function listOverrideTypes()
+{
+  global $request_tbl;
+  return getEnums($request_tbl, "type");
+}
+
 function addOverrideRequest(Student $student, Section $section, string $status, string $type, string $explaination)
 {
   // TODO: Implement minimum
