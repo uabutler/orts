@@ -48,6 +48,7 @@ function addSemester(Semester $semester)
 
 class Section
 {
+  public $id; // int
   public $course; // Course
   public $semester; // Semester
   public $info; // String

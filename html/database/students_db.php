@@ -6,6 +6,7 @@ include 'common_db.php';
  */
 class Student
 {
+  public $id;
   public $email;
   public $first_name;
   public $last_name;
