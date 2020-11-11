@@ -190,3 +190,44 @@ div.formElement {
 label.hide{
     display: none;
 }
+
+
+
+
+
+#requestInformation {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#requestInformation h3 {
+    text-align: center;
+    background: #510c76;
+    color: white;
+}
+
+#decisionBox {
+    display: table-cell;
+    text-align: center;
+}
+
+#decisionBox button {
+    margin: 10px;
+}
+
+#informationBox {
+    display: table;
+    width: 100%;
+    border-spacing: 10px;
+}
+
+#informationBox #overrideInformation {
+    display: table-cell;
+    width: 50%;
+}
+
+.message {
+    margin-left: 40px;
+}
