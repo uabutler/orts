@@ -92,7 +92,7 @@ main#adminPage {
     flex-wrap: none;
 }
 
-#requests {
+#requests, #activeRequests, #archivedRequests {
     width: 100%;
     transition: width 0.5s linear;
 }
@@ -180,4 +180,9 @@ main#adminPage {
 .paginate_button.current {
     background: rgba(0,168,226,0.5) !important;
     border: 1px solid #510c76 !important;
+}
+
+div.formElement {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
