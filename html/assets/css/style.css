@@ -184,6 +184,22 @@ main#adminPage {
     border: 1px solid #510c76 !important;
 }
 
+input[type=text] {
+    border: none;
+    border-bottom: 2px solid #510c76;
+}
+
+input[type=extext] {
+    border: none;
+}
+
+input[type=radio] {
+    background-color: #510c76;
+}
+
+label[type=studentInfo] {
+    font-style: Courier ;
+}
 div.formElement {
     margin-top: 10px;
     margin-bottom: 10px;
