@@ -149,6 +149,8 @@ main#adminPage {
 
 .select2-selection__choice{
     background-color: #00a8e2 !important;
+    color: white !important;
+    font-weight: bold !important;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
