@@ -1,4 +1,4 @@
-<?php
+mys<?php
 include 'common_db.php';
 
 function addDepartment(string $department)
@@ -23,7 +23,7 @@ class Course
   public $course_num; // int
   public $title; // string
 
-  function __construct(string $department
+  //function __construct(string $department
 }
 
 /**
@@ -53,7 +53,7 @@ class Semester
 function addSemester(Semester $semester)
 {
   // TODO: Make current active false
-  INSERT INTO semesters (semester, description) VALUES ('123', 'Fall 2021');
+  //INSERT INTO semesters (semester, description) VALUES ('123', 'Fall 2021');
 }
 
 class Section
@@ -63,10 +63,10 @@ class Section
   public $semester; // Semester
   public $info; // String
 
-  function __construct()
-  {
+  //function __construct(string $course, string %semester)
+  //{
 
-  }
+  //}
 }
 
 function addSection(Section $section)
