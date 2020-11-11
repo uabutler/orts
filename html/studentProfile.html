@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="assets/js/jquery-3.5.1.min.js"></script>
-    <!-- DataTables -->
-    <link rel="stylesheet" type="text/css" href="assets/datatables/datatables.min.css" />
-    <script type="text/javascript" src="assets/datatables/datatables.min.js"></script>
     <!-- Form Validation -->
     <script src="assets/js/validation/jquery.validate.min.js"></script>
     <script src="assets/js/validation/additional-methods.min.js"></script>
+    <!-- Select2 plugin -->
+    <link rel="stylesheet" type="text/css" href="assets/css/select2.min.css">
+    <script src="assets/js/select2.min.js"></script>
     <!-- Local JS -->
     <script src="assets/js/common.js"></script>
-    <script src="assets/js/profile.js"></script>
+    <script src="assets/js/studentProfile.js"></script>
     <!--Local CSS-->
     <link rel="stylesheet" href="assets/css/style.css">
-    <title>Profile | Truman State MSCS Overrides</title>
+    <title>Student Profile | Truman State MSCS Overrides</title>
 </head>
 
 <body>
@@ -25,7 +25,6 @@
             <div class="navTitle">Truman State MSCS Overrides</div>
             <a href="studentDashboard.html">Student Dashboard</a>
             <a href="studentForm.html">Override Request Form</a>
-            <a href="admin.html">Administrative Dashboard</a>
             <a href="" class="right">Log Out</a>
             <a href="profile.html" class="right currentPage">Profile</a>
             <div class="right navTitle" id="userName">John Doe</div>
@@ -33,7 +32,7 @@
     </header>
     <main>
       <section id="profile">
-        <h2>User Profile</h2>
+        <h2>Student Profile</h2>
         <form action="" id="profileForm">
           <div class="formElement">
             <label>Name: </label>
@@ -59,6 +58,18 @@
             </select>
             <label for="gradyear" class="hide">Graduation Year</label>
             <input type="number" name="gradyear" id="gradyear" placeholder="3015" required="required">
+          </div>
+          <div class="formElement">
+            <label for="majors">Major(s): </label>
+            <select disabled name="majors" id="majors" class="select2" multiple required="required">
+            </select>
+            <span id="majorsLoading">Loading...</span>
+          </div>
+          <div class="formElement">
+            <label for="minors">Minor(s): </label>
+            <select disabled name="minors" id="minors" class="select2" multiple>
+            </select>
+            <span id="minorsLoading">Loading...</span>
           </div>
           <div class="formElement">
             <input type="submit" value="Update">
