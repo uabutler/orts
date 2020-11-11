@@ -11,29 +11,30 @@
     <!-- Form Validation -->
     <script src="assets/js/validation/jquery.validate.min.js"></script>
     <script src="assets/js/validation/additional-methods.min.js"></script>
+    <!-- Select2 plugin -->
+    <link rel="stylesheet" type="text/css" href="assets/css/select2.min.css">
+    <script src="assets/js/select2.min.js"></script>
     <!-- Local JS -->
     <script src="assets/js/common.js"></script>
-    <script src="assets/js/profile.js"></script>
+    <script src="assets/js/adminProfile.js"></script>
     <!--Local CSS-->
     <link rel="stylesheet" href="assets/css/style.css">
-    <title>Profile | Truman State MSCS Overrides</title>
+    <title>Administrator Profile | Truman State MSCS Overrides</title>
 </head>
 
 <body>
     <header>
         <nav>
             <div class="navTitle">Truman State MSCS Overrides</div>
-            <a href="studentDashboard.html">Student Dashboard</a>
-            <a href="studentForm.html">Override Request Form</a>
-            <a href="admin.html">Administrative Dashboard</a>
+            <a href="admin.html">Administrator Dashboard</a>
             <a href="" class="right">Log Out</a>
             <a href="profile.html" class="right currentPage">Profile</a>
-            <div class="right navTitle" id="userName">John Doe</div>
+            <div class="right navTitle" id="userName">Diane Sandefur</div>
         </nav>
     </header>
     <main>
       <section id="profile">
-        <h2>User Profile</h2>
+        <h2>Administrator Profile</h2>
         <form action="" id="profileForm">
           <div class="formElement">
             <label>Name: </label>
@@ -41,24 +42,8 @@
             <label for="lastname" class="hide">Last Name</label><input placeholder="Last" type="text" name="lastname" id="lastname" required="required">
           </div>
           <div class="formElement">
-            <label for="bannerid">Banner ID: </label>
-            <input type="text" name="bannerid" id="bannerid" placeholder="000000000" required="required">
-          </div>
-          <div class="formElement">
             <label for="email">Truman Email Address:</label>
             <input type="email" name="email" id="email" required="required" disabled>
-          </div>
-          <div class="formElement">
-            <label>Expected Graduation: </label>
-            <label for="gradmonth" class="hide">Graduation Month</label>
-            <select name="gradmonth" id="gradmonth" required="required">
-              <option value="default">&nbsp;</option>
-              <option value="05">May</option>
-              <option value="08">August</option>
-              <option value="12">December</option>
-            </select>
-            <label for="gradyear" class="hide">Graduation Year</label>
-            <input type="number" name="gradyear" id="gradyear" placeholder="3015" required="required">
           </div>
           <div class="formElement">
             <input type="submit" value="Update">

@@ -136,7 +136,7 @@ $(document).ready(function() {
 
                         // sort the values ascending
                         column.data().unique().sort().each(function(d, j) {
-                            select.append('<option value="' + (d === null ? "Ongoing" : d) + '">' + (d === null ? "Ongoing" : d) + '</option>');
+                            select.append('<option value="' + d + '">' + d + '</option>');
                         });
 
                         //Invoke Select2

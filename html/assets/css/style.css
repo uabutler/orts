@@ -133,17 +133,17 @@ main#adminPage {
     padding-right: 5px;
 }
 
-.select2 {
+#adminPage .select2 {
     width: 100%!important;
     margin: 0!important;
     padding: 0!important;
 }
 
-.select2-container {
+#adminPage .select2-container {
     width: 100%!important;
 }
 
-.select2-search--dropdown .select2-search__field {
+#adminPage .select2-search--dropdown .select2-search__field {
     width: 98%!important;
 }
 
