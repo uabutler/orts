@@ -12,12 +12,11 @@ class OverrideRequest
   public $explaination; // string
 }
 
-function addOverrideRequest(string $email, $section, $status, $type, $explaination)
+function addOverrideRequest(Student $student, Section $section, string $status, string $type, string $explaination)
 {
-  $student = searchStudents($email);
-  // $student->id;
+  // TODO: Implement minimum
 
-
+  // TODO: validate status, type
 }
 
 ?>
