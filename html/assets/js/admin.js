@@ -5,6 +5,16 @@ $(document).ready(function() {
     $("#requestsTable thead tr").clone(true).appendTo("#requestsTable thead");
     $("#requestsTable thead tr:eq(0) th").each(function() { $(this).empty() });
 
+    $.fn.dataTable.ext.type.order['unixTime-pre'] = function (datestring){
+        var d = new Date(datestring + "-0:00");
+        return (d.getTime() / 1000);
+    };
+
+   $.fn.dataTable.ext.type.order['monthYear-pre'] = function(datestring){
+        const components = datestring.split("/");
+       return (components[1]+components[0]);
+    };
+
     var table = $("#requestsTable").DataTable({
         dom: "lrtip",
         pageLength: 10,
@@ -34,7 +44,8 @@ $(document).ready(function() {
                 render: function(data, type, row){
                     var d = new Date(data+"-0:00");
                     return d.toLocaleDateString() + " " + d.toLocaleTimeString();
-                }
+                },
+                type: "unixTime"
             },
             {
                 targets: 3,
@@ -46,7 +57,8 @@ $(document).ready(function() {
             },
             {
                 targets: 5,
-                data: "grad-month"
+                data: "grad-month",
+                type: "monthYear"
             },
             {
                 targets: 6,
@@ -80,11 +92,6 @@ $(document).ready(function() {
             [2, "desc"]
         ],
         initComplete: function() {
-                $("#requestsTable tbody tr").each(function(){
-                    var cell = $(this).find("td:eq(2)");
-                    var d = new Date(cell.text() + "-0:00");
-                    cell.attr("data-sort", d.getTime() / 1000);
-                });
                 var textBoxCols = [2, 3, 4, 6, 8, 10];
                 var selectCols = [1, 5, 7, 9];
                 this.api().columns().every(function(i) {
