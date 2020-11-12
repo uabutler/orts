@@ -6,7 +6,7 @@ $(document).ready(function() {
     {
       success: function(data, status, xhr){
         data = $.parseJSON(data);
-        $(data).each(function(){
+        $(data.departments).each(function(){
           $("#department").append("<option value='" + this + "'>" + this + "</option>");
         });
         // Sort reasons
@@ -31,7 +31,7 @@ $(document).ready(function() {
       {
         success: function(data, status, xhr){
           data = $.parseJSON(data);
-          $(data).each(function(){
+          $(data.types).each(function(){
             $("#type").append("<option value='" + this + "'>" + this + "</option>");
           });
           // Sort reasons
@@ -74,6 +74,7 @@ $(document).ready(function() {
         $.ajax(
           BASE_URL+"/courses",
           {
+            type: "get",
             data: JSON.stringify({
               department: $("#department").val(),
               number: parseInt($("#classnumber").val()),

@@ -6,8 +6,8 @@ $(document).ready(function() {
     {
       success: function(data, status, xhr){
         data = $.parseJSON(data);
-        $(data).each(function(){
-          $("#majors").append("<option value='" + this.id + "'>" + this.name + "</option>");
+        $(data.majors).each(function(){
+          $("#majors").append("<option value='" + this + "'>" + this + "</option>");
         });
         // Sort majors
         var select = $('#majors');
@@ -32,8 +32,8 @@ $(document).ready(function() {
     {
       success: function(data, status, xhr){
         data = $.parseJSON(data);
-        $(data).each(function(){
-          $("#minors").append("<option value='" + this.id + "'>" + this.name + "</option>");
+        $(data.minors).each(function(){
+          $("#minors").append("<option value='" + this + "'>" + this + "</option>");
         });
         // Sort minors
         var select = $('#minors');

@@ -93,7 +93,7 @@
                         "responses": [
                             {
                                 "uuid": "",
-                                "body": "[\"Time Conflict\", \"Prerequisite\", \"Major Restriction\", \"Class Standing Restriction\", \"Capacity\", \"Other\"]",
+                                "body": "{\n\"types\": [\"Time Conflict\", \"Prerequisite\", \"Major Restriction\", \"Class Standing Restriction\", \"Capacity\", \"Other\"]\n}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
@@ -120,7 +120,7 @@
                         "responses": [
                             {
                                 "uuid": "",
-                                "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Computer Science\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Mathematics\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Statistics\"\n  }\n]",
+                                "body": "{ \n\"majors\":\n  [\n    \"Computer Science\",\n    \"Mathematics\",\n    \"Statistics\",\n    \"Photography\"\n  ]\n}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
@@ -142,7 +142,7 @@
                         "responses": [
                             {
                                 "uuid": "",
-                                "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Computer Science\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Mathematics\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Statistics\"\n  },\n  {\n    \"id\": 4,\n    \"name\": \"Photography\"\n  }\n]",
+                                "body": "{ \n\"minors\":\n  [\n    \"Computer Science\",\n    \"Mathematics\",\n    \"Statistics\",\n    \"Photography\"\n  ]\n}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
@@ -169,7 +169,7 @@
                         "responses": [
                             {
                                 "uuid": "",
-                                "body": "[\"CS\", \"MATH\", \"STAT\"]",
+                                "body": "{\"departments\":[\"CS\", \"MATH\", \"STAT\"]}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
@@ -191,7 +191,7 @@
                         "responses": [
                             {
                                 "uuid": "",
-                                "body": "{\n  \"department\": \"CS\",\n  \"number\": 370,\n  \"section\": 1,\n  \"title\": \"Software Engineering\",\n  \"crn\": \"1234\"\n}",
+                                "body": "{\n  \"title\": \"Software Engineering\",\n  \"crn\": \"1234\"\n}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
