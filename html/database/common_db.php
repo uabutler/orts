@@ -16,6 +16,7 @@ $course_tbl = "courses";
 $semester_tbl = "semesters";
 $section_tbl = "sections";
 $request_tbl = "requests";
+$attachment_tbl = "attachments";
 $notification_tbl = "notifications";
 
 /**
@@ -37,7 +38,7 @@ function connectDB()
  * This function takes in a multi-dim array where each smaller array has a single elements and return a
  * one-dim array.
  */
-function flattenResult(array $result)
+function flattenResult(array $result): array
 {
   $out = [];
 

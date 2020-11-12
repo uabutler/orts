@@ -13,7 +13,7 @@ function createStudentTbl($pdo)
     last_name varchar(255),
     banner_id varchar(9) NOT NULL UNIQUE,
     grad_month varchar(7) NOT NULL,
-    standing enum('Freshman', 'Sophomore', 'Junior', 'Senior'))");
+    standing enum('Freshman', 'Sophomore', 'Junior', 'Senior') NOT NULL)");
 }
 
 // Major and minor tables
@@ -73,7 +73,7 @@ function createFacultyTbl($pdo)
     id int PRIMARY KEY AUTO_INCREMENT,
     email varchar(64) NOT NULL UNIQUE,
     first_name varchar(255),
-    last_name varchar(255)) NOT NULL");
+    last_name varchar(255) NOT NULL)");
 }
 
 // Class Tables
@@ -175,15 +175,21 @@ function createNotificationTbl($pdo)
 // Indicies
 function createStudentIdx($pdo)
 {
-  global $student_tbl, $faculty_tbl;
+  global $student_tbl;
   echo "  $student_tbl\n";
   $pdo->exec("CREATE INDEX email_inx ON $student_tbl (email)");
 }
 
 function createFacultyIdx($pdo)
 {
+  global $faculty_tbl;
   echo "  $faculty_tbl\n";
   $pdo->exec("CREATE INDEX email_inx ON $faculty_tbl (email)");
+}
+
+function populateMajors($pdo)
+{
+  
 }
 
 /**
