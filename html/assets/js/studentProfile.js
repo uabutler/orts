@@ -9,6 +9,12 @@ $(document).ready(function() {
         $(data).each(function(){
           $("#majors").append("<option value='" + this.id + "'>" + this.name + "</option>");
         });
+        // Sort majors
+        var select = $('#majors');
+        select.html(select.find('option').sort(function(x, y) {
+          // to change to descending order switch "<" for ">"
+          return $(x).text() > $(y).text() ? 1 : -1;
+        }));
         $("#majors").prop("disabled", false);
         $("#majorsLoading").css("display", "none");
       },
@@ -29,6 +35,12 @@ $(document).ready(function() {
         $(data).each(function(){
           $("#minors").append("<option value='" + this.id + "'>" + this.name + "</option>");
         });
+        // Sort minors
+        var select = $('#minors');
+        select.html(select.find('option').sort(function(x, y) {
+          // to change to descending order switch "<" for ">"
+          return $(x).text() > $(y).text() ? 1 : -1;
+        }));
         $("#minors").prop("disabled", false);
         $("#minorsLoading").css("display", "none");
       },

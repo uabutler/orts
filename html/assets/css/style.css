@@ -204,12 +204,6 @@ label.hide{
     text-align: right;
 }
 
-#emphasized {
-    font-style: italic;
-    font-weight: bolder;
-}
-
-
 #requestInformation {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -250,4 +244,8 @@ label.hide{
 .soon {
     font-style: italic;
     font-size: small;
+}
+
+.block{
+    display: block;
 }

@@ -1,106 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Truman State MCS Override Request Form</title>
-        <link rel="stylesheet" href="assets/css/style.css">
-    </head>
 
-    <body>
-        <header>
-            <nav>
-                <div class="navTitle">Truman State MSCS Overrides</div>
-                <a href="studentDashboard.html">Student Dashboard</a>
-                <a href="studentForm.html" class="left currentPage">Override Request Form</a>
-                <a href="" class="right">Log Out</a>
-                <a href="studentProfile.html" class="right">Profile</a>
-                <div class="right navTitle" id="userName">John Doe</div>
-            </nav>
-        </header>
-        <main>
-            <section id="studentInfo"> 
-                <p>
-                    <div id="termAndCond"><a href="overrideRequestTermsAndConditions.html" target="popup">Terms and Conditions</a></div>
-                    <u>STUDENT INFORMATION:</u>
-                </p>
-                <form action="cgi-bin/override.pl" method="post">
-                    <label for="major">Major: </label>
-                    <!--REQUIRES API ENDPOINT INFORMATION-->
-                    <!--OPTIONS IN DROPDOWN ARE ONLY FOR DEMO-->
-                    <form action="/action_page.php">
-                    <input list="majors" type="inputText" name="browser">
-                    <datalist id="majors">
-                        <option value="Computer Science">
-                        <option value="Mathematics">
-                        <option value="Statistics">
-                    </datalist>
-                    <label for="grad">Expected Grad Date (semester and year): </label>
-                        <input required="required" name="grad" type="inputText" value="" id="grad" onkeypress="return event.keyCode!=13">
-                </form>
-                
-            </section>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
+    <!-- Form Validation -->
+    <script src="assets/js/validation/jquery.validate.min.js"></script>
+    <script src="assets/js/validation/additional-methods.min.js"></script>
+    <!-- Select2 plugin -->
+    <link rel="stylesheet" type="text/css" href="assets/css/select2.min.css">
+    <script src="assets/js/select2.min.js"></script>
+    <!-- Local JS -->
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/studentForm.js"></script>
+    <!--Local CSS-->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Request Form | Truman State MCS Overrides</title>
 
-            <section id="requestedCourse">
-                <p>Please list course requested:</p>
-                <table>
-                    <tbody>
-                        <tr>
-                            <th> <!--Empty Cell for Space--> </th>
-                            <th>DEPARTMENT</th>
-                            <th>COURSE#</th>
-                            <th>SECTION</th>
-                            <th>CRN#</th>
-                            <th>TITLE</th>
-                        </tr>
-                        <tr>
-                            <td>EXAMPLE:</td>
-                            <td><input name="exdep" type="extext" value="CS " disabled="disabled" size="5"></td>
-                            <td><input name="excou" type="extext" value="123" disabled="disabled" size="8"></td>
-                            <td><input name="exsec" type="extext" value="01" disabled="disabled" size="4"></td>
-                            <td><p>7381</p></td>
-                            <td> <p>FORTRAN Programming</p></td>
-                        </tr>
-                        <tr>
-                            <td>REQUESTED COURSE:</td>
-                            <td>
-                                <!--REQUIRES API ENDPOINT INFORMATION-->
-                                <!--OPTIONS IN DROPDOWN ARE ONLY FOR DEMO-->
-                                <form action="/action_page.php">
-                                    <input list="majors" type="inputText" name="department" size="5">
-                                    <datalist id="majors">
-                                    <option value="Computer Science(CS)">
-                                    <option value="Mathematics(MATH)">
-                                    <option value="Statistics(STAT)">
-                                    </datalist>
-                                </form>
-                            </td>
-                            <td><input name="courseNum" type="inputText" value="" size="8" onkeypress="return event.keyCode!=13"></td>
-                            <td><input name="section" type="inputText" value="" size="4" onkeypress="return event.keyCode!=13"></td>
-                            <td><input name="crn" type="inputText" value="" size="6" onkeypress="return event.keyCode!=13"></td>
-                            <td><input name="title" type="inputText" value="" onkeypress="return event.keyCode!=13"></td></tr>
-                    </tbody>
-                </table>
-            </section>
-            
-            <section id="requestedExplanation">
-                <p>Reason for request: Check one or more of the reasons listed below, and then give a <u>THOROUGH</u> explanation.</p>
-                <select name="reasonSelection" class="select2" multiple>
+</head>
 
-                </select>
-                <span id="reasonLoading">Loading...</span>
-                <p>
-                    <label for="explanation">Explanation:</label>
-                    <br>
-                    <textarea name="explanation" cols="70" rows="10" id="explanation"></textarea>
-                </p>
-                <p>
-                    <input name="submit" type="submit" value="Submit" disabled="disabled" id="submit">
-                </p>
-            </section>
-                
-            
-        </main>
-        
-    </body>
+<body>
+    <header>
+        <nav>
+            <div class="navTitle">Truman State MSCS Overrides</div>
+            <a href="studentDashboard.html">Student Dashboard</a>
+            <a href="studentForm.html" class="left currentPage">Override Request Form</a>
+            <a href="" class="right">Log Out</a>
+            <a href="studentProfile.html" class="right">Profile</a>
+            <div class="right navTitle" id="userName">John Doe</div>
+        </nav>
+    </header>
+    <main>
+        <h2>Override Request Form</h2>
+        <section id="requestedCourse">
+            <form action="" id="requestForm">
+                <div class="formElement">
+                    <label for="department">Department: </label>
+                    <select name="department" id="department">
+                            <option value="zzzdefault">&nbsp;</option>
+                    </select>
+                        <span id="departmentLoading">Loading...</span>
+                </div>
+                <div class="formElement">
+                    <label for="classnumber">Class Number: </label>
+                    <input type="number" name="classnumber" id="classnumber" placeholder="370">
+                </div>
+                <div class="formElement">
+                    <label for="sectionnumber">Section Number: </label>
+                    <input type="number" name="sectionnumber" id="sectionnumber" placeholder="1">
+                </div>
+                <div class="formElement">
+                    <label for="crn">CRN: </label>
+                    <input type="text" name="crn" id="crn" size="6" disabled>
+                </div>
+                <div class="formElement">
+                    <label for="classtitle">Class Title: </label>
+                    <input type="text" name="classtitle" id="classtitle" size="40" disabled>
+                </div>
+                <div class="formElement">
+                    <label for="type">Type(s) of Request: </label>
+                    <select name="type" id="type" class="select2" multiple required>
+                        </select>
+                    <span id="typeLoading">Loading...</span>
+                </div>
+                <div class="formElement">
+                    <label for="explanation" class="block">Please give a detailed, thorough explanation as to why you need the override.</label>
+                    <textarea name="explanation" id="explanation" cols="70" rows="10"></textarea>
+                </div>
+                <div class="formElement">
+                    <input type="submit" value="Submit" disabled>
+                </div>
+
+            </form>
+        </section>
+    </main>
+
+</body>
+
 </html>
