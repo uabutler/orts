@@ -53,23 +53,35 @@ paths:
   # this is the changed part
   /majors:
     get:
-      summary: Returns the name of the students with the given major
-      parameters:
-        - in: query
-          name: major
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
-          description: the list of majors to look for
+      summary: Returns available majors in the system
       responses:
         '200':
           description: Ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Request/properties/last-name"
+                $ref: "#/components/schemas/Majors/properties/majors"
+  /minors:
+    get:
+      summary: Returns available minors in the system
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Minors/properties/minors"
+  /requests/types:
+    get:
+      summary: Returns all possible request types
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Types/properties/types"
+             
   # this is the end of changed part
 components:
   schemas:
@@ -192,6 +204,27 @@ components:
         explanation:
           type: string
           example: "I need this course to graduate"
+    Majors:
+      properties:
+        majors:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics", "Mathematics"]
+    Minors:
+      properties:
+        minors:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics", "Mathematics"]
+    Types:
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+          example: ["Capacity", "Prerequisites", "Time conflict", "Major restriction", "Class standing restriction", "Other"]
     Error:
       properties:
         code:
@@ -201,3 +234,4 @@ components:
         message:
           type: string
           example: "This was an error twelve."
+  
