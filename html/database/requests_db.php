@@ -30,7 +30,7 @@ function addOverrideRequest(Student $student, Section $section, string $status, 
   global $request_tbl;
   
   $pdo = connectDB();
-  //$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, status, type, explaination) VALUES (:student_id, :last_modified, :section_id, :status, :type, :explanation)");
   $smt->bindParam(":student_id", $student->id, PDO::PARAM_INT);
@@ -52,12 +52,12 @@ function addOverrideRequest(Student $student, Section $section, string $status, 
 
 //TESTING
 
-$me = new Student('mmk5213', 'Micah', 'Kuan', '123456789', '2021', array(1), array(2));
-$me->id = 1;
-$sec = new Section();
-$sec->id = 1;
+//$me = new Student('mmk5213', 'Micah', 'Kuan', '123456789', '2021', array(1), array(2));
+//$me->id = 1;
+//$sec = new Section();
+//$sec->id = 2;
 
-addOverrideRequest($me, $sec, 'Received', 'Other', 'testexplanation');
+//addOverrideRequest($me, $sec, listStatuses()[1], listOverrideTypes()[0], 'testexplanation');
 
 
 ?>
