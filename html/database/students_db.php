@@ -260,10 +260,36 @@ class Student
       $grad_month, $standing, $majors, $minors);
   }
 
+  // Given the student information row from the DB, this function completes the student object
+  private static function loadStudent(array $data, $pdo): Student
+  {
+    global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
+
+    // First, query for the majors
+    $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.id = :id");
+    $smt->bindParam(":id", $data['id'], PDO::PARAM_INT);
+    $smt->execute();
+
+    // Place off the the rows in a single array
+    $majors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+
+    // Then, query for the minors
+    $smt = $pdo->prepare("SELECT minor FROM $student_tbl INNER JOIN $student_minor_tbl ON $student_tbl.id = $student_minor_tbl.student_id  INNER JOIN $minor_tbl ON $student_minor_tbl.minor_id = $minor_tbl.id WHERE $student_tbl.id = :id");
+    $smt->bindParam(":id", $data['id'], PDO::PARAM_INT);
+    $smt->execute();
+
+    $minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+
+    // Build the student and return the object
+    $out = new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
+
+    return $out;
+  }
+
   /**
    * Retrieve a student from the database
    */
-  public static function getStudent(string $email) : Student
+  public static function getStudent(string $email): Student
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
@@ -273,23 +299,20 @@ class Student
     $smt->bindParam(":email", $email, PDO::PARAM_STR);
     $smt->execute();
 
-    $data = $smt->fetch(PDO::FETCH_ASSOC);
-    
-    $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.email = :email");
-    $smt->bindParam(":email", $email, PDO::PARAM_STR);
+    return Student::loadStudent($smt->fetch(PDO::FETCH_ASSOC), $pdo);
+  }
+
+  public static function getStudentById(int id): Student
+  {
+    global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
+
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("SELECT * FROM $student_tbl WHERE id=:id LIMIT 1");
+    $smt->bindParam(":id", $id, PDO::PARAM_INT);
     $smt->execute();
 
-    $majors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-
-    $smt = $pdo->prepare("SELECT minor FROM $student_tbl INNER JOIN $student_minor_tbl ON $student_tbl.id = $student_minor_tbl.student_id  INNER JOIN $minor_tbl ON $student_minor_tbl.minor_id = $minor_tbl.id WHERE $student_tbl.email = :email");
-    $smt->bindParam(":email", $email, PDO::PARAM_STR);
-    $smt->execute();
-
-    $minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-
-    $out = new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
-
-    return $out;
+    return Student::loadStudent($smt->fetch(PDO::FETCH_ASSOC), $pdo);
   }
 }
 
