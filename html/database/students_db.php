@@ -1,8 +1,10 @@
 <?php
 include_once 'common_db.php';
+// TODO: Data validation on constructor and setters
+// TODO: Error-handling
 
 /**
- * These are objects to wrap the data stored in the databases
+ * This class wraps a student entry in the database
  */
 class Student
 {
@@ -30,6 +32,9 @@ class Student
     $this->id = $id;
   }
 
+  /**
+   * Getters
+   */
   public function getId() { return $this->id; }
   public function getEmail() { return $this->email; }
   public function getFirstName() { return $this->first_name; }
@@ -40,7 +45,9 @@ class Student
   public function getMajors() { return $this->majors; }
   public function getMinors() { return $this->minors; }
 
-  // TODO: Validate these entries
+  /**
+   * Setters
+   */
   public function setEmail(string $email)
   {
     $this->email = $email;
@@ -106,6 +113,7 @@ class Student
     return getEnums($student_tbl, "standing");
   }
 
+  // Adds the list of majors to the database
   private function add_majors(array $majors, $pdo)
   {
     global $student_major_tbl, $student_tbl, $major_tbl;
@@ -115,6 +123,7 @@ class Student
     $smt->execute();
   }
 
+  // Adds the list of minors to the database
   private function add_minors(array $minors, $pdo)
   {
     global $student_minor_tbl, $student_tbl, $minor_tbl;
@@ -124,6 +133,7 @@ class Student
     $smt->execute();
   }
 
+  // Removes one major from the database
   private function remove_major(string $major, $pdo)
   {
     global $student_major_tbl, $student_tbl, $major_tbl;
@@ -133,6 +143,7 @@ class Student
     $smt->execute();
   }
 
+  // Removes one minor from the database
   private function remove_minor(string $minor, $pdo)
   {
     global $student_minor_tbl, $student_tbl, $minor_tbl;
@@ -142,6 +153,7 @@ class Student
     $smt->execute();
   }
 
+  // If the student is newly created, this will create a new entry in the database
   private function insertDB()
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
@@ -160,6 +172,7 @@ class Student
 
     $smt->execute();
 
+    // get the newly created ID
     $smt = $pdo->prepare("SELECT id FROM $student_tbl WHERE email=:email");
 
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
@@ -168,10 +181,12 @@ class Student
 
     $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
 
+    // Insert information about majors and minors
     add_majors($this->majors, $pdo);
     add_minors($this->minors, $pdo);
   }
 
+  // If the student already exists in the database, this will update their entry with the information from this object
   private function updateDB()
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
@@ -221,8 +236,14 @@ class Student
       if(!in_array($minor, $this->minors)) $this->remove_minor($minor, $pdo);
   }
 
+  /**
+   * Stores the current object in the database. If the object is newly created,
+   * a new entry into the DB is made. If the student has been stored in the DB,
+   * we update the existing entry
+   */
   public function storeInDB()
   {
+    // The id is set only when the student is already in the databse
     if(is_null($this->id))
       $this->insertDB();
     else
