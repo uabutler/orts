@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>CS 370 - Group 1 Database Design</title>
+        <style>
+            div{font-family: Arial, Helvetica, sans-serif;}
+            body{margin: 1in;}
+            .tg  {border-collapse:collapse;border-spacing:0;}
+            .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+              overflow:hidden;padding:10px 5px;word-break:normal;}
+            .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+              overflow:hidden;padding:10px 5px;word-break:normal;}
+            .tg .tg-0lax{text-align:left;vertical-align:top}
+            .params{white-space:nowrap;}
+        </style>
+    </head>
+    <body>
+        <!-- The document must include a title, your team name, 
+            the time and date of last revision, and a statement of the document. purpose.-->
+        <div>
+            <h1 style="text-align: center;">Student Database Access</h1>
+            <h2 style="text-align: center;">Group 1</h3>
+            <h3>Last Revision: Nov 9th 2020</h3>
+            <h3>Contact Info: ub4782@truman.edu</h3>
+            <p>
+            This document specifies how to use the <code>students_db.php</code> library to interact with the student data.
+            </p>
+        </div>
+        <div>
+            <h3>1. Students</h3>
+            <div><b>1.1. Constructors</b></div>
+                To create a student object, there are two static factory methods
+                <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Name</th>
+                    <th class="tg-0lax">Parameters</th>
+                    <th class="tg-0lax">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="tg-0lax"><code>buildStudent</code></td>
+                    <td class="tg-0lax params">
+                      <ul>
+                        <li><code>email : string</code></li>
+                        <li><code>first_name : string</code></li>
+                        <li><code>last_name : string</code></li>
+                        <li><code>banner_id : string</code></li>
+                        <li><code>grad_month : string</code></li>
+                        <li><code>majors : array</code></li>
+                        <li><code>minors : array</code></li>
+                      </ul>
+                    </td>
+                    <td class="tg-0lax">This method allows the user to specify every attribute of a new student. The values of these fields must use the same format as the corresponding entry in the students table. For example, <code>grad_month</code> must be <code>'MM/YYYY'</code> format and email must include only the username, the domain is assumed to be truman.edu. The majors and minors must exactly match one of the predefined majors values retreived from <code>listMajors()</code>, etc.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>getStudent</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>email : string</code></li>
+                    </ul>
+                    </td>
+                    <td class="tg-0lax"> This method searches the database for an existing student with the given email.</td>
+                  </tr>
+                </tbody>
+                </table>
+            <div><b>1.1.1.</b> Example, <code>$new_student = Student::getStudent('jtk1701');</code></div>
+
+            <br>
+            <div><b>1.2. Methods</b></div>
+                <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Modifier and Type</th>
+                    <th class="tg-0lax">Name</th>
+                    <th class="tg-0lax">Parameters</th>
+                    <th class="tg-0lax">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="tg-0lax"><code>static array</code></td>
+                    <td class="tg-0lax"><code>listMajors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Returns an array of strings representing all the currently supported majors</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>static array</code></td>
+                    <td class="tg-0lax"><code>listMinors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Returns an array of strings representing all the currently supported minors</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>int</code></td>
+                    <td class="tg-0lax"><code>getId</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Returns the unique numerical id for a student in the system. This id is only used locally and is unrelated to any of the student's attributes such as the <code>banner_id</code></td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getEmail</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> The username for the student, the domain is assumed to be truman.edu. (e.g., if the student's email is jtk1701@truman.edu, we would store <code>'jtk1701'</code></td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getFirstName</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getLastName</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getBannerId</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> A string representing the student's 9-digit banner ID.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getGradMonth</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> A string in <code>'MM/YYYY'</code> format.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>array</code></td>
+                    <td class="tg-0lax"><code>getMajors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> An array of strings. All of the values will match those in <code>listMajors()</code>.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>array</code></td>
+                    <td class="tg-0lax"><code>getMinors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> An array of strings. All of the values will match those in <code>listMinors()</code>.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>storeInDB</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Stores the current student in the database as a new item.</td>
+                  </tr>
+                </tbody>
+                </table>
+        </div>
+    </body>
+</html>
