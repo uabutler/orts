@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $("#crn, #classtitle").val("");
+  $("#crn, #classtitle").val(null);
   /* Load Departments */
   $.ajax(
     BASE_URL+"/departments",
@@ -69,7 +69,7 @@ $(document).ready(function() {
        $("#classnumber").val() != "" &&
        $("#sectionnumber").val() != ""){
          $("#crnLoading, #titleLoading").css("display", "inline");
-         $("#crn, #classtitle").val("");
+         $("#crn, #classtitle").val(null);
         /* Load class info */
         $.ajax(
           BASE_URL+"/courses",
@@ -93,7 +93,7 @@ $(document).ready(function() {
           }
         );
     } else {
-      $("#crn, #classtitle").val("");
+      $("#crn, #classtitle").val(null);
     }
   });
 });
