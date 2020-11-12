@@ -25,7 +25,10 @@
             This document proposes a design for the database of the Override Tracking System. Currently, this system uses a MySQL database. The PHP interface that the logic team will use to interact with the databases is considered outside the scope of this document.
             </p>
             <p>
-            Update: Additional constraints are added to tables. Additionally, the class tables and request table have been modified to reflect changed in the logic team's API.
+            Updates: Additional constraints are added to tables. Additionally, the course tables and request table have been modified to reflect changed in the logic team's API. Sections have been added to the database, as have attachements for requests.
+            </p>
+            <p>
+            <b>Note</b>: An early version of this document used the term "class" instead of "course". This was changed to avoid confusion and technical problems associated with the use of the word "class" to refer to a concept in OOP.
             </p>
         </div>
         <div>
@@ -59,17 +62,22 @@
                   <tr>
                     <td class="tg-0lax">last_name</td>
                     <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">NOT NULL</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax">banner_id</td>
                     <td class="tg-0lax">varchar(9)</td>
-                    <td class="tg-0lax">UNIQUE</td>
+                    <td class="tg-0lax">UNIQUE, NOT NULL</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax">grad_month</td>
                     <td class="tg-0lax">varchar(7)</td>
-                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">NOT NULL</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">standing</td>
+                    <td class="tg-0lax">enum</td>
+                    <td class="tg-0lax">NOT NULL</td>
                   </tr>
                 </tbody>
                 </table>
@@ -77,7 +85,8 @@
             <div><b>1.1.2.</b> We anticipate the <code>email</code> field will be frequently used to search the table. For this reason, we will likely use it with an index. Since the user's email is used during the login process, we will always have that information availible, so require its value not be null.</div>
             <div><b>1.1.3.</b> The <code>banner_id</code> will be a string for compatibility with the API schema created by the logic team. It is a 9-digit value.</div>
             <div><b>1.1.4.</b> The <code>grad_month</code> will be stored in MM/YYYY format for compatibility with the API schema created by the logic team.</div>
-            <div><b>1.1.4.</b> It should be noted that, in all of these tables, the <code>email</code> is stored as the local username since all email addresses are on the truman.edu domain.</div>
+            <div><b>1.1.5.</b> It should be noted that, in all of these tables, the <code>email</code> is stored as the local username since all email addresses are on the truman.edu domain.</div>
+            <div><b>1.1.5.</b> A student's <code>standing</code> is "Freshman", "Sophomore", "Junior", or "Senior"</div>
 
             <br>
             <div><b>1.2. Majors and Minors Tables</b></div>
@@ -229,16 +238,16 @@
                   <tr>
                     <td class="tg-0lax">last_name</td>
                     <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">NOT NULL</td>
                   </tr>
                 </tbody>
                 </table>
             <div><b>2.1.1.</b> It should be noted that 1.1.2 is also relavent here.</div>
             <div><b>2.1.2.</b> The <code>email</code> field needs to be globally unique. That is, aside from being unique in this table, there also shouldn't be duplicate values in the student and faculty tables. This creates a one-to-one coorespondence that we can use to uniquely identify any user on the system.</div>
 
-            <h3>3. Classes</h3>
-            <div><b>3.1. Class Tables</b></div>
-                This system will also have tables that store the possible departments, classes, and sections. We justify this using the same logic we use to seperate majors, the administator of this system may want to, for example, change what classes the system can currently be used with.<br><br>
+            <h3>3. Override Requests</h3>
+            <div><b>3.1. Course Tables</b></div>
+                This system will also have tables that store the possible departments, courses, and sections. We justify this using the same logic we use to seperate majors, the administator of this system may want to, for example, change what courses the system can currently be used with.<br><br>
                 First, the departments
                 <table class="tg">
                 <thead>
@@ -267,7 +276,7 @@
                 </tbody>
                 </table>
 
-                the classes. These include a department and a class number. 
+                the courses. These include a department and a course number. 
                 <table class="tg">
                 <thead>
                   <tr>
@@ -288,7 +297,7 @@
                     <td class="tg-0lax">NOT NULL, FOREIGN KEY departments(id)</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">class_num</td>
+                    <td class="tg-0lax">course_num</td>
                     <td class="tg-0lax">int</td>
                     <td class="tg-0lax">NOT NULL</td>
                   </tr>
@@ -354,9 +363,9 @@
                     <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">class_id</td>
+                    <td class="tg-0lax">course_id</td>
                     <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY classes(id)</td>
+                    <td class="tg-0lax">NOT NULL, FOREIGN KEY courses(id)</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax">semester_id</td>
@@ -374,27 +383,20 @@
                     <td class="tg-0lax">NOT NULL</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">info</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                  <tr>
                     <td class="tg-0lax">active</td>
                     <td class="tg-0lax">boolean</td>
                     <td class="tg-0lax">NOT NULL</td>
                   </tr>
                 </tbody>
                 </table>
-                <br>
-                <br>
-
             <div><b>3.1.1.</b> The <code>department</code> is the prefix string. The "worst-case" we deal with are "STAT" and "MATH" with four letters, "CS" only has two.</div>
-            <div><b>3.1.2.</b> The <code>class_num</code> will be stored as an int for compatibility with the API schema created by the logic team.</div>
+            <div><b>3.1.2.</b> The <code>course_num</code> will be stored as an int for compatibility with the API schema created by the logic team.</div>
             <div><b>3.1.3.</b> The <code>semester</code> and <code>crn</code> are numerical values stored as an strings for compatibility with the API schema created by the logic team.</div>
             <div><b>3.1.4.</b> The <code>semester</code> is a numberical code used internally (e.g., 202060).</div>
-            <div><b>3.1.5.</b> The section <code>info</code> is the additional text used with the title of a semester. For example, if it's a writing enhanced section, it could just be the letters "WE". For special topics courses, it could be the title of the specific topics course offered in that section. This value would be appended to the <code>title</code> when displaying the course to the user.</div>
-            <div><b>3.1.5.</b> The section <code>description</code> is a human readable version of the semester added for convenience (e.g., "Winter Interm 2020").</div>
-            <div><b>3.1.6.</b> The statuses table was removed in favor of an enum</div>
+            <div><b>3.1.5.</b> <strike>The section <code>info</code> is the additional text used with the title of a semester. For example, if it's a writing enhanced section, it could just be the letters "WE". For special topics courses, it could be the title of the specific topics course offered in that section. This value would be appended to the <code>title</code> when displaying the course to the user.</strike> This field was deemed impractical, so removed.</div>
+            <div><b>3.1.6.</b> The section <code>description</code> is a human readable version of the semester added for convenience (e.g., "Winter Interm 2020").</div>
+            <div><b>3.1.7.</b> The statuses table was removed in favor of an enum</div>
+            <div><b>3.1.8.</b> It should be noted that exactly one semester should be active at any given time, the semester the system is currenly acceping override requests for.</div>
             
             <br>
             <div><b>3.2. Override Requests Table</b></div>
@@ -445,10 +447,46 @@
                   </tr>
                 </tbody>
                 </table>
-
             <div><b>3.2.1.</b> <strike>The <code>crn</code> is a 4-digit value encouded as a string for compatibility with the API schema created by the logic team.</strike> The crn was removed and added to the sections table.</div>
             <div><b>3.2.2.</b> The <code>status</code> is "Received" at first, then can be changed to "Approved", "Provisionally Approved", or "Denied", or "Required Faculty Approval".</div>
             <div><b>3.2.3.</b> The <code>type</code> is "Closed Class", "Prerequisite Restriction", or "Other".</div>
+
+            <br>
+            <div><b>3.3. Attachments Table</b></div>
+                Finally, we can create override requests table.
+                <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Column Name</th>
+                    <th class="tg-0lax">Data Type</th>
+                    <th class="tg-0lax">Attributes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="tg-0lax">id</td>
+                    <td class="tg-0lax">int</td>
+                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">request_id</td>
+                    <td class="tg-0lax">int</td>
+                    <td class="tg-0lax">NOT NULL, FOREIGN KEY requests(id)</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">name</td>
+                    <td class="tg-0lax">varchar(255)</td>
+                    <td class="tg-0lax">NOT NULL</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">path</td>
+                    <td class="tg-0lax">text</td>
+                    <td class="tg-0lax">NOT NULL</td>
+                  </tr>
+                </tbody>
+                </table>
+            <div><b>3.3.1.</b> The <code>name</code> is the original file name, kept in case we need to change the file name to ensure uniqueness.</div>
+            <div><b>3.3.2.</b> The <code>path</code> is the location of the file in the server's filesystem.</div>
 
             <h3>4. Notifications</h3>
             <div><b>4.1. Notification Table</b></div>
@@ -465,6 +503,11 @@
                     <td class="tg-0lax">id</td>
                     <td class="tg-0lax">int</td>
                     <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">request_id</td>
+                    <td class="tg-0lax">int</td>
+                    <td class="tg-0lax">NOT NULL, FOREIGN KEY requests(id)</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax">sender_email</td>
