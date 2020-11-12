@@ -6,14 +6,15 @@ include_once 'common_db.php';
  */
 class Student
 {
-  public $id;
-  public $email;
-  public $first_name;
-  public $last_name;
-  public $banner_id;
-  public $grad_month;
-  public $majors;
-  public $minors;
+  private $id;
+  private $email;
+  private $first_name;
+  private $last_name;
+  private $banner_id;
+  private $grad_month;
+  private $standing;
+  private $majors;
+  private $minors;
 
   private function __construct(string $email, string $first_name, string $last_name, string $banner_id,
     string $grad_month, string $standing, array $majors, array $minors, int $id=null)
@@ -35,10 +36,53 @@ class Student
   public function getLastName() { return $this->last_name; }
   public function getBannerId() { return $this->banner_id; }
   public function getGradMonth() { return $this->grad_month; }
+  public function getStanding() { return $this->standing; }
   public function getMajors() { return $this->majors; }
   public function getMinors() { return $this->minors; }
 
-  public static function listMajors()
+  // TODO: Validate these entries
+  public function setEmail(string $email)
+  {
+    $this->email = $email;
+  }
+
+  public function setFirstName(string $first_name)
+  {
+    $this->first_name = $first_name;
+  }
+
+  public function setLastName(string $last_name)
+  {
+    $this->last_name = $last_name;
+  }
+
+  public function setBannerId(string $banner_id)
+  {
+    $this->banner_id = $banner_id;
+  }
+
+  public function setGradMonth(string $grad_month)
+  {
+    $this->grad_month = $grad_month;
+  }
+
+  public function setStanding(string $standing)
+  {
+    $this->standing = $standing;
+  }
+
+  public function setMajors(array $majors)
+  {
+    $this->majors = $majors;
+  }
+
+  public function setMinors(array $minors)
+  {
+    $this->minors = $minors;
+  }
+
+  // List all possible majors
+  public static function listMajors(): array
   {
     global $major_tbl;
     $pdo = connectDB();
@@ -46,7 +90,8 @@ class Student
     return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
   }
 
-  public static function listMinors()
+  // List all possible minors
+  public static function listMinors(): array
   {
     global $minor_tbl;
     $pdo = connectDB();
@@ -54,13 +99,50 @@ class Student
     return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
   }
 
-  function listStandings()
+  // List all possible standings
+  public static function listStandings(): array
   {
     global $student_tbl;
     return getEnums($student_tbl, "standing");
   }
 
-  public function storeInDB()
+  private function add_majors(array $majors, $pdo)
+  {
+    global $student_major_tbl, $student_tbl, $major_tbl;
+    $major_str = arrayToDbList($majors);
+    $smt = $pdo->prepare("INSERT INTO $student_major_tbl (student_id, major_id) SELECT $student_tbl.id, $major_tbl.id FROM $student_tbl INNER JOIN $major_tbl WHERE $student_tbl.email=:email AND $major_tbl.major IN ($major_str)");
+    $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
+  private function add_minors(array $minors, $pdo)
+  {
+    global $student_minor_tbl, $student_tbl, $minor_tbl;
+    $minor_str = arrayToDbList($minors);
+    $smt = $pdo->prepare("INSERT INTO $student_minor_tbl (student_id, minor_id) SELECT $student_tbl.id, $minor_tbl.id FROM $student_tbl INNER JOIN $minor_tbl WHERE $student_tbl.email=:email AND $minor_tbl.minor IN ($minor_str)");
+    $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
+  private function remove_major(string $major, $pdo)
+  {
+    global $student_major_tbl, $student_tbl, $major_tbl;
+    $smt = $pdo->prepare("DELETE $student_major_tbl FROM $student_major_tbl INNER JOIN $student_tbl ON $student_tbl.id=student_id INNER JOIN $major_tbl ON $major_tbl.id=major_id WHERE email=:email AND major=:major");
+    $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
+    $smt->bindParam(":major", $major, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
+  private function remove_minor(string $minor, $pdo)
+  {
+    global $student_minor_tbl, $student_tbl, $minor_tbl;
+    $smt = $pdo->prepare("DELETE $student_minor_tbl FROM $student_minor_tbl INNER JOIN $student_tbl ON $student_tbl.id=student_id INNER JOIN $minor_tbl ON $minor_tbl.id=minor_id WHERE email=:email AND minor=:minor");
+    $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
+    $smt->bindParam(":minor", $minor, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
+  private function insertDB()
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
@@ -86,19 +168,65 @@ class Student
 
     $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
 
-    // The two arrays need to be converted to strings because PDO doesn't like arrays
-    $majors = arrayToDbList($this->majors);
-    $minors = arrayToDbList($this->minors);
+    add_majors($this->majors, $pdo);
+    add_minors($this->minors, $pdo);
+  }
 
-    // Insert majors
-    $smt = $pdo->prepare("INSERT INTO $student_major_tbl (student_id, major_id) SELECT $student_tbl.id, $major_tbl.id FROM $student_tbl INNER JOIN $major_tbl WHERE $student_tbl.email=:email AND $major_tbl.major IN ($majors)");
+  private function updateDB()
+  {
+    global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
+
+    $pdo = connectDB();
+
+    // First, update the basic student info
+    $smt = $pdo->prepare("UPDATE $student_tbl SET email=:email, first_name=:first_name, last_name=:last_name, banner_id=:banner_id, grad_month=:grad_month, standing=:standing WHERE id=:id");
+
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
+    $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
+    $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
+    $smt->bindParam(":banner_id", $this->banner_id, PDO::PARAM_STR);
+    $smt->bindParam(":grad_month", $this->grad_month, PDO::PARAM_STR);
+    $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
+    $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
+
     $smt->execute();
 
-    // And minors
-    $smt = $pdo->prepare("INSERT INTO $student_minor_tbl (student_id, minor_id) SELECT $student_tbl.id, $minor_tbl.id FROM $student_tbl INNER JOIN $minor_tbl ON $student_tbl.email=:email AND $minor_tbl.minor IN ($minors)");
+    // Next, get the majors currently stored in the database
+    $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.email = :email");
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
     $smt->execute();
+    $current_majors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+
+    $smt = $pdo->prepare("SELECT minor FROM $student_tbl INNER JOIN $student_minor_tbl ON $student_tbl.id = $student_minor_tbl.student_id  INNER JOIN $minor_tbl ON $student_minor_tbl.minor_id = $minor_tbl.id WHERE $student_tbl.email = :email");
+    $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
+    $smt->execute();
+    $current_minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+
+    // Add all the majors that aren't in the database to the database
+    $majors_to_add = [];
+    foreach($this->majors as $major)
+      if(!in_array($major, $current_majors)) array_push($majors_to_add, $major);
+    $this->add_majors($majors_to_add, $pdo);
+
+    $minors_to_add = [];
+    foreach($this->minors as $minor)
+      if(!in_array($minor, $current_minors)) array_push($minors_to_add, $minor);
+    $this->add_minors($minors_to_add, $pdo);
+
+    // If a major is in the database, but is no longer a major, remove it
+    foreach($current_majors as $major)
+      if(!in_array($major, $this->majors)) $this->remove_major($major, $pdo);
+
+    foreach($current_minors as $minor)
+      if(!in_array($minor, $this->minors)) $this->remove_minor($minor, $pdo);
+  }
+
+  public function storeInDB()
+  {
+    if(is_null($this->id))
+      $this->insertDB();
+    else
+      $this->updateDB();
   }
 
   /**
