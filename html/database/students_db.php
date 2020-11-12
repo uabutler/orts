@@ -16,7 +16,7 @@ class Student
   public $minors;
 
   private function __construct(string $email, string $first_name, string $last_name, string $banner_id,
-    string $grad_month, array $majors, array $minors, int $id=null)
+    string $grad_month, string $standing, array $majors, array $minors, int $id=null)
   {
     $this->email = $email;
     $this->first_name = $first_name;
@@ -25,6 +25,8 @@ class Student
     $this->grad_month = $grad_month;
     $this->majors = $majors;
     $this->minors = $minors;
+    $this->standing = $standing;
+    $this->id = $id;
   }
 
   public function getId() { return $this->id; }
@@ -52,6 +54,12 @@ class Student
     return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
   }
 
+  function listStandings()
+  {
+    global $student_tbl;
+    return getEnums($student_tbl, "standing");
+  }
+
   public function storeInDB()
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
@@ -59,15 +67,24 @@ class Student
     $pdo = connectDB();
 
     // Insert basic student info
-    $smt = $pdo->prepare("INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month)");
+    $smt = $pdo->prepare("INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing)");
 
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
     $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
     $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
     $smt->bindParam(":banner_id", $this->banner_id, PDO::PARAM_STR);
     $smt->bindParam(":grad_month", $this->grad_month, PDO::PARAM_STR);
+    $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
 
     $smt->execute();
+
+    $smt = $pdo->prepare("SELECT id FROM $student_tbl WHERE email=:email");
+
+    $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
+
+    $smt->execute();
+
+    $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
 
     // The two arrays need to be converted to strings because PDO doesn't like arrays
     $majors = arrayToDbList($this->majors);
@@ -88,10 +105,10 @@ class Student
    * Constructs a new student locally
    */
   public static function buildStudent(string $email, string $first_name, string $last_name, string $banner_id,
-    string $grad_month, array $majors, array $minors)
+    string $grad_month, string $standing, array $majors, array $minors)
   {
     return new Student($email, $first_name, $last_name, $banner_id,
-      $grad_month, $majors, $minors);
+      $grad_month, $standing, $majors, $minors);
   }
 
   /**
@@ -121,7 +138,7 @@ class Student
 
     $minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
 
-    $out = new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $majors, $minors, $data['id']);
+    $out = new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
 
     return $out;
   }
