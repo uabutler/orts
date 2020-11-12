@@ -5,42 +5,27 @@ info:
 servers:
   - url: http://example.com/api/v1
 paths:
-  /requests/{requestId}:
+  /requests:  
     get:
-      summary: Return a single request by ID 
+      summary: Returns all requests or one request
       parameters:
-        - name: requestId
-          in: path
-          required: true
-          description: The ID of the request to return
+        - in: query
+          name: id
+          required: false
           schema:
             type: integer
             format: int64
+          description: The id of the request to return
       responses:
         '200':
           description: Ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Request"
-        '404':
-          description: A user with the specified ID was not found
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /requests:  
-    get:
-      summary: Returns all requests
-      responses:
-        '200':
-          description: Ok
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Requests"
+                oneOf:
+                  - $ref: "#/components/schemas/Request"
+                  - $ref: "#/components/schemas/Requests"
+                description: Returns one request or all requests
         default:
           description: unexpected error
           content:
