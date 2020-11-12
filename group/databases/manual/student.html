@@ -11,480 +11,153 @@
             .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
               overflow:hidden;padding:10px 5px;word-break:normal;}
             .tg .tg-0lax{text-align:left;vertical-align:top}
+            .params{white-space:nowrap;}
         </style>
     </head>
     <body>
         <!-- The document must include a title, your team name, 
             the time and date of last revision, and a statement of the document. purpose.-->
         <div>
-            <h1 style="text-align: center;">Database Design Proposal</h1>
+            <h1 style="text-align: center;">Student Database Access</h1>
             <h2 style="text-align: center;">Group 1</h3>
             <h3>Last Revision: Nov 9th 2020</h3>
             <h3>Contact Info: ub4782@truman.edu</h3>
             <p>
-            This document proposes a design for the database of the Override Tracking System. Currently, this system uses a MySQL database. The PHP interface that the logic team will use to interact with the databases is considered outside the scope of this document.
-            </p>
-            <p>
-            Update: Additional constraints are added to tables. Additionally, the class tables and request table have been modified to reflect changed in the logic team's API.
+            This document specifies how to use the <code>students_db.php</code> library to interact with the student data.
             </p>
         </div>
         <div>
             <h3>1. Students</h3>
-            <div><b>1.1. Student Table</b></div>
-                first, we have the tables that hold the data for each student.
+            <div><b>1.1. Constructors</b></div>
+                To create a student object, there are two static factory methods
                 <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
+                    <th class="tg-0lax">Name</th>
+                    <th class="tg-0lax">Parameters</th>
+                    <th class="tg-0lax">Description</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
+                    <td class="tg-0lax"><code>buildStudent</code></td>
+                    <td class="tg-0lax params">
+                      <ul>
+                        <li><code>email : string</code></li>
+                        <li><code>first_name : string</code></li>
+                        <li><code>last_name : string</code></li>
+                        <li><code>banner_id : string</code></li>
+                        <li><code>grad_month : string</code></li>
+                        <li><code>majors : array</code></li>
+                        <li><code>minors : array</code></li>
+                      </ul>
+                    </td>
+                    <td class="tg-0lax">This method allows the user to specify every attribute of a new student. The values of these fields must use the same format as the corresponding entry in the students table. For example, <code>grad_month</code> must be <code>'MM/YYYY'</code> format and email must include only the username, the domain is assumed to be truman.edu. The majors and minors must exactly match one of the predefined majors values retreived from <code>listMajors()</code>, etc.</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">email</td>
-                    <td class="tg-0lax">varchar(64)</td>
-                    <td class="tg-0lax">UNIQUE, NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">first_name</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">last_name</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">banner_id</td>
-                    <td class="tg-0lax">varchar(9)</td>
-                    <td class="tg-0lax">UNIQUE</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">grad_month</td>
-                    <td class="tg-0lax">varchar(7)</td>
-                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax"><code>getStudent</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>email : string</code></li>
+                    </ul>
+                    </td>
+                    <td class="tg-0lax"> This method searches the database for an existing student with the given email.</td>
                   </tr>
                 </tbody>
                 </table>
-            <div><b>1.1.1.</b> Both the <code>email</code> and <code>banner_id</code> are unique to each user.</div>
-            <div><b>1.1.2.</b> We anticipate the <code>email</code> field will be frequently used to search the table. For this reason, we will likely use it with an index. Since the user's email is used during the login process, we will always have that information availible, so require its value not be null.</div>
-            <div><b>1.1.3.</b> The <code>banner_id</code> will be a string for compatibility with the API schema created by the logic team. It is a 9-digit value.</div>
-            <div><b>1.1.4.</b> The <code>grad_month</code> will be stored in MM/YYYY format for compatibility with the API schema created by the logic team.</div>
-            <div><b>1.1.4.</b> It should be noted that, in all of these tables, the <code>email</code> is stored as the local username since all email addresses are on the truman.edu domain.</div>
+            <div><b>1.1.1.</b> Example, <code>$new_student = Student::getStudent('jtk1701');</code></div>
 
             <br>
-            <div><b>1.2. Majors and Minors Tables</b></div>
-                We expect these two tables to look identical. The majors and minors available at Truman aren't static, they are added and removed from the catalog from time to time. Thus, we don't want to store them as an enum. Further more, each user can have multiple majors or minors. Thus, we create a tables for majors, a table for minors, and a table relating each user to their majors and minors. <br><br>
-
-                First, the table for the majors
+            <div><b>1.2. Methods</b></div>
                 <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
+                    <th class="tg-0lax">Modifier and Type</th>
+                    <th class="tg-0lax">Name</th>
+                    <th class="tg-0lax">Parameters</th>
+                    <th class="tg-0lax">Description</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
+                    <td class="tg-0lax"><code>static array</code></td>
+                    <td class="tg-0lax"><code>listMajors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Returns an array of strings representing all the currently supported majors</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">major</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax">UNIQUE, NOT NULL</td>
+                    <td class="tg-0lax"><code>static array</code></td>
+                    <td class="tg-0lax"><code>listMinors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Returns an array of strings representing all the currently supported minors</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">active</td>
-                    <td class="tg-0lax">boolean</td>
-                    <td class="tg-0lax">NOT NULL</td>
+                    <td class="tg-0lax"><code>int</code></td>
+                    <td class="tg-0lax"><code>getId</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Returns the unique numerical id for a student in the system. This id is only used locally and is unrelated to any of the student's attributes such as the <code>banner_id</code></td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getEmail</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> The username for the student, the domain is assumed to be truman.edu. (e.g., if the student's email is jtk1701@truman.edu, we would store <code>'jtk1701'</code></td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getFirstName</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getLastName</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getBannerId</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> A string representing the student's 9-digit banner ID.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getGradMonth</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> A string in <code>'MM/YYYY'</code> format.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>array</code></td>
+                    <td class="tg-0lax"><code>getMajors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> An array of strings. All of the values will match those in <code>listMajors()</code>.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>array</code></td>
+                    <td class="tg-0lax"><code>getMinors</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> An array of strings. All of the values will match those in <code>listMinors()</code>.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>storeInDB</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Stores the current student in the database as a new item.</td>
                   </tr>
                 </tbody>
                 </table>
-
-                the table for the minors
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">minor</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax">UNIQUE, NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">active</td>
-                    <td class="tg-0lax">boolean</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                </tbody>
-                </table>
-                <br>
-
-                And finally, the tables relating them
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">student_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY students(id)</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">major_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY majors(id)</td>
-                  </tr>
-                </tbody>
-                </table>
-                
-                and
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">student_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY students(id)</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">minor_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY minors(id)</td>
-                  </tr>
-                </tbody>
-                </table>
-                <br>
-
-            <div><b>1.2.1.</b> When a major or minor is first created, it will be active. Whenever a major or minor is removed, it will no longer be active. This means that it can still apear as a given user's major or minor, but it will not be an option for new users to select as their major or minor.</div>
-
-            <h3>2. Faculty</h3>
-            <div><b>2.1. Faculty Table</b></div>
-                First, we store the basic information about each faculty member. Information like the <code>banner_id</code> and <code>grad_month</code> is only relavent to the students, so this table doesn't include those two columns.
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">email</td>
-                    <td class="tg-0lax">varchar(64)</td>
-                    <td class="tg-0lax">UNIQUE, NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">first_name</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">last_name</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                </tbody>
-                </table>
-            <div><b>2.1.1.</b> It should be noted that 1.1.2 is also relavent here.</div>
-            <div><b>2.1.2.</b> The <code>email</code> field needs to be globally unique. That is, aside from being unique in this table, there also shouldn't be duplicate values in the student and faculty tables. This creates a one-to-one coorespondence that we can use to uniquely identify any user on the system.</div>
-
-            <h3>3. Classes</h3>
-            <div><b>3.1. Class Tables</b></div>
-                This system will also have tables that store the possible departments, classes, and sections. We justify this using the same logic we use to seperate majors, the administator of this system may want to, for example, change what classes the system can currently be used with.<br><br>
-                First, the departments
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">department</td>
-                    <td class="tg-0lax">varchar(4)</td>
-                    <td class="tg-0lax">UNIQUE, NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">active</td>
-                    <td class="tg-0lax">boolean</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                </tbody>
-                </table>
-
-                the classes. These include a department and a class number. 
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">department_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY departments(id)</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">class_num</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">title</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">active</td>
-                    <td class="tg-0lax">boolean</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                </tbody>
-                </table>
-                
-                the semesters
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">semester</td>
-                    <td class="tg-0lax">varchar(6)</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">description</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">active</td>
-                    <td class="tg-0lax">boolean</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                </tbody>
-                </table>
-
-                and, finally, the sections.
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">class_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY classes(id)</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">semester_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY semesters(id)</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">section</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">crn</td>
-                    <td class="tg-0lax">varchar(4)</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">info</td>
-                    <td class="tg-0lax">varchar(255)</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">active</td>
-                    <td class="tg-0lax">boolean</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                </tbody>
-                </table>
-                <br>
-                <br>
-
-            <div><b>3.1.1.</b> The <code>department</code> is the prefix string. The "worst-case" we deal with are "STAT" and "MATH" with four letters, "CS" only has two.</div>
-            <div><b>3.1.2.</b> The <code>class_num</code> will be stored as an int for compatibility with the API schema created by the logic team.</div>
-            <div><b>3.1.3.</b> The <code>semester</code> and <code>crn</code> are numerical values stored as an strings for compatibility with the API schema created by the logic team.</div>
-            <div><b>3.1.4.</b> The <code>semester</code> is a numberical code used internally (e.g., 202060).</div>
-            <div><b>3.1.5.</b> The section <code>info</code> is the additional text used with the title of a semester. For example, if it's a writing enhanced section, it could just be the letters "WE". For special topics courses, it could be the title of the specific topics course offered in that section. This value would be appended to the <code>title</code> when displaying the course to the user.</div>
-            <div><b>3.1.5.</b> The section <code>description</code> is a human readable version of the semester added for convenience (e.g., "Winter Interm 2020").</div>
-            <div><b>3.1.6.</b> The statuses table was removed in favor of an enum</div>
-            
-            <br>
-            <div><b>3.2. Override Requests Table</b></div>
-                Finally, we can create override requests table.
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">student_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY students(id)</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">last_modified</td>
-                    <td class="tg-0lax">datetime</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">section_id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">NOT NULL, FOREIGN KEY sections(id)</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">status</td>
-                    <td class="tg-0lax">enum</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">type</td>
-                    <td class="tg-0lax">enum</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">explaination</td>
-                    <td class="tg-0lax">text</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                </tbody>
-                </table>
-
-            <div><b>3.2.1.</b> <strike>The <code>crn</code> is a 4-digit value encouded as a string for compatibility with the API schema created by the logic team.</strike> The crn was removed and added to the sections table.</div>
-            <div><b>3.2.2.</b> The <code>status</code> is "Received" at first, then can be changed to "Approved", "Provisionally Approved", or "Denied", or "Required Faculty Approval".</div>
-            <div><b>3.2.3.</b> The <code>type</code> is "Closed Class", "Prerequisite Restriction", or "Other".</div>
-
-            <h3>4. Notifications</h3>
-            <div><b>4.1. Notification Table</b></div>
-                <table class="tg">
-                <thead>
-                  <tr>
-                    <th class="tg-0lax">Column Name</th>
-                    <th class="tg-0lax">Data Type</th>
-                    <th class="tg-0lax">Attributes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="tg-0lax">id</td>
-                    <td class="tg-0lax">int</td>
-                    <td class="tg-0lax">PRIMARY KEY, AUTO_INCREMENT</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">sender_email</td>
-                    <td class="tg-0lax">varchar(64)</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">receiver_email</td>
-                    <td class="tg-0lax">varchar(64)</td>
-                    <td class="tg-0lax">NOT NULL</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">body</td>
-                    <td class="tg-0lax">text</td>
-                    <td class="tg-0lax"></td>
-                  </tr>
-                </tbody>
-                </table>
-            <div><b>4.1.1.</b> Here, we use emails to indicate the sender and receiver. Either of these can be any user in the system, students or faculty. Recall from 2.1.2 that emails are globally unique, so this is sufficient to indicate which user in the system is related to the message.</div>
-
         </div>
     </body>
 </html>
