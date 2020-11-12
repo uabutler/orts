@@ -3,35 +3,21 @@ include_once 'common_db.php';
 
 function addDepartment(string $department)
 {
-  global $student_tbl;
+  global $department_tbl;
   $pdo = connectDB();
 
-  $smt = $pdo->prepare("INSERT INTO $department_tbl(department) VALUES (:department)")
+  $smt = $pdo->prepare("INSERT INTO $department_tbl(department) VALUES (:department)");
 
-  $smt-> bindParam(":department", $department, PDO::PARAM_STR);
+  $smt->bindParam(":department", $department, PDO::PARAM_STR);
 
-  $smt-> execute();
+  $smt->execute();
 
 }
 
-function listDepartments(): array
+function listDepartments()
 {
   global $department_tbl;
-  $department = array();
-
-  $pdo = connectDB();
-  $smt = $pdo->prepare("SELECT * FROM $department_tbl")
-  $smt->execute();
-
-  $data = $smt->fetch(PDO::FETCH_ASSOC);
-
-  $arrlength = count($data);
-
-  for($i = 0; $i < $arrlength; $i++) {
-    $department[$i] = $data['department'];
-  }
-
-  return $department;
+  return getEnums($department_tbl, "department");
 }
 
 function removeDepartment($department)
@@ -66,7 +52,7 @@ function addCourse(Course $course)
 
 function searchCourse($department, $course_num): Course
 {
-  global , $class_tbl;
+  global  $class_tbl;
   $pdo = connectDB();
   $smt = $pdo->prepare("SELECT * FROM $class_tbl WHERE department = :department AND course_num=:course_num");
   $smt->bindParam(":department", $department,PDO::PARAM_STR);
@@ -77,6 +63,7 @@ function searchCourse($department, $course_num): Course
 
   return new Course($course['id'],$course['department'], $course['course_num'], $course['title']);
 
+}
 }
 
 class Semester
@@ -143,5 +130,13 @@ function searchSection(string $department, int $class_num, int $section_number):
 
   // use course_id, find current semester, and section number to find section
 }
+
+$me = listDepartments();
+
+print_r($me);
+
+
+//addOverrideRequest($me, $sec, listStatuses()[1], listOverrideTypes()[0], 'testexplanation');
+
 
 ?>
