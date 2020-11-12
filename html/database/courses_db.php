@@ -53,28 +53,20 @@ class Course
     $this->title = $title;
   }
 
-  public static function addCourse(Course $course)
-  {
-    //global $class_tbl;
-
-    //$pdo = connectDB();
-
-  // Insert basic course info
-  //$smt = $pdo->prepare("INSERT INTO $class_tbl (
-  }
+  public static function addCourse(Course $course) { }
 
   public static function searchCourse(int $department_id, int $course_num): Course
   {
-    global $class_tbl;
+    global $course_tbl;
     $pdo = connectDB();
-    $smt = $pdo->prepare("SELECT * FROM $class_tbl WHERE department_id = :department AND class_num=:course_num");
+    $smt = $pdo->prepare("SELECT * FROM $course_tbl WHERE department_id = :department AND course_num=:course_num");
     $smt->bindParam(":department", $department_id,PDO::PARAM_INT);
     $smt->bindParam(":course_num", $course_num,PDO::PARAM_INT);
     $smt->execute();
 
     $data = $smt->fetch(PDO::FETCH_ASSOC);
 
-    return new Course($data['id'],$data['department_id'], $data['class_num'], $data['title']);
+    return new Course($data['id'],$data['department_id'], $data['course_num'], $data['title']);
 
   }
 }
@@ -115,7 +107,7 @@ class Section
 
   }
 
-  public static function searchSection(string $department, int $class_num, int $section_number): Section
+  public static function searchSection(string $department, int $course_num, int $section_number): Section
   {
     global $section_tbl, $semester_tbl,$department_tbl;
     $true = 1;
@@ -126,7 +118,7 @@ class Section
 
     $dept = $smt->fetch(PDO::FETCH_ASSOC);
 
-    $course = Course::searchCourse($dept['id'], $class_num);
+    $course = Course::searchCourse($dept['id'], $course_num);
 
 
     if($course){
@@ -138,9 +130,9 @@ class Section
 
       $data = $smt->fetch(PDO::FETCH_ASSOC);
 
-      $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE semester_id = :semester_id AND class_id=:class_id");
+      $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE semester_id = :semester_id AND course_id=:course_id");
       $smt->bindParam(":semester_id", $data['id'],PDO::PARAM_INT);
-      $smt->bindParam(":class_id", $course->id,PDO::PARAM_STR);
+      $smt->bindParam(":course_id", $course->id,PDO::PARAM_STR);
       $smt->execute();
 
       $section = $smt->fetch(PDO::FETCH_ASSOC);
