@@ -186,6 +186,7 @@ $(document).ready(function() {
                   // Insert Data
                   const data = table.row(theRow).data();
                   $("#status").text(data.status);
+                  $("#classStanding").text(data["class-standing"]);
                   $("#overrideType").empty();
                   $(data.types).each(function(){
                     $("#overrideType").append("<li>" + this + "</li>");
