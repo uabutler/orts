@@ -302,7 +302,7 @@ class Student
     return Student::loadStudent($smt->fetch(PDO::FETCH_ASSOC), $pdo);
   }
 
-  public static function getStudentById(int id): Student
+  public static function getStudentById(int $id): Student
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
