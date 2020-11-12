@@ -1,6 +1,11 @@
 <?php
 include 'common_db.php';
 
+/* The inital lists to populate tables */
+$majors = ['Computer Science', 'Mathematics', 'Statistics'];
+$minors = ['Computer Science', 'Mathematics', 'Statistics'];
+$departments = ['CS', 'MATH', 'STAT'];
+
 // Student table
 function createStudentTbl($pdo)
 {
@@ -187,15 +192,38 @@ function createFacultyIdx($pdo)
   $pdo->exec("CREATE INDEX email_inx ON $faculty_tbl (email)");
 }
 
+function createValsList(array $arr): string
+{
+  return implode(", ", preg_filter('/^/', "('", preg_filter('/$/', "')", $arr)));
+}
+
 function populateMajors($pdo)
 {
-  
+  global $majors, $major_tbl;
+  echo "  $major_tbl\n";
+  $major_param = createValsList($majors);
+  $smt = $pdo->exec("INSERT INTO $major_tbl (major) VALUES $major_param");
+}
+
+function populateMinors($pdo)
+{
+  global $minors, $minor_tbl;
+  echo "  $minor_tbl\n";
+  $minor_param = createValsList($minors);
+  $smt = $pdo->exec("INSERT INTO $minor_tbl (minor) VALUES $minor_param");
+}
+
+function populateDepartments($pdo)
+{
+  global $departments, $department_tbl;
+  echo "  $department_tbl\n";
+  $department_param = createValsList($departments);
+  $smt = $pdo->exec("INSERT INTO $department_tbl (department) VALUES $department_param");
 }
 
 /**
  * Script starts here
  */
-
 echo "Connecting to DB\n";
 $pdo = connectDB();
 
@@ -220,6 +248,13 @@ echo "Creating indicies...\n";
 
 createStudentIdx($pdo);
 createFacultyIdx($pdo);
+
+echo "done\n\n";
+echo "Populating tables...\n";
+
+populateMajors($pdo);
+populateMinors($pdo);
+populateDepartments($pdo);
 
 echo "done\n\n";
 

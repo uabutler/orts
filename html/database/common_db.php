@@ -48,7 +48,17 @@ function flattenResult(array $result): array
   return $out;
 }
 
-function getEnums($table, $field, $pdo=null)
+/**
+ * Takes an array and turns it into a comma seperated string with single
+ * quotes around each item.
+ */
+function arrayToDbList(array $arr): string
+{
+  return implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", $arr)));
+}
+
+
+function getEnums(string $table, string $field, $pdo=null): array
 {
   if(is_null($pdo))
     $pdo = connectDB();

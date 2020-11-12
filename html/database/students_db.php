@@ -36,6 +36,20 @@ class Student
   public function getMajors() { return $this->majors; }
   public function getMinors() { return $this->minors; }
 
+  public static function listMajors()
+  {
+    $pdo = connectDB();
+    $smt = $pdo->query("SELECT major FROM $major_table");
+    return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+  }
+
+  public static function listMinors()
+  {
+    $pdo = connectDB();
+    $smt = $pdo->query("SELECT minor FROM $minor_table");
+    return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+  }
+
   public function storeInDB()
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
@@ -54,8 +68,8 @@ class Student
     $smt->execute();
 
     // The two arrays need to be converted to strings because PDO doesn't like arrays
-    $majors = implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", $this->majors)));
-    $minors = implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", $this->minors)));
+    $majors = arrayToDbList($this->majors);
+    $minors = arrayToDbList($this->minors);
 
     // Insert majors
     $smt = $pdo->prepare("INSERT INTO $student_major_tbl (student_id, major_id) SELECT $student_tbl.id, $major_tbl.id FROM $student_tbl INNER JOIN $major_tbl WHERE $student_tbl.email=:email AND $major_tbl.major IN ($majors)");
