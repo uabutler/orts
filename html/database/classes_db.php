@@ -1,5 +1,5 @@
-<?php
-include 'common_db.php';
+mys<?php
+include_once 'common_db.php';
 
 function addDepartment(string $department)
 {
@@ -46,17 +46,22 @@ class Course
   public $course_num; // int
   public $title; // string
 
-  funciton __construct(int $id ,string $department,int $course_num, string $title){
+function __construct(int $id ,string $department,int $course_num, string $title){
     $this->id = $id;
     $this->department = $department;
     $this->course_num= $course_num;
     $this->title = $title;
   }
-}
+
 
 function addCourse(Course $course)
 {
+  global $class_tbl;
 
+  $pdo = connectDB();
+
+  // Insert basic course info
+  //$smt = $pdo->prepare("INSERT INTO $class_tbl (
 }
 
 function searchCourse($department, $course_num): Course
@@ -83,12 +88,13 @@ class Semester
 function addSemester(Semester $semester)
 {
   // TODO: Make current active false
-  INSERT INTO semesters (semester, description) VALUES ('123', 'Fall 2021');
+  //INSERT INTO semesters (semester, description) VALUES ('123', 'Fall 2021');
 }
 
 class Section
 {
-  public $course; //Course
+  public $id; // int
+  public $course; // Course
   public $semester; // Semester
   public $info; // String
   public $crn;//String

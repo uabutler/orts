@@ -1,11 +1,12 @@
 <?php
-include 'common_db.php';
+include_once 'common_db.php';
 
 /**
  * These are objects to wrap the data stored in the databases
  */
 class Student
 {
+  public $id;
   public $email;
   public $first_name;
   public $last_name;
@@ -86,7 +87,10 @@ function getStudent(string $email) : Student
 
   $minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
 
-  return new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $majors, $minors);
+  $out = new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $majors, $minors);
+  $out->id = $data['id'];
+
+  return $out;
 }
 
 ?>
