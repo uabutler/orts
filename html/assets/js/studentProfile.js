@@ -92,6 +92,9 @@ $(document).ready(function() {
       gradmonth: {
         valueNotEquals: "default"
       },
+      class: {
+        valueNotEquals: "default"
+      },
       gradyear:{
         min: 2020
       }
@@ -99,7 +102,8 @@ $(document).ready(function() {
     messages: {
       bannerid: "Please enter a valid Banner ID",
       email: "Please enter a valid Truman email address",
-      gradmonth: "Please select a graduation month."
+      gradmonth: "Please select a graduation month.",
+      class: "Please select a class standing."
     },
     submitHandler: function(form, event){
       event.preventDefault();
@@ -118,7 +122,8 @@ $(document).ready(function() {
         email: $("#email").val(),
         gradmonth: $("#gradmonth option:selected").val() + "/" + $("#gradyear").val(),
         majors: selectedMajors,
-        minors: selectedMinors
+        minors: selectedMinors,
+        class: $("#class option:selected").val()
       }
       console.log(payload);
       return false;

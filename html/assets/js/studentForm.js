@@ -76,8 +76,8 @@ $(document).ready(function() {
           {
             data: JSON.stringify({
               department: $("#department").val(),
-              number: $("#classnumber").val(),
-              section: $("#sectionnumber").val()
+              number: parseInt($("#classnumber").val()),
+              section: parseInt($("#sectionnumber").val())
             }),
             success: function(data, status, xhr){
               data = $.parseJSON(data);
