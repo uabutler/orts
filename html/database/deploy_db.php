@@ -9,10 +9,11 @@ function createStudentTbl($pdo)
   $pdo->exec("CREATE TABLE $student_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     email varchar(64) NOT NULL UNIQUE,
-    first_name varchar(255),
+    first_name varchar(255) NOT NULL,
     last_name varchar(255),
-    banner_id varchar(9) UNIQUE,
-    grad_month varchar(7))");
+    banner_id varchar(9) NOT NULL UNIQUE,
+    grad_month varchar(7) NOT NULL,
+    standing enum('Freshman', 'Sophomore', 'Junior', 'Senior'))");
 }
 
 // Major and minor tables
@@ -46,7 +47,8 @@ function createStudentMajorTbl($pdo)
     student_id int NOT NULL,
     major_id int NOT NULL,
     FOREIGN KEY (student_id) REFERENCES $student_tbl(id),
-    FOREIGN KEY (major_id) REFERENCES $major_tbl(id))");
+    FOREIGN KEY (major_id) REFERENCES $major_tbl(id),
+    CONSTRAINT pair UNIQUE (student_id, major_id))");
 }
 
 function createStudentMinorTbl($pdo)
@@ -58,7 +60,8 @@ function createStudentMinorTbl($pdo)
     student_id int NOT NULL,
     minor_id int NOT NULL,
     FOREIGN KEY (student_id) REFERENCES $student_tbl(id),
-    FOREIGN KEY (minor_id) REFERENCES $minor_tbl(id))");
+    FOREIGN KEY (minor_id) REFERENCES $minor_tbl(id),
+    CONSTRAINT pair UNIQUE (student_id, minor_id))");
 }
 
 // Faculty table
@@ -70,7 +73,7 @@ function createFacultyTbl($pdo)
     id int PRIMARY KEY AUTO_INCREMENT,
     email varchar(64) NOT NULL UNIQUE,
     first_name varchar(255),
-    last_name varchar(255))");
+    last_name varchar(255)) NOT NULL");
 }
 
 // Class Tables
@@ -94,7 +97,8 @@ function createCourseTbl($pdo)
     course_num int NOT NULL,
     title varchar(255) NOT NULL,
     active boolean NOT NULL DEFAULT true,
-    FOREIGN KEY (department_id) REFERENCES $department_tbl(id))");
+    FOREIGN KEY (department_id) REFERENCES $department_tbl(id),
+    CONSTRAINT pair UNIQUE (department_id, course_num))");
 }
 
 function createSemesterTbl($pdo)
@@ -103,8 +107,8 @@ function createSemesterTbl($pdo)
   echo "  $semester_tbl\n";
   $pdo->exec("CREATE TABLE $semester_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
-    semester varchar(6) NOT NULL,
-    description varchar(255) NOT NULL,
+    semester varchar(6) NOT NULL UNIQUE,
+    description varchar(255) NOT NULL UNIQUE,
     active boolean NOT NULL DEFAULT true)");
 }
 
@@ -118,10 +122,11 @@ function createSectionTbl($pdo)
     semester_id int NOT NULL,
     section int NOT NULL,
     crn varchar(4) NOT NULL,
-    info varchar(255),
     active boolean NOT NULL DEFAULT true,
     FOREIGN KEY (course_id) REFERENCES $course_tbl(id),
-    FOREIGN KEY (semester_id) REFERENCES $semester_tbl(id))");
+    FOREIGN KEY (semester_id) REFERENCES $semester_tbl(id),
+    CONSTRAINT section_unq UNIQUE (course_id, semester_id, section),
+    CONSTRAINT crn_unq UNIQUE (semester_id, crn))");
 }
 
 // Override request table
@@ -138,7 +143,8 @@ function createRequestTbl($pdo)
     type enum('Closed Class', 'Prerequisite', 'Other') NOT NULL,
     explanation text,
     FOREIGN KEY (student_id) REFERENCES $student_tbl(id),
-    FOREIGN KEY (section_id) REFERENCES $section_tbl(id))");
+    FOREIGN KEY (section_id) REFERENCES $section_tbl(id),
+    CONSTRAINT pair UNIQUE (section_id, student_id))");
 }
 
 function createAttachmentTbl($pdo)
