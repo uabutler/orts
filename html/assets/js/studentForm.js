@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  $("#crn, #classtitle").val("");
   /* Load Departments */
   $.ajax(
     BASE_URL+"/departments",
@@ -67,6 +68,8 @@ $(document).ready(function() {
     if($("#department").val() != "zzzdefault" && 
        $("#classnumber").val() != "" &&
        $("#sectionnumber").val() != ""){
+         $("#crnLoading, #titleLoading").css("display", "inline");
+         $("#crn, #classtitle").val("");
         /* Load class info */
         $.ajax(
           BASE_URL+"/courses",
@@ -77,10 +80,10 @@ $(document).ready(function() {
               section: $("#sectionnumber").val()
             }),
             success: function(data, status, xhr){
-              console.log(data);
               data = $.parseJSON(data);
               $("#crn").val(data.crn);
               $("#classtitle").val(data.title);
+              $("#crnLoading, #titleLoading").css("display", "none");
             },
             failure: function(data, status, xhr){
               data = $.parseJSON(data);
@@ -90,8 +93,7 @@ $(document).ready(function() {
           }
         );
     } else {
-      $("#crn").val("");
-      $("#classtitle").val("");
+      $("#crn, #classtitle").val("");
     }
   });
 });

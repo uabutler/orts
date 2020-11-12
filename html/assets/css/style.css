@@ -249,3 +249,7 @@ label.hide{
 .block{
     display: block;
 }
+
+#crnLoading, #titleLoading {
+    display: none;
+}
