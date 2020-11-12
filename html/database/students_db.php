@@ -28,15 +28,15 @@ class Student
   }
 
   public function getId() { return $this->id; }
-  public function getEmail { return $this->email; }
-  public function getFirstName { return $this->first_name; }
-  public function getLastName { return $this->last_name; }
-  public function getBannerId { return $this->banner_id; }
-  public function getGradMonth { return $this->grad_month; }
-  public function getMajors { return $this->majors; }
-  public function getMinors { return $this->minors; }
+  public function getEmail() { return $this->email; }
+  public function getFirstName() { return $this->first_name; }
+  public function getLastName() { return $this->last_name; }
+  public function getBannerId() { return $this->banner_id; }
+  public function getGradMonth() { return $this->grad_month; }
+  public function getMajors() { return $this->majors; }
+  public function getMinors() { return $this->minors; }
 
-  public function addToDb()
+  public function storeInDB()
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
