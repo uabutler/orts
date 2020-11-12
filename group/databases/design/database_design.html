@@ -207,6 +207,7 @@
                 <br>
 
             <div><b>1.2.1.</b> When a major or minor is first created, it will be active. Whenever a major or minor is removed, it will no longer be active. This means that it can still apear as a given user's major or minor, but it will not be an option for new users to select as their major or minor.</div>
+            <div><b>1.2.2.</b> In the relational tables, <code>student_id</code> is pairwise unique with <code>major_id</code> and <code>minor_id</code> so that one student can't have the same major twice.
 
             <h3>2. Faculty</h3>
             <div><b>2.1. Faculty Table</b></div>
@@ -397,6 +398,9 @@
             <div><b>3.1.6.</b> The section <code>description</code> is a human readable version of the semester added for convenience (e.g., "Winter Interm 2020").</div>
             <div><b>3.1.7.</b> The statuses table was removed in favor of an enum</div>
             <div><b>3.1.8.</b> It should be noted that exactly one semester should be active at any given time, the semester the system is currenly acceping override requests for.</div>
+            <div><b>3.1.9.</b> <code>department_id</code> and <code>course_num</code> are pairwise unique. Duplicate courses are represented as different sections.</div>
+            <div><b>3.1.10.</b> Each section must have a unique set of <code>course_id</code>, <code>semester_id</code>, and <code>section</code>.
+            <div><b>3.1.11.</b> <code>semester_id</code> and <code>crn</code> are pairwise unique.</div>
             
             <br>
             <div><b>3.2. Override Requests Table</b></div>
@@ -450,6 +454,7 @@
             <div><b>3.2.1.</b> <strike>The <code>crn</code> is a 4-digit value encouded as a string for compatibility with the API schema created by the logic team.</strike> The crn was removed and added to the sections table.</div>
             <div><b>3.2.2.</b> The <code>status</code> is "Received" at first, then can be changed to "Approved", "Provisionally Approved", or "Denied", or "Required Faculty Approval".</div>
             <div><b>3.2.3.</b> The <code>type</code> is "Closed Class", "Prerequisite Restriction", or "Other".</div>
+            <div><b>3.2.4.</b> <code>student_id</code> and <code>section_id</code> are pairwise unique. Students should edit an existing override request instead of submitting a new one for the same course.</div>
 
             <br>
             <div><b>3.3. Attachments Table</b></div>
