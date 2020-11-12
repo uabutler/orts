@@ -38,15 +38,17 @@ class Student
 
   public static function listMajors()
   {
+    global $major_tbl;
     $pdo = connectDB();
-    $smt = $pdo->query("SELECT major FROM $major_table");
+    $smt = $pdo->query("SELECT major FROM $major_tbl");
     return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
   }
 
   public static function listMinors()
   {
+    global $minor_tbl;
     $pdo = connectDB();
-    $smt = $pdo->query("SELECT minor FROM $minor_table");
+    $smt = $pdo->query("SELECT minor FROM $minor_tbl");
     return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
   }
 
