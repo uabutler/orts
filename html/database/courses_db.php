@@ -73,12 +73,12 @@ class Department
       $this->updateDB();
   }
 
-  public static function buildDepartment(string $department)
+  public static function buildDepartment(string $department): Department
   {
     return new Department($department);
   }
 
-  public static function getDepartment(string $department)
+  public static function getDepartment(string $department): ?Department
   {
     global $department_tbl;
     $pdo = connectDB();
@@ -94,7 +94,7 @@ class Department
     return new Department($data['department'], $data['id']);
   }
 
-  public static function getDepartmentById(string $department)
+  public static function getDepartmentById(string $department): ?Department
   {
     global $department_tbl;
     $pdo = connectDB();
@@ -193,12 +193,12 @@ class Course
       $this->updateDB();
   }
 
-  public static function buildCourse(Department $department, int $course_num, string $title)
+  public static function buildCourse(Department $department, int $course_num, string $title): Course
   {
     return new Course($department, $course_num, $title);
   }
 
-  public static function getCourse(Department $department, int $course_num)
+  public static function getCourse(Department $department, int $course_num): ?Course
   {
     global $course_tbl;
     $pdo = connectDB();
@@ -215,7 +215,7 @@ class Course
     return new Course($department, $data['course_num'], $data['title'], $data['id']);
   }
 
-  public static function getCourseById(int $id): Course
+  public static function getCourseById(int $id): ?Course
   {
     global $course_tbl;
     $pdo = connectDB();
@@ -315,7 +315,7 @@ class Semester
     return new Semster($semester, $description);
   }
 
-  public static function getSemester(string $description)
+  public static function getSemester(string $description): ?Semester
   {
     global $semester_tbl;
     $pdo = connectDB();
@@ -331,7 +331,7 @@ class Semester
     return new Semester($data['semester'], $description, $data['id']);
   }
 
-  public static function getSemesterByCode(string $semester)
+  public static function getSemesterByCode(string $semester): ?Semester
   {
     global $semester_tbl;
     $pdo = connectDB();
@@ -347,7 +347,7 @@ class Semester
     return new Semester($semester, $data['description'], $data['id']);
   }
 
-  public static function getSemesterById(int $id)
+  public static function getSemesterById(int $id): ?Semester
   {
     global $semester_tbl;
     $pdo = connectDB();
@@ -463,7 +463,7 @@ class Section
     return new Section($course, $semester, $section, $crn);
   }
   
-  public static function getSection(Course $course, Semester $semester, int $section): Section
+  public static function getSection(Course $course, Semester $semester, int $section): ?Section
   {
     global $section_tbl;
     $pdo = connectDB();
@@ -482,7 +482,7 @@ class Section
     return new Section($course, $semester, $data['section'], $data['crn']);
   }
 
-  public static function getSectionByCrn(Semester $semester, string $crn): Section
+  public static function getSectionByCrn(Semester $semester, string $crn): ?Section
   {
     global $section_tbl;
     $pdo = connectDB();
@@ -499,7 +499,7 @@ class Section
     return new Section(Course::getCourseById($data['course_id']), $semester, $data['section'], $crn);
   }
 
-  public static function getSectionById(int $id): Section
+  public static function getSectionById(int $id): ?Section
   {
     global $section_tbl;
     $pdo = connectDB();

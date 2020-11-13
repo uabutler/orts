@@ -285,7 +285,7 @@ class Student
   /**
    * Retrieve a student from the database
    */
-  public static function getStudent(string $email): Student
+  public static function getStudent(string $email): ?Student
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
     $pdo = connectDB();
@@ -300,7 +300,7 @@ class Student
     return Student::loadStudent($data, $pdo);
   }
 
-  public static function getStudentById(int $id): Student
+  public static function getStudentById(int $id): ?Student
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
     $pdo = connectDB();
