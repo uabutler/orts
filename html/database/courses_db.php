@@ -29,7 +29,7 @@ function listDepartments()
   while ($data = $smt->fetch(PDO::FETCH_ASSOC)) {
     $department[$i] = $data['department'];
     $i++;
-}
+  }
 
   return $department;
 }
@@ -51,6 +51,19 @@ class Course
     $this->department = $department_id;
     $this->course_num= $course_num;
     $this->title = $title;
+  }
+
+  public function getId(){
+    return $this->id;
+  }
+  public function getdepartmentID(){
+    return $this->department_id;
+  }
+  public function getCourseNum(){
+    return $this->course_num;
+  }
+  public function getTitle(){
+    return $this->title:
   }
 
   public static function addCourse(Course $course) { }
@@ -101,7 +114,12 @@ class Section
     $this->info = $info;
     $this->crn = $crn;
   }
-
+  public function getId(){return $this->id;}
+  public function getCourse(){return $this->course;}
+  public function getSemester(){return $this->semester}
+  public function getInfo(){return $this->info}
+  public function getCrn(){return $this->crn}
+  
   function addSection(Section $section)
   {
 
