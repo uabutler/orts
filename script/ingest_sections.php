@@ -4,12 +4,27 @@ include_once '../html/database/courses_db.php';
 
 $pdo = connectDB();
 
-$argc == 2 or die("Please specify an input file\n");
+$argc == 3 or $argc == 4 or die("Please specify an excel file and an output tsv file: $argv[0] excel_file tsv_file [python_script_name]\n");
 
-$file = fopen($argv[1], "r");
+echo "Converting xlsx to tsv\n";
+$mesg;
+if($argc == 4)
+  $mesg = exec("python $argv[3] $argv[1] $argv[2]");
+else
+  $mesg = exec("python section_xlsx2csv.py $argv[1] $argv[2]");
+echo $mesg;
+echo "Done\n";
+
+echo "Reading from $argv[2]\n";
+$file = fopen($argv[2], "r");
+
+echo "Establishing connection to database\n";
 $pdo = connectDB();
+echo "Determining current semester...";
 $semester = Semester::getSemesterByCode('202110');
+echo "Found ".$semester->getSemesterCode()."\n";
 
+echo "Storing data\n";
 while(!feof($file))
 {
   $line = fgets($file);
@@ -34,6 +49,7 @@ while(!feof($file))
   $section->storeInDB();
 }
 
+echo "done; exiting\n";
 fclose($file);
 
 ?>

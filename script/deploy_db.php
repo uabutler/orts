@@ -1,5 +1,5 @@
 <?php
-include 'common_db.php';
+include_once '../html/database/common_db.php';
 
 /* The inital lists to populate tables */
 $majors = ['Computer Science', 'Mathematics', 'Statistics'];
@@ -265,7 +265,12 @@ populateDepartments($pdo);
 populateSemester($pdo);
 
 echo "done\n\n";
+echo "Loading current semester sections...\n";
 
+$mesg = exec("php ingest_sections.php swrprof_202110.xlsx out.tsv");
+echo $mesg;
+
+echo "done\n";
 echo "[DEPLOY SCRIPT COMPLETE]\n";
 
 ?>
