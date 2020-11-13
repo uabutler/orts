@@ -221,6 +221,13 @@ function populateDepartments($pdo)
   $smt = $pdo->exec("INSERT INTO $department_tbl (department) VALUES $department_param");
 }
 
+function populateSemester($pdo)
+{
+  global $semester_tbl;
+  echo "  $semester_tbl\n";
+  $smt = $pdo->exec("INSERT INTO $semester_tbl (semester, description) VALUES ('202110', 'Spring 2021')");
+}
+
 /**
  * Script starts here
  */
@@ -255,6 +262,7 @@ echo "Populating tables...\n";
 populateMajors($pdo);
 populateMinors($pdo);
 populateDepartments($pdo);
+populateSemester($pdo);
 
 echo "done\n\n";
 

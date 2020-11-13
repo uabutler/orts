@@ -195,7 +195,7 @@ class Course
 
   public static function buildCourse(Department $department, int $course_num, string $title)
   {
-    return new Department($department, $course_num, $title);
+    return new Course($department, $course_num, $title);
   }
 
   public static function getCourse(Department $department, int $course_num)
