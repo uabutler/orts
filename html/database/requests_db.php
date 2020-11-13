@@ -66,8 +66,14 @@ class OverrideRequest
   {
 	$time = gmmktime();
     $now = date("Y-m-d H:i:s", $time);
-    //VALIDATE ENUMS HERE?
-    return new OverrideRequest($student, $section, $now, $status, $type, $explanation);
+    if(in_array($status, listStatuses()) && in_array(type, listOverrideTypes()))
+    {
+      return new OverrideRequest($student, $section, $now, $status, $type, $explanation);
+	}
+	else
+	{
+	  return null; //null? error message?
+	}
   }
   
   /**
