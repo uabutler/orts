@@ -11,7 +11,7 @@ class OverrideRequest
   public $type;
   public $explanation;
   
-  private function __construct(Student $student, Section $section, string $last_modified, string $status, string type, string $explanation)
+  private function __construct(Student $student, Section $section, string $last_modified, string $status, string $type, string $explanation)
   {
     $this->student = $student;
     $this->section = $section;
@@ -34,7 +34,7 @@ class OverrideRequest
     
     $pdo = connectDB();
     
-    //$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
     $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, status, type, explanation) VALUES (:student_id, :last_modified, :section_id, :status, :type, :explanation)");
     
     $smt->bindParam(":student_id", $this->student->id, PDO::PARAM_INT); //Does -> -> work?
@@ -62,7 +62,7 @@ class OverrideRequest
   /**
    * Constructs a new request locally
    */
-  public static function buildRequest(Student $student, Section $section, string $status, string type, string $explanation) //Need?: OverrideRequest
+  public static function buildRequest(Student $student, Section $section, string $status, string $type, string $explanation) //Need?: OverrideRequest
   {
 	$time = gmmktime();
     $now = date("Y-m-d H:i:s", $time);
@@ -112,9 +112,10 @@ class OverrideRequest
 }
 
 //TESTING
-//$me = new Student('mmk5213', 'Micah', 'Kuan', '123456789', '2021', array(1), array(2));
-//$me->id = 1;
-//$sec = new Section();
-//$sec->id = 2;
-//addOverrideRequest($me, $sec, listStatuses()[1], listOverrideTypes()[0], 'testexplanation');
+$me = buildStudent('mmk5213', 'Micah', 'Kuan', '123456789', '202060', 'Freshman', array(1), array(2));
+$me->id = 1;
+$sec = new Section();
+$sec->id = 2;
+$ob = buildRequest($me, $sec, listStatuses()[1], listOverrideTypes()[0], 'testexplanation');
+$ob.addToDB();
 ?>
