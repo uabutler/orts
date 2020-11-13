@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>CS 370 - Group 1 Database Design</title>
+        <title>CS 370 - Student DB Doc</title>
         <style>
             div{font-family: Arial, Helvetica, sans-serif;}
             body{margin: 1in;}
@@ -12,6 +12,7 @@
               overflow:hidden;padding:10px 5px;word-break:normal;}
             .tg .tg-0lax{text-align:left;vertical-align:top}
             .params{white-space:nowrap;}
+            ul {margin:0;padding:0;}
         </style>
     </head>
     <body>
@@ -20,7 +21,7 @@
         <div>
             <h1 style="text-align: center;">Student Database Access</h1>
             <h2 style="text-align: center;">Group 1</h3>
-            <h3>Last Revision: Nov 9th 2020</h3>
+            <h3>Last Revision: Nov 11th 2020</h3>
             <h3>Contact Info: ub4782@truman.edu</h3>
             <p>
             This document specifies how to use the <code>students_db.php</code> library to interact with the student data.
@@ -48,6 +49,7 @@
                         <li><code>last_name : string</code></li>
                         <li><code>banner_id : string</code></li>
                         <li><code>grad_month : string</code></li>
+                        <li><code>standing : string</code></li>
                         <li><code>majors : array</code></li>
                         <li><code>minors : array</code></li>
                       </ul>
@@ -63,9 +65,17 @@
                     </td>
                     <td class="tg-0lax"> This method searches the database for an existing student with the given email.</td>
                   </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>getStudentById</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>id : int</code></li>
+                    </ul>
+                    </td>
+                    <td class="tg-0lax"> This method searches the database for an existing student given id. Note, this is the database id, not the banner id.</td>
+                  </tr>
                 </tbody>
                 </table>
-            <div><b>1.1.1.</b> Example, <code>$new_student = Student::getStudent('jtk1701');</code></div>
 
             <br>
             <div><b>1.2. Methods</b></div>
@@ -136,6 +146,13 @@
                     <td class="tg-0lax"> A string in <code>'MM/YYYY'</code> format.</td>
                   </tr>
                   <tr>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getStanding</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> The student's current academic standing. Freshman, sophomore, junior, or senior.</td>
+                  </tr>
+                  <tr>
                     <td class="tg-0lax"><code>array</code></td>
                     <td class="tg-0lax"><code>getMajors</code></td>
                     <td class="tg-0lax params">
@@ -151,13 +168,121 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>getEmail</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>email : string</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> The username for the student, the domain is assumed to be truman.edu. (e.g., if the student's email is jtk1701@truman.edu, we would store <code>'jtk1701'</code></td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>setFirstName</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>first_name : string</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>setLastName</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>last_name : string</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>setBannerId</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>banner_id : string</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> Must be a string representing the student's 9-digit banner ID.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>setGradMonth</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>grad_month : string</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> Must be a string in <code>'MM/YYYY'</code> format.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>setStanding</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>standing : string</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> Must be a string, either <code>'Freshman'</code>, <code>'Sophomore'</code>, <code>'Junior'</code>, or <code>'Senior'</code>.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>setMajors</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>majors : array</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> All of the values must match those in <code>listMajors()</code>.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
+                    <td class="tg-0lax"><code>setMinors</code></td>
+                    <td class="tg-0lax params">
+                    <ul>
+                      <li><code>minors : array</code></li>
+                    <ul>
+                    </td>
+                    <td class="tg-0lax"> All of the values must match those in <code>listMinors()</code>.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>storeInDB</code></td>
                     <td class="tg-0lax params">
                     </td>
-                    <td class="tg-0lax"> Stores the current student in the database as a new item.</td>
+                    <td class="tg-0lax"> If this is a newly created student object (made using <code>buildStudent()</code>) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry.</td>
                   </tr>
                 </tbody>
                 </table>
+
+            <div><b>1.3. Example</b></div>
+            Here, we demonstate two common use cases. First, we create a new student and store it in the database. Then, we search for a student, modify said student, and store the alterations.
+<pre><code>
+// First, we get a list of majors
+$majors = Student::listMajors();
+
+// Now, we create a student
+$student1 = Student::buildStudent('jtk1701', 'James', 'Kirk', '001074656', '05/2021', 'Senior', ['Computer Science'], ['Mathematics', 'Statistics']);
+
+// The student isn't currenly in the database. To write the information, use the storeInDB method
+$student1->storeInDB();
+
+// Now, the student has an ID we can retrieve using a getter. This is useful as an identifier for a student that will never change.
+$student1_id = $student1->getId();
+
+// We can also retreive a student from the database by searching for an email
+$student2 = Student::getStudent('ub4782');
+
+// Finally, we can alter that student's attributes
+$student2->setMajors(['Mathematics', 'Statistics']);
+$student2->setGradMonth('12/2021');
+$student2->setStanding('Senior');
+
+// These changes aren't reflected in the database until we write them
+$student2->storeInDB();
+</code></pre>
+                
         </div>
     </body>
 </html>
