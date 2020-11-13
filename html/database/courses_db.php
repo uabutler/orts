@@ -1,74 +1,140 @@
 <?php
 include_once 'common_db.php';
 
-function addDepartment(string $department)
+class Department
 {
-  global $department_tbl;
-  $pdo = connectDB();
+  private $id;
+  private $department;
 
-  $smt = $pdo->prepare("INSERT INTO $department_tbl(department) VALUES (:department)");
+  public function getId() { return $this->id; }
+  public function getDept() { return $this->department; }
 
-  $smt->bindParam(":department", $department, PDO::PARAM_STR);
-
-  $smt->execute();
-
-}
-
-function listDepartments()
-{
-  global $department_tbl;
-   $department = array();
-
-  $pdo = connectDB();
-  $smt = $pdo->prepare("SELECT * FROM $department_tbl");
-  $smt->execute();
-
- // $data = $smt->fetch(PDO::FETCH_ASSOC);
-
-  $i = 0;
-  while ($data = $smt->fetch(PDO::FETCH_ASSOC)) {
-    $department[$i] = $data['department'];
-    $i++;
+  /**
+   * Setters
+   */
+  public function setDept(string $department)
+  {
+    $this->department = $department;
   }
 
-  return $department;
-}
+  private function __construct(string $department, int $id=null)
+  {
+    $this->department = $department;
+    $this->id = $id;
+  }
 
-function removeDepartment($department)
-{
+  public static function listDepartments(): array
+  {
+    global $major_tbl;
+    $pdo = connectDB();
+    $smt = $pdo->query("SELECT department FROM $department_tbl");
+    return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+  }
 
+  private function insertDB()
+  {
+    global $department_tbl;
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("INSERT INTO $department_tbl(department) VALUES (:department)");
+    $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
+    $smt->execute();
+
+    $smt = $pdo->prepare("SELECT id FROM $department_tbl WHERE department=:department");
+    $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
+    $smt->execute();
+    $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
+  }
+
+  private function updateDB()
+  {
+    global $department_tbl;
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("UPDATE $department_tbl SET department=:department WHERE id=:id");
+    $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
+    $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
+  /**
+   * Stores the current object in the database. If the object is newly created,
+   * a new entry into the DB is made. If the student has been stored in the DB,
+   * we update the existing entry
+   */
+  public function storeInDB()
+  {
+    // The id is set only when the student is already in the databse
+    if(is_null($this->id))
+      $this->insertDB();
+    else
+      $this->updateDB();
+  }
+
+  public static function buildDepartment(string $department)
+  {
+    return new Department($department);
+  }
+
+  public static function getDepartment(string $department)
+  {
+    global $department_tbl;
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("SELECT * FROM $department_tbl WHERE department=:department LIMIT 1");
+    $smt->bindParam(":department", $department, PDO::PARAM_STR);
+    $smt->execute();
+
+    $data = $smt->fetch(PDO::FETCH_ASSOC);
+
+    if(!$data) return null;
+
+    return new Department($data['department'], $data['id']);
+  }
+
+  public static function getDepartmentById(string $department)
+  {
+    global $department_tbl;
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("SELECT * FROM $department_tbl WHERE id=:id LIMIT 1");
+    $smt->bindParam(":id", $id, PDO::PARAM_INT);
+    $smt->execute();
+
+    $data = $smt->fetch(PDO::FETCH_ASSOC);
+
+    if(!$data) return null;
+
+    return new Department($data['department'], $data['id']);
+  }
 }
 
 class Course
 {
-  public $id; // int
-  public $department_id; // string
-  public $course_num; // int
-  public $title; // string
+  private $id; // int
+  private $department; // string
+  private $course_num; // int
+  private $title; // string
 
-  function __construct(int $id, int $department_id,int $course_num, string $title){
+  private function __construct(Department $department, int $course_num, string $title, int $id=null)
+  {
     $this->id = $id;
     $this->department = $department_id;
     $this->course_num= $course_num;
     $this->title = $title;
   }
 
-  public function getId(){
-    return $this->id;
-  }
-  public function getdepartmentID(){
-    return $this->department_id;
-  }
-  public function getCourseNum(){
-    return $this->course_num;
-  }
-  public function getTitle(){
-    return $this->title:
+  public function getId(){ return $this->id; }
+  public function getDepartment(){ return $this->department; }
+  public function getCourseNum(){ return $this->course_num; }
+  public function getTitle(){ return $this->title; }
+
+  public function setDepartment(Department $department)
+  {
+
   }
 
-  public static function addCourse(Course $course) { }
-
-  public static function searchCourse(int $department_id, int $course_num): Course
+  public static function getCourse(Department $department, int $course_num): Course
   {
     global $course_tbl;
     $pdo = connectDB();
@@ -80,7 +146,6 @@ class Course
     $data = $smt->fetch(PDO::FETCH_ASSOC);
 
     return new Course($data['id'],$data['department_id'], $data['course_num'], $data['title']);
-
   }
 }
 

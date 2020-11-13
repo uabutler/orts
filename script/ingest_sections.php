@@ -2,7 +2,6 @@
 include_once '../html/database/common_db.php';
 
 $pdo = connectToDB();
-=======
 $file = fopen("out.csv", "r");
 $pdo = connectDB();
 
