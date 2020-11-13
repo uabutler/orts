@@ -1,4 +1,5 @@
 <?php
+include_once 'common_db.php';
 include_once 'courses_db.php';
 include_once 'students_db.php';
 
@@ -11,7 +12,7 @@ class OverrideRequest
   public $type;
   public $explanation;
   
-  private function __construct(Student $student, Section $section, string $last_modified, string $status, string type, string $explanation)
+  function __construct(Student $student, Section $section, string $last_modified, string $status, string $type, string $explanation)
   {
     $this->student = $student;
     $this->section = $section;
@@ -20,6 +21,16 @@ class OverrideRequest
     $this->type = $type;
     $this->explanation = $explanation;
   }
+  
+  function __construct(array $data)
+  {
+  	$this->student = new Student($data);
+  	$this->section = new Section($data);
+  	$this->last_modified = $last_modified;
+   $this->status = $status;
+   $this->type = $type;
+   $this->explanation = $explanation;
+  } 
   
   public function getStudent()      { return $this->student; }
   public function getSection()      { return $this->section; }
@@ -73,20 +84,24 @@ class OverrideRequest
   /**
    * Retrieve a students requests from the database
    */ 
-  public static function getStudentRequests(Student $student) : OverrideRequest
+  public static function getStudentRequests(Student $student) : array
   {
-	global $request_tbl;
-
+	 global $request_tbl;
     $pdo = connectDB();
 
-    $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE student_id=:student_id");
+    $smt = $pdo->prepare("SELECT * FROM $student_table INNER JOIN $request_tbl ON $request_tbl.student_id = $student_tbl.id INNER JOIN $section_tbl ON $request_tbl.section_id = $request_tbl.id WHERE student_id=:student_id");
     $smt->bindParam(":student_id", $student->$id, PDO::PARAM_INT);
     $smt->execute();
     
-    $data = $smt->fetch(PDO::FETCH_ASSOC);
+    $requestsList = $smt->fetchAll();
+    $returnList = array();
+    foreach ($requestsList as $row){
+		$request = new OverrideRequest($row);
+		array_push($returnList, $request);
+    }
     
     //$out = new OverrideRequest($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $majors, $minors, $data['id']);
-    return $out;
+    return $returnList;
   }
   
   /**
@@ -94,6 +109,15 @@ class OverrideRequest
    */ 
   public static function getOverrideRequest(int $id) : OverrideRequest
   {
+  	global $request_tbl;
+  	$pdo = connectDB();
+  	
+  	 $smt = $pdo->prepare("SELECT * FROM $student_table INNER JOIN $request_tbl ON $request_tbl.student_id = $student_tbl.id INNER JOIN $section_tbl ON $request_tbl.section_id = $request_tbl.id WHERE section_id=:section_id");
+    $smt->bindParam(":section_id", $section->$id, PDO::PARAM_INT);
+    $smt->execute();
+	    
+   $data = $smt->fetch(PDO::FETCH_ASSOC);
+   return new OverrideRequest($data); 
   }
   
   /**
@@ -101,6 +125,21 @@ class OverrideRequest
    */ 
   public static function getOverrideRequests() : OverrideRequest
   {
+  	global $request_tbl;
+  	$pdo = connectDB();
+  	
+  	$smt = $pdo->prepare("SELECT * FROM $student_table INNER JOIN $request_tbl ON $request_tbl.student_id = $student_tbl.id INNER JOIN $section_tbl ON $request_tbl.section_id = $request_tbl.id");
+   $smt->execute();
+   
+   $requestsList = $smt->fetchAll();
+   $returnList = array();
+   foreach ($requestsList as $row){
+		$request = new OverrideRequest($row);
+		array_push($returnList, $request);
+   }
+    
+   //$out = new OverrideRequest($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $majors, $minors, $data['id']);
+   return $returnList;
   }
   
 }
