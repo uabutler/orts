@@ -235,13 +235,13 @@ class Semester
   private $description;
 
   public function getId() { return $this->id; }
-  public function getSemester() { return $this->semester; }
+  public function getSemesterCode() { return $this->semester; }
   public function getDescription() { return $this->description; }
 
   /**
    * Setters
    */
-  public function setSemster(string $semester)
+  public function setSemsterCode(string $semester)
   {
     $this->semester = $semester;
   }
@@ -453,7 +453,7 @@ class Section
 
   public static function buildSection(Course $course, Semester $semester, int $section, string $crn)
   {
-    return new Section(Course $course, Semester $semester, int $section, string $crn);
+    return new Section($course, $semester, $section, $crn);
   }
   
   public static function getSection(Course $course, Semester $semester, int $section): Section
