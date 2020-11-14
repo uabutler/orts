@@ -22,15 +22,17 @@ class OverrideRequest
     $this->explanation = $explanation;
   }
   
+  /*
   function __construct(array $data)
   {
-  	$this->student = new Student($data);
-  	$this->section = new Section($data);
-  	$this->last_modified = $last_modified;
+   $this->student = new Student($data);
+   $this->section = new Section($data);
+   $this->last_modified = $last_modified;
    $this->status = $status;
    $this->type = $type;
    $this->explanation = $explanation;
   } 
+  */
   
   public function getStudent()      { return $this->student; }
   public function getSection()      { return $this->section; }
@@ -151,10 +153,9 @@ class OverrideRequest
 }
 
 //TESTING
-$me = buildStudent('mmk5213', 'Micah', 'Kuan', '123456789', '202060', 'Freshman', array(1), array(2));
-$me->id = 1;
-$sec = new Section();
-$sec->id = 2;
-$ob = buildRequest($me, $sec, listStatuses()[1], listOverrideTypes()[0], 'testexplanation');
-$ob.addToDB();
+$me = Student::buildStudent('mmk5213', 'Micah', 'Kuan', '123456789', '202060', 'Freshman', array(1), array(2));
+$me.Student::insertDB();
+//$sec = Section::getSectionById(1);
+//$ob = buildRequest($me, $sec, listStatuses()[1], listOverrideTypes()[0], 'testexplanation');
+//$ob.addToDB();
 ?>
