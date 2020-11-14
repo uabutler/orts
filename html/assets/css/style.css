@@ -40,6 +40,15 @@ table.dataTable thead .sorting_asc{
 	background-image: url("../images/sort_asc.png") !important;
 }
 
+main a, main a:visited {
+    color: #510c76;
+    transition: color 0.25s linear;
+}
+
+main a:hover {
+    color: #00a8e2;
+}
+
 nav {
 	background-color: #510c76;
     overflow: hidden;
@@ -84,6 +93,14 @@ div.bar {
 	margin-bottom: 5xp;
 	background-color: #510c76;
 	border-radius: 2cm;
+}
+
+label.error {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 2px;
+    background-color: rgba(255,0,0,0.2);
+    color: black;
 }
 
 main#adminPage {
@@ -252,4 +269,9 @@ label.hide{
 
 #crnLoading, #titleLoading {
     display: none;
+}
+
+main#termsAndConditions li{
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
