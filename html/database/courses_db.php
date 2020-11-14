@@ -94,7 +94,7 @@ class Department
     return new Department($data['department'], $data['id']);
   }
 
-  public static function getDepartmentById(string $department): ?Department
+  public static function getDepartmentById(int $id): ?Department
   {
     global $department_tbl;
     $pdo = connectDB();
@@ -514,4 +514,5 @@ class Section
     return new Section(Course::getCourseById($data['course_id']), Semester::getSemesterById($data['semester_id']), $data['section'], $data['crn']);
   }
 }
+
 ?>
