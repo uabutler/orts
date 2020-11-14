@@ -5,42 +5,27 @@ info:
 servers:
   - url: http://example.com/api/v1
 paths:
-  /requests/{requestId}:
+  /requests:  
     get:
-      summary: Return a single request by ID 
+      summary: Returns all requests or one request
       parameters:
-        - name: requestId
-          in: path
-          required: true
-          description: The ID of the request to return
+        - in: query
+          name: id
+          required: false
           schema:
             type: integer
             format: int64
+          description: The id of the request to return
       responses:
         '200':
           description: Ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Request"
-        '404':
-          description: A user with the specified ID was not found
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /requests:  
-    get:
-      summary: Returns all requests
-      responses:
-        '200':
-          description: Ok
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Requests"
+                oneOf:
+                  - $ref: "#/components/schemas/Request"
+                  - $ref: "#/components/schemas/Requests"
+                description: Returns one request or all requests
         default:
           description: unexpected error
           content:
@@ -65,6 +50,85 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  # this is the changed part
+  /majors:
+    get:
+      summary: Returns available majors in the system
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Majors"
+  /minors:
+    get:
+      summary: Returns available minors in the system
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Minors"
+  /requests/types:
+    get:
+      summary: Returns all possible request types
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Types"
+  /departments:
+    get:
+      summary: Returns all the current departments
+      responses:
+        '200':
+          description: ok
+          content:
+            application.json:
+              schema:
+                $ref: "#/components/schemas/Departments"
+  /courses:
+    get:
+      summary: Returns courses info of a given input
+      parameters:
+        - in: query
+          name: department
+          required: true
+          schema:
+            type: string
+          description: The department in charge of the course
+        - in: query
+          name: number
+          required: true
+          schema:
+            type: integer
+            format: int32
+          description: the course number
+        - in: query
+          name: section
+          required: true
+          schema:
+            type: integer
+            format: int32
+          description: the section of the course
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"    
+  # this is the end of changed part
 components:
   schemas:
     Request:
@@ -102,6 +166,9 @@ components:
           type: integer
           format: int32
           example: 370
+        class-standing:
+          type: string
+          example: "Sophomore"
         semester:
           type: string
           example: "202060"
@@ -161,6 +228,9 @@ components:
           type: integer
           format: int64
           example: 370
+        class-standing:
+          type: string
+          example: "Sophomore"
         semester:
           type: string
           example: "202060"
@@ -186,6 +256,43 @@ components:
         explanation:
           type: string
           example: "I need this course to graduate"
+    Majors:
+      properties:
+        majors:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics", "Mathematics"]
+    Minors:
+      properties:
+        minors:
+          type: array
+          items:
+            type: string
+          example: ["Computer Science", "Statistics", "Mathematics"]
+    Types:
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+          example: ["Capacity", "Prerequisites", "Time conflict", "Major restriction", "Class standing restriction", "Other"]
+    Departments:
+      properties:
+        departments:
+          type: array
+          items:
+            type: string
+          example: ["MATH", "CS", "STAT"]
+    Course:
+      properties:
+        title:
+          type: string
+          example: "Software Engineering"
+        crn:
+          type: string
+          pattern: '^\d{4}$'
+          example: "1234"
     Error:
       properties:
         code:
@@ -195,3 +302,4 @@ components:
         message:
           type: string
           example: "This was an error twelve."
+  
