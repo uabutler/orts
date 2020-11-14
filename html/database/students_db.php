@@ -168,17 +168,13 @@ class Student
     $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
     $smt->bindParam(":banner_id", $this->banner_id, PDO::PARAM_STR);
     $smt->bindParam(":grad_month", $this->grad_month, PDO::PARAM_STR);
-    $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
-
+    $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR); 
     $smt->execute();
 
     // get the newly created ID
     $smt = $pdo->prepare("SELECT id FROM $student_tbl WHERE email=:email");
-
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
-
     $smt->execute();
-
     $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
 
     // Insert information about majors and minors
@@ -289,30 +285,34 @@ class Student
   /**
    * Retrieve a student from the database
    */
-  public static function getStudent(string $email): Student
+  public static function getStudent(string $email): ?Student
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
-
     $pdo = connectDB();
 
     $smt = $pdo->prepare("SELECT * FROM $student_tbl WHERE email=:email LIMIT 1");
     $smt->bindParam(":email", $email, PDO::PARAM_STR);
     $smt->execute();
+    $data = $smt->fetch(PDO::FETCH_ASSOC);
 
-    return Student::loadStudent($smt->fetch(PDO::FETCH_ASSOC), $pdo);
+    if(!$data) return null;
+
+    return Student::loadStudent($data, $pdo);
   }
 
-  public static function getStudentById(int $id): Student
+  public static function getStudentById(int $id): ?Student
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
-
     $pdo = connectDB();
 
     $smt = $pdo->prepare("SELECT * FROM $student_tbl WHERE id=:id LIMIT 1");
     $smt->bindParam(":id", $id, PDO::PARAM_INT);
     $smt->execute();
+    $data = $smt->fetch(PDO::FETCH_ASSOC);
 
-    return Student::loadStudent($smt->fetch(PDO::FETCH_ASSOC), $pdo);
+    if(!$data) return null;
+
+    return Student::loadStudent($data, $pdo);
   }
 }
 

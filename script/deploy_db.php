@@ -1,5 +1,5 @@
 <?php
-include 'common_db.php';
+include_once '../html/database/common_db.php';
 
 /* The inital lists to populate tables */
 $majors = ['Computer Science', 'Mathematics', 'Statistics'];
@@ -221,6 +221,13 @@ function populateDepartments($pdo)
   $smt = $pdo->exec("INSERT INTO $department_tbl (department) VALUES $department_param");
 }
 
+function populateSemester($pdo)
+{
+  global $semester_tbl;
+  echo "  $semester_tbl\n";
+  $smt = $pdo->exec("INSERT INTO $semester_tbl (semester, description) VALUES ('202110', 'Spring 2021')");
+}
+
 /**
  * Script starts here
  */
@@ -255,9 +262,15 @@ echo "Populating tables...\n";
 populateMajors($pdo);
 populateMinors($pdo);
 populateDepartments($pdo);
+populateSemester($pdo);
 
 echo "done\n\n";
+echo "Loading current semester sections...\n";
 
+$mesg = exec("php ingest_sections.php swrprof_202110.xlsx out.tsv");
+echo $mesg;
+
+echo "done\n";
 echo "[DEPLOY SCRIPT COMPLETE]\n";
 
 ?>
