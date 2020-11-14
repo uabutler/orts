@@ -275,3 +275,31 @@ main#termsAndConditions li{
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
+#authenticationNeeded {
+    text-align: center;
+}
+
+#authenticationNeeded button {
+    display: block;
+    background-color: #510c76;
+    border: none;
+    transition: background-color 0.25s linear;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: large;
+    padding: 10px;
+    border-radius: 0.125cm;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#authenticationNeeded button:hover {
+    background-color: #00a8e2;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
