@@ -373,8 +373,9 @@ class Section
   private $crn; // String
 
 
-  function __construct(Course $course, Semester $semester, int $section, string $crn)
+  function __construct(Course $course, Semester $semester, int $section, string $crn, int $id)
   {
+    $this->id = $id;
     $this->course = $course;
     $this->semester = $semester;
     $this->section = $section;
@@ -479,7 +480,7 @@ class Section
 
     if(!$data) return null;
 
-    return new Section($course, $semester, $data['section'], $data['crn']);
+    return new Section($course, $semester, $data['section'], $data['crn'], $data['id']);
   }
 
   public static function getSectionByCrn(Semester $semester, string $crn): ?Section
@@ -496,7 +497,7 @@ class Section
 
     if(!$data) return null;
 
-    return new Section(Course::getCourseById($data['course_id']), $semester, $data['section'], $crn);
+    return new Section(Course::getCourseById($data['course_id']), $semester, $data['section'], $crn, $data['id']);
   }
 
   public static function getSectionById(int $id): ?Section
@@ -511,7 +512,7 @@ class Section
 
     if(!$data) return null;
 
-    return new Section(Course::getCourseById($data['course_id']), Semester::getSemesterById($data['semester_id']), $data['section'], $data['crn']);
+    return new Section(Course::getCourseById($data['course_id']), Semester::getSemesterById($data['semester_id']), $data['section'], $data['crn'], $data['id']);
   }
 }
 
