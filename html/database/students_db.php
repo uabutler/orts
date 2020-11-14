@@ -178,8 +178,8 @@ class Student
     $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
 
     // Insert information about majors and minors
-    add_majors($this->majors, $pdo);
-    add_minors($this->minors, $pdo);
+    $this->add_majors($this->majors, $pdo);
+    $this->add_minors($this->minors, $pdo);
   }
 
   // If the student already exists in the database, this will update their entry with the information from this object
