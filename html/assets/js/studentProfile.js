@@ -123,7 +123,7 @@ $(document).ready(function() {
         gradmonth: $("#gradmonth option:selected").val() + "/" + $("#gradyear").val(),
         majors: selectedMajors,
         minors: selectedMinors,
-        class: $("#class option:selected").val()
+        "class-standing": $("#class option:selected").val()
       }
       console.log(payload);
       return false;

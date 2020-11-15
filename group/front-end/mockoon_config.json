@@ -1,11 +1,11 @@
 {
-    "source": "mockoon:1.10.0",
+    "source": "mockoon:1.11.0",
     "data": [
         {
             "type": "environment",
             "item": {
                 "uuid": "",
-                "lastMigration": 12,
+                "lastMigration": 13,
                 "name": "Override Request API",
                 "endpointPrefix": "api/v1",
                 "latency": 0,
@@ -56,7 +56,8 @@
                                 "disableTemplating": false
                             }
                         ],
-                        "enabled": true
+                        "enabled": true,
+                        "randomResponse": false
                     },
                     {
                         "uuid": "",
@@ -83,7 +84,8 @@
                                 "disableTemplating": false
                             }
                         ],
-                        "enabled": true
+                        "enabled": true,
+                        "randomResponse": false
                     },
                     {
                         "uuid": "",
@@ -110,7 +112,8 @@
                                 "disableTemplating": false
                             }
                         ],
-                        "enabled": true
+                        "enabled": true,
+                        "randomResponse": false
                     },
                     {
                         "uuid": "",
@@ -120,7 +123,7 @@
                         "responses": [
                             {
                                 "uuid": "",
-                                "body": "{ \n\"majors\":\n  [\n    \"Computer Science\",\n    \"Mathematics\",\n    \"Statistics\",\n    \"Photography\"\n  ]\n}",
+                                "body": "{ \n\"majors\":\n  [\n    \"Computer Science\",\n    \"Mathematics\",\n    \"Statistics\"\n  ]\n}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
@@ -132,7 +135,8 @@
                                 "disableTemplating": false
                             }
                         ],
-                        "enabled": true
+                        "enabled": true,
+                        "randomResponse": false
                     },
                     {
                         "uuid": "",
@@ -159,7 +163,8 @@
                                 "disableTemplating": false
                             }
                         ],
-                        "enabled": true
+                        "enabled": true,
+                        "randomResponse": false
                     },
                     {
                         "uuid": "",
@@ -181,7 +186,8 @@
                                 "disableTemplating": false
                             }
                         ],
-                        "enabled": true
+                        "enabled": true,
+                        "randomResponse": false
                     },
                     {
                         "uuid": "",
@@ -208,7 +214,89 @@
                                 "disableTemplating": false
                             }
                         ],
-                        "enabled": true
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "profile",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 0,
+                                "statusCode": 404,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"firstname\": \"Abby\",\n  \"lastname\": \"Example\",\n  \"bannerid\": \"001234567\",\n  \"email\": \"ane1234@truman.edu\",\n  \"gradmonth\": \"05/2021\",\n  \"majors\": [\"Computer Science\", \"Mathematics\"],\n  \"minors\": [\"Statistics\", \"Photography\"],\n  \"class-standing\": \"Junior\"\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [
+                                    {
+                                        "target": "query",
+                                        "modifier": "email",
+                                        "value": "ane1234@truman.edu",
+                                        "isRegex": false
+                                    }
+                                ],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "Update a profile",
+                        "method": "put",
+                        "endpoint": "profile",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "",
+                                "latency": 0,
+                                "statusCode": 204,
+                                "label": "Created",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
                     }
                 ],
                 "proxyMode": false,
