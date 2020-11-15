@@ -50,7 +50,8 @@ class OverrideRequest
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
     $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, status, type, explanation) VALUES (:student_id, :last_modified, :section_id, :status, :type, :explanation)");
     
-    $smt->bindParam(":student_id", OverrideRequest::getStudent()->id, PDO::PARAM_INT); //Does -> -> work?
+    $qwe = OverrideRequest::getStudent()->id;
+    $smt->bindParam(":student_id", $qwe, PDO::PARAM_INT); //Does -> -> work?
     $smt->bindParam(":last_modified", OverrideRequest::getLastModified(), PDO::PARAM_STR);
     $smt->bindParam(":section_id", OverrideRequest::getSection()->id, PDO::PARAM_INT);
     $smt->bindParam(":status", OverrideRequest::getStatus(), PDO::PARAM_STR);
