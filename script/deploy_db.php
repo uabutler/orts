@@ -145,7 +145,7 @@ function createRequestTbl($pdo)
     last_modified datetime NOT NULL,
     section_id int NOT NULL,
     status enum('Received', 'Approved', 'Provisionally Approved', 'Denied', 'Requires Faculty Approval') NOT NULL,
-    type enum('Closed Class', 'Prerequisite', 'Other') NOT NULL,
+    reason enum('Closed Class', 'Prerequisite', 'Other') NOT NULL,
     explanation text,
     FOREIGN KEY (student_id) REFERENCES $student_tbl(id),
     FOREIGN KEY (section_id) REFERENCES $section_tbl(id),
@@ -231,6 +231,7 @@ function populateSemester($pdo)
 /**
  * Script starts here
  */
+
 echo "Connecting to DB\n";
 $pdo = connectDB();
 
