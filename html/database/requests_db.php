@@ -50,10 +50,10 @@ class OverrideRequest
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
     $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, status, type, explanation) VALUES (:student_id, :last_modified, :section_id, :status, :type, :explanation)");
     
-    $qwe = OverrideRequest::getStudent()->id;
+    $qwe = OverrideRequest::getStudent()->getId();
     $smt->bindParam(":student_id", $qwe, PDO::PARAM_INT); //Does -> -> work?
     $smt->bindParam(":last_modified", OverrideRequest::getLastModified(), PDO::PARAM_STR);
-    $smt->bindParam(":section_id", OverrideRequest::getSection()->id, PDO::PARAM_INT);
+    $smt->bindParam(":section_id", OverrideRequest::getSection()->getId(), PDO::PARAM_INT);
     $smt->bindParam(":status", OverrideRequest::getStatus(), PDO::PARAM_STR);
     $smt->bindParam(":type", OverrideRequest::getType(), PDO::PARAM_STR);
     $smt->bindParam(":explanation", OverrideRequest::getExplanation(), PDO::PARAM_STR);
@@ -122,7 +122,7 @@ class OverrideRequest
   	$pdo = connectDB();
     
    $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE id=:request_id LIMIT 1"); 
-   $smt->bindParam(":request_id", $id, PDO:PARAM_INT);  
+   $smt->bindParam(":request_id", $id, PDO::PARAM_INT);  
 	$smt->execute();  
 	    
    $data = $smt->fetch(PDO::FETCH_ASSOC);
@@ -161,5 +161,5 @@ class OverrideRequest
 $me = Student::buildStudent('mmk9999', 'Michael', 'Kuan', '123456780', '202060', 'Freshman', array(1), array(2));
 $sec = Section::getSectionById(1);
 $ob = OverrideRequest::buildRequest($me, $sec, OverrideRequest::listStatuses()[1], OverrideRequest::listOverrideTypes()[0], 'testexplanation');
-$ob.OverrideRequest::storeInDB();
+$ob -> storeInDB();
 ?>
