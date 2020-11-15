@@ -95,21 +95,21 @@ class OverrideRequest
   public static function getStudentRequests(Student $student) : array
   {
 	 global $request_tbl;
-    $pdo = connectDB();
+  	$pdo = connectDB();
+   
+	$smt = $pdo->prepare("SELECT * FROM $request_tbl");   
+	$smt->execute();   
+   
+   $requestsList = $smt->fetchAll();
+   $returnList = array();
 
-    $smt = $pdo->prepare("SELECT * FROM $student_table INNER JOIN $request_tbl ON $request_tbl.student_id = $student_tbl.id INNER JOIN $section_tbl ON $request_tbl.section_id = $request_tbl.id WHERE student_id=:student_id");
-    $smt->bindParam(":student_id", $student->$id, PDO::PARAM_INT);
-    $smt->execute();
-    
-    $requestsList = $smt->fetchAll();
-    $returnList = array();
-    foreach ($requestsList as $row){
-		$request = new OverrideRequest($row);
+  	foreach ($requestsList as $row){
+   	$section = getSectionById($row['section_id']);
+		$request = new OverrideRequest($student, $section, $row['last_modified'], $row['status'], $row['type'], $row['explanation']);
 		array_push($returnList, $request);
-    }
+   }
     
-    //$out = new OverrideRequest($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $majors, $minors, $data['id']);
-    return $returnList;
+   return $returnList;
   }
   
   /**
@@ -119,13 +119,16 @@ class OverrideRequest
   {
   	global $request_tbl;
   	$pdo = connectDB();
-  	
-  	 $smt = $pdo->prepare("SELECT * FROM $student_table INNER JOIN $request_tbl ON $request_tbl.student_id = $student_tbl.id INNER JOIN $section_tbl ON $request_tbl.section_id = $request_tbl.id WHERE section_id=:section_id");
-    $smt->bindParam(":section_id", $section->$id, PDO::PARAM_INT);
-    $smt->execute();
+    
+   $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE id=:request_id LIMIT 1"); 
+   $smt->bindParam(":request_id", $id, PDO:PARAM_INT);  
+	$smt->execute();  
 	    
    $data = $smt->fetch(PDO::FETCH_ASSOC);
-   return new OverrideRequest($data); 
+   
+   $student = getStudentById($data['student_id']);
+   $section = getSectionById($data['section_id']);
+	return new OverrideRequest($student, $section, $row['last_modified'], $row['status'], $row['type'], $row['explanation']);
   }
   
   /**
@@ -135,18 +138,19 @@ class OverrideRequest
   {
   	global $request_tbl;
   	$pdo = connectDB();
-  	
-  	$smt = $pdo->prepare("SELECT * FROM $student_table INNER JOIN $request_tbl ON $request_tbl.student_id = $student_tbl.id INNER JOIN $section_tbl ON $request_tbl.section_id = $request_tbl.id");
-   $smt->execute();
+   
+	$smt = $pdo->prepare("SELECT * FROM $request_tbl");   
+	$smt->execute();   
    
    $requestsList = $smt->fetchAll();
    $returnList = array();
    foreach ($requestsList as $row){
-		$request = new OverrideRequest($row);
+   	$student = getStudentById($row['student_id']);
+   	$section = getSectionById($row['section_id']);
+		$request = new OverrideRequest($student, $section, $row['last_modified'], $row['status'], $row['type'], $row['explanation']);
 		array_push($returnList, $request);
    }
     
-   //$out = new OverrideRequest($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $majors, $minors, $data['id']);
    return $returnList;
   }
   
