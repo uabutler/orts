@@ -50,12 +50,13 @@ class OverrideRequest
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
     $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, status, type, explanation) VALUES (:student_id, :last_modified, :section_id, :status, :type, :explanation)");
     
-    $smt->bindParam(":student_id", $this->student->id, PDO::PARAM_INT); //Does -> -> work?
-    $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
-    $smt->bindParam(":section_id", $this->section->id, PDO::PARAM_INT);
-    $smt->bindParam(":status", $this->status, PDO::PARAM_STR);
-    $smt->bindParam(":type", $this->type, PDO::PARAM_STR);
-    $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
+    $qwe = OverrideRequest::getStudent()->id;
+    $smt->bindParam(":student_id", $qwe, PDO::PARAM_INT); //Does -> -> work?
+    $smt->bindParam(":last_modified", OverrideRequest::getLastModified(), PDO::PARAM_STR);
+    $smt->bindParam(":section_id", OverrideRequest::getSection()->id, PDO::PARAM_INT);
+    $smt->bindParam(":status", OverrideRequest::getStatus(), PDO::PARAM_STR);
+    $smt->bindParam(":type", OverrideRequest::getType(), PDO::PARAM_STR);
+    $smt->bindParam(":explanation", OverrideRequest::getExplanation(), PDO::PARAM_STR);
   
     $smt->execute();
   }
@@ -79,7 +80,7 @@ class OverrideRequest
   {
 	$time = gmmktime();
     $now = date("Y-m-d H:i:s", $time);
-    if(in_array($status, listStatuses()) && in_array(type, listOverrideTypes()))
+    if(in_array($status, OverrideRequest::listStatuses()) && in_array($type, OverrideRequest::listOverrideTypes()))
     {
       return new OverrideRequest($student, $section, $now, $status, $type, $explanation);
 	}
@@ -157,9 +158,8 @@ class OverrideRequest
 }
 
 //TESTING
-$me = Student::buildStudent('mmk5213', 'Micah', 'Kuan', '123456789', '202060', 'Freshman', array(1), array(2));
-$me.Student::insertDB();
-//$sec = Section::getSectionById(1);
-//$ob = buildRequest($me, $sec, listStatuses()[1], listOverrideTypes()[0], 'testexplanation');
-//$ob.addToDB();
+$me = Student::buildStudent('mmk9999', 'Michael', 'Kuan', '123456780', '202060', 'Freshman', array(1), array(2));
+$sec = Section::getSectionById(1);
+$ob = OverrideRequest::buildRequest($me, $sec, OverrideRequest::listStatuses()[1], OverrideRequest::listOverrideTypes()[0], 'testexplanation');
+$ob.OverrideRequest::storeInDB();
 ?>

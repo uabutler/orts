@@ -178,8 +178,8 @@ class Student
     $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
 
     // Insert information about majors and minors
-    add_majors($this->majors, $pdo);
-    add_minors($this->minors, $pdo);
+    $this->add_majors($this->majors, $pdo);
+    $this->add_minors($this->minors, $pdo);
   }
 
   // If the student already exists in the database, this will update their entry with the information from this object
@@ -239,7 +239,7 @@ class Student
    */
   public function storeInDB()
   {
-    // The id is set only when the student is already in the databse
+    // The id is set only when the student is already in the database
     if(is_null($this->id))
       $this->insertDB();
     else
