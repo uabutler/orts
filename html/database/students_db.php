@@ -239,7 +239,7 @@ class Student
    */
   public function storeInDB()
   {
-    // The id is set only when the student is already in the databse
+    // The id is set only when the student is already in the database
     if(is_null($this->id))
       $this->insertDB();
     else
