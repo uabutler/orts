@@ -38,7 +38,7 @@ class OverrideRequest
   public function getSection()      { return $this->section; }
   public function getLastModified() { return $this->last_modified; }
   public function getStatus()       { return $this->status; }
-  public function getReason()         { return $this->reason; }
+  public function getReason()       { return $this->reason; }
   public function getExplanation()  { return $this->explanation; }
 
   public function storeInDB()
@@ -50,10 +50,11 @@ class OverrideRequest
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
     $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, status, reason, explanation) VALUES (:student_id, :last_modified, :section_id, :status, :reason, :explanation)");
     
-    $qwe = OverrideRequest::getStudent()->getId();
-    $smt->bindParam(":student_id", $qwe, PDO::PARAM_INT); //Does -> -> work?
+    $studentid = OverrideRequest::getStudent()->getId();
+    $sectionid = OverrideRequest::getSection()->getId();
+    $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
     $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
-    $smt->bindParam(":section_id", $qwe, PDO::PARAM_INT);
+    $smt->bindParam(":section_id", $sectionid, PDO::PARAM_INT);
     $smt->bindParam(":status", $this->status, PDO::PARAM_STR);
     $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
     $smt->bindParam(":explanation", $this->explaination, PDO::PARAM_STR);
