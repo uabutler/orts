@@ -99,12 +99,12 @@ $(document).ready(function() {
           BASE_URL+"/courses",
           {
             type: "get",
-            data: JSON.stringify({
+            data: {
               department: $("#department").val(),
               number: parseInt($("#classnumber").val()),
               section: parseInt($("#sectionnumber").val()),
               semester: $("#semester").val()
-            }),
+            },
             success: function(data, status, xhr){
               data = $.parseJSON(data);
               $("#crn").val(data.crn);
