@@ -97,4 +97,19 @@ $(document).ready(function() {
       $("#crn, #classtitle").val(null);
     }
   });
+
+  /**
+   * Validator method to not equal a value
+   */
+  $.validator.addMethod("valueNotEquals", function(value, element, arg) {
+    return arg !== value;
+  }, "Value must not equal arg.");
+
+  $("#requestForm").validate({
+    rules: {},
+    messages: {},
+    submitHandler: function(form, event){
+      
+    }
+  })
 });
