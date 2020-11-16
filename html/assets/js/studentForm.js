@@ -145,7 +145,8 @@ $(document).ready(function() {
       $.ajax({
           method: "POST",
           url: BASE_URL+"/requests",
-          data: {
+          contentType: "application/json",
+          data: JSON.stringify({
             "last-name": "", //TODO
             "first-name": "", //TODO
             "grad-month": "", //TODO
@@ -160,7 +161,7 @@ $(document).ready(function() {
             "major": "", //TODO
             "minor": "", //TODO
             "explanation": $("#explanation").val()
-          },
+          }),
           complete: function(request, status){
             if (request.status == 201){
               dismissible.success("Request Created Successfully");
