@@ -280,12 +280,40 @@
                                 "uuid": "",
                                 "body": "",
                                 "latency": 0,
-                                "statusCode": 204,
+                                "statusCode": 200,
                                 "label": "Created",
                                 "headers": [
                                     {
                                         "key": "Content-Type",
                                         "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "semesters",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"semesters\": [\"Spring 2021\"]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
                                     }
                                 ],
                                 "filePath": "",

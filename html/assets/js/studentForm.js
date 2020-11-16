@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  const dismissible = new Dismissible(document.querySelector('#dismissible-container'));
   $("#crn, #classtitle").val(null);
   /* Load Semesters */
   $.ajax(
@@ -18,10 +19,9 @@ $(document).ready(function() {
         $("#semester").prop("disabled", false);
         $("#semesterLoading").css("display", "none");
       },
-      failure: function(data, status, xhr){
-        data = $.parseJSON(data);
-        //TODO
-        console.log("status: " + status + "; data: " + data);
+      error: function(request, status, error){
+        var data = $.parseJSON(request.responseText);
+        dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
       }
     }
   );
@@ -43,10 +43,9 @@ $(document).ready(function() {
         $("#department").prop("disabled", false);
         $("#departmentLoading").css("display", "none");
       },
-      failure: function(data, status, xhr){
-        data = $.parseJSON(data);
-        //TODO
-        console.log("status: " + status + "; data: " + data);
+      error: function(request, status, error){
+        var data = $.parseJSON(request.responseText);
+        dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
       }
     }
   );
@@ -68,10 +67,9 @@ $(document).ready(function() {
           $("#type").prop("disabled", false);
           $("#typeLoading").css("display", "none");
         },
-        failure: function(data, status, xhr){
-          data = $.parseJSON(data);
-          //TODO
-          console.log("status: " + status + "; data: " + data);
+        error: function(request, status, error){
+          var data = $.parseJSON(request.responseText);
+          dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
         }
       }
     );
@@ -113,10 +111,9 @@ $(document).ready(function() {
               $("#classtitle").val(data.title);
               $("#crnLoading, #titleLoading").css("display", "none");
             },
-            failure: function(data, status, xhr){
-              data = $.parseJSON(data);
-              //TODO
-              console.log("status: " + status + "; data: " + data);
+            error: function(request, status, error){
+              var data = $.parseJSON(request.responseText);
+              dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
             }
           }
         );
@@ -132,11 +129,49 @@ $(document).ready(function() {
     return arg !== value;
   }, "Value must not equal arg.");
 
-  $("#requestForm").validate({
+  var validator = $("#requestForm").validate({
     rules: {},
     messages: {},
     submitHandler: function(form, event){
-      
+      event.preventDefault();
+
+      // Collect Override Types
+      var selectedTypes = [];
+      $("#type option:selected").each(function(){
+        selectedTypes.push($(this).val());
+      });
+
+      // Make request
+      $.ajax({
+          method: "POST",
+          url: BASE_URL+"/requests",
+          data: {
+            "last-name": "", //TODO
+            "first-name": "", //TODO
+            "grad-month": "", //TODO
+            "banner-id": "", //TODO
+            "crn": $("#crn").val(),
+            "department": $("#department").val(),
+            "class-number": $("#classnumber").val(),
+            "class-standing": "", //TODO
+            "semester": $("#semester").val(),
+            "types": selectedTypes,
+            "email": getCookie("userEmail"),
+            "major": "", //TODO
+            "minor": "", //TODO
+            "explanation": $("#explanation").val()
+          },
+          complete: function(request, status){
+            if (request.status == 201){
+              dismissible.success("Request Created Successfully");
+              form.reset();
+              $('.select2').val(null).trigger('change');
+            } else {
+              var data = $.parseJSON(request.responseText);
+              dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
+            }
+          }
+        });
     }
   })
 });

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+  const dismissible = new Dismissible(document.querySelector('#dismissible-container'));
   /* Load Majors */
   $.ajax(
     BASE_URL+"/majors",
@@ -18,10 +18,9 @@ $(document).ready(function() {
         $("#majors").prop("disabled", false);
         $("#majorsLoading").css("display", "none");
       },
-      failure: function(data, status, xhr){
-        data = $.parseJSON(data);
-        //TODO
-        console.log("status: " + status + "; data: " + data);
+      error: function(request, status, error){
+        var data = $.parseJSON(request.responseText);
+        dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
       }
     }
   );
@@ -44,10 +43,9 @@ $(document).ready(function() {
         $("#minors").prop("disabled", false);
         $("#minorsLoading").css("display", "none");
       },
-      failure: function(data, status, xhr){
-        data = $.parseJSON(data);
-        //TODO
-        console.log("status: " + status + "; data: " + data);
+      error: function(request, status, error){
+        var data = $.parseJSON(request.responseText);
+        dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
       }
     }
   );

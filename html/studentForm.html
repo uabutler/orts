@@ -14,6 +14,10 @@
     <!-- Modal -->
     <script src="assets/js/jquery.modal.min.js"></script>
     <link rel="stylesheet" href="assets/css/jquery.modal.min.css">
+    <!-- Dismissible -->
+    <link href="https://cdn.lineicons.com/2.0/LineIcons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/dismissible.css">
+    <script src="assets/js/dismissible.js"></script>
     <!-- Local JS -->
     <script src="assets/js/common.js"></script>
     <script src="assets/js/studentForm.js"></script>
@@ -36,19 +40,20 @@
     </header>
     <main>
         <h2>Override Request Form</h2>
+        <div id="dismissible-container"></div>
         <section id="requestedCourse">
             <form action="" id="requestForm">
                 <div class="formElement">
                     <label for="semester">Semester:  </label>
-                    <select name="semester" id="semester">
-                        <option value="zzzdefault">&nbsp;</option>
+                    <select disabled name="semester" id="semester">
+                        <option value="zzzdefault" selected>&nbsp;</option>
                     </select>
                     <span id="semesterLoading">Loading...</span>
                 </div>
                 <div class="formElement">
                     <label for="department">Department: </label>
-                    <select name="department" id="department">
-                            <option value="zzzdefault">&nbsp;</option>
+                    <select disabled name="department" id="department">
+                            <option value="zzzdefault" selected>&nbsp;</option>
                     </select>
                         <span id="departmentLoading">Loading...</span>
                 </div>
@@ -72,7 +77,7 @@
                 </div>
                 <div class="formElement">
                     <label for="type">Type(s) of Request: </label>
-                    <select name="type" id="type" class="select2" multiple required>
+                    <select disabled name="type" id="type" class="select2" multiple required>
                         </select>
                     <span id="typeLoading">Loading...</span>
                 </div>
@@ -87,7 +92,7 @@
                     <input type="checkbox" name="terms" id="terms" required><label for="terms">I have read and agree to the <a href="overrideRequestTermsAndConditions.html" rel="modal:open">Terms and Conditions</a> and understand all fees that may apply.</label>
                 </div>
                 <div class="formElement">
-                    <input type="submit" value="Submit" disabled>
+                    <input type="submit" value="Submit">
                 </div>
 
             </form>
