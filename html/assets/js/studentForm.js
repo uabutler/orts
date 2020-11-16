@@ -1,5 +1,30 @@
 $(document).ready(function() {
   $("#crn, #classtitle").val(null);
+  /* Load Semesters */
+  $.ajax(
+    BASE_URL+"/semesters",
+    {
+      success: function(data, status, xhr){
+        data = $.parseJSON(data);
+        $(data.semesters).each(function(){
+          $("#semester").append("<option value='" + this + "'>" + this + "</option>");
+        });
+        // Sort reasons
+        var select = $('#semester');
+        select.html(select.find('option').sort(function(x, y) {
+          // to change to descending order switch "<" for ">"
+          return $(x).text() > $(y).text() ? 1 : -1;
+        }));
+        $("#semester").prop("disabled", false);
+        $("#semesterLoading").css("display", "none");
+      },
+      failure: function(data, status, xhr){
+        data = $.parseJSON(data);
+        //TODO
+        console.log("status: " + status + "; data: " + data);
+      }
+    }
+  );
   /* Load Departments */
   $.ajax(
     BASE_URL+"/departments",
@@ -64,8 +89,9 @@ $(document).ready(function() {
   $('.select2').val(null).trigger('change');
 
   // Deal with loading CRN and Title
-  $("#department, #classnumber, #sectionnumber").change(function(){
-    if($("#department").val() != "zzzdefault" && 
+  $("#semester, #department, #classnumber, #sectionnumber").change(function(){
+    if($("#semester").val() != "zzzdefault" && 
+       $("#department").val() != "zzzdefault" && 
        $("#classnumber").val() != "" &&
        $("#sectionnumber").val() != ""){
          $("#crnLoading, #titleLoading").css("display", "inline");
@@ -78,7 +104,8 @@ $(document).ready(function() {
             data: JSON.stringify({
               department: $("#department").val(),
               number: parseInt($("#classnumber").val()),
-              section: parseInt($("#sectionnumber").val())
+              section: parseInt($("#sectionnumber").val()),
+              semester: $("#semester").val()
             }),
             success: function(data, status, xhr){
               data = $.parseJSON(data);
