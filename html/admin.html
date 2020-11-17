@@ -34,7 +34,8 @@
         <a href="admin.html" class="currentPage">Administrator Dashboard</a>
         <a href="" class="right">Log Out</a>
         <a href="adminProfile.html" class="right">Profile</a>
-        <div class="right navTitle" id="userName">Diane Sandefur</div>
+        <div class="right navTitle" id="userName"></div>
+        <script>document.getElementById("userName").textContent = getCookie("userName");</script>
       </nav>
     </header>
     <main id="adminPage">
