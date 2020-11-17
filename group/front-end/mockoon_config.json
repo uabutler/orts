@@ -79,7 +79,14 @@
                                 ],
                                 "filePath": "",
                                 "sendFileAsBody": false,
-                                "rules": [],
+                                "rules": [
+                                    {
+                                        "target": "header",
+                                        "modifier": "Content-Type",
+                                        "value": "application/json",
+                                        "isRegex": false
+                                    }
+                                ],
                                 "rulesOperator": "OR",
                                 "disableTemplating": false
                             }
@@ -174,7 +181,7 @@
                         "responses": [
                             {
                                 "uuid": "",
-                                "body": "{\"departments\":[\"CS\", \"MATH\", \"STAT\"]}",
+                                "body": "{\"departments\":[\"CS\", \"MATH\", \"STAT\", \"JINS\", \"TRU\"]}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
