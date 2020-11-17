@@ -1,3 +1,8 @@
 # Ignore machine-specific front-end configuration
 # See README.md for more
 html/config.js
+
+.DS_Store
+.Rhistory
+*~
+*.bak

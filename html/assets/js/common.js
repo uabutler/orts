@@ -62,7 +62,7 @@ function clearCookie(name) {
   document.cookie = encodeURIComponent(name) + "="
 }
 
-$(document).ready(function () {document.getElementById("userName").textContent = "greetings, " + getCookie("userName");})
+$(document).ready(function () {document.getElementById("userName").textContent = getCookie("userName");})
 
 // MOCK; REMOVE FOR PRODUCTION
 setCookie("userName", "Abby Example");
