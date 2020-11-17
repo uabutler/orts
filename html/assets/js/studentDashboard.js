@@ -20,7 +20,10 @@ $(document).ready(function() {
         columnDefs: [
             {
                 targets: 0,
-                data: "status"
+                data: "status",
+                render: function(data, type, row){
+                    return "<i></i><span class='statusText'>" + data + "</span>";
+                }
             },
             {
                 targets: 1,
@@ -52,6 +55,7 @@ $(document).ready(function() {
         ]
     }); // var activetable
 
+    /*
     var archiveTable = $("#studentArchivedRequestsTable").DataTable({
         dom: "lfrt",
         paging: false,
@@ -63,7 +67,10 @@ $(document).ready(function() {
         columnDefs: [
             {
                 targets: 0,
-                data: "status"
+                data: "status",
+                render: function(data, type, row){
+                    return "<i></i><span class='statusText'>" + data + "</span>";
+                }
             },
             {
                 targets: 1,
@@ -94,6 +101,6 @@ $(document).ready(function() {
             [1, "desc"]
         ]
     }); // var archivetable
-
+    */
     
 }); // document ready

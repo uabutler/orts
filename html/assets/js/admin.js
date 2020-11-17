@@ -36,7 +36,10 @@ $(document).ready(function() {
             },
             {
                 targets: 1,
-                data: "status"
+                data: "status",
+                render: function(data, type, row){
+                    return "<i></i><span class='statusText'>" + data + "</span>";
+                }
             },
             {
                 targets: 2,
