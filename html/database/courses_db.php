@@ -141,7 +141,7 @@ class Course
     $this->course_num = $course_num;
   }
 
-  public function setTitle(int $title)
+  public function setTitle(title $title)
   {
     $this->title = $title;
   }
@@ -463,7 +463,7 @@ class Section
   {
     return new Section($course, $semester, $section, $crn);
   }
-  
+
   public static function getSection(Course $course, Semester $semester, int $section): ?Section
   {
     global $section_tbl;
