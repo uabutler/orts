@@ -130,8 +130,18 @@ $(document).ready(function() {
   }, "Value must not equal arg.");
 
   var validator = $("#requestForm").validate({
-    rules: {},
-    messages: {},
+    rules: {
+      semester: {
+        valueNotEquals: "zzzdefault"
+      },
+      classnumber: {
+        min: 0,
+        max: 499
+      }
+    },
+    messages: {
+      semester: "Please select a semester."
+    },
     submitHandler: function(form, event){
       event.preventDefault();
 
