@@ -56,7 +56,7 @@
                         <li><code>department : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing department with the given department name.
+                    <td class="tg-0lax">This method searches the database for an existing department with the given department name.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getDepartmentById</code></td>
@@ -92,12 +92,11 @@
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>setDept</code></td>
-                    <td class="tg-0lax params">
-                    </td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax params"><code>department : string</code></td>
+                    <td class="tg-0lax">Must be a department name eg:"CS" or "MATH"</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">array</td>
+                    <td class="tg-0lax"><code>array</code></td>
                     <td class="tg-0lax"><code>listDepartments</code></td>
                     <td class="tg-0lax params">
                     </td>
@@ -107,7 +106,7 @@
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>storeInDB</code></td>
                     <td class="tg-0lax params">
-                    <td class="tg-0lax">If this is a newly created department object (made using buildDepartment()) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
+                    <td class="tg-0lax">If this is a newly created department object (made using <code>buildDepartment()</code>) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
                   </tr>
                 </tbody>
                 </table>
@@ -150,7 +149,7 @@
                         <li><code>course_num : int</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing course with the given <code>Department</code> and course number and returns the courese.
+                    <td class="tg-0lax">This method searches the database for an existing course with the given <code>Department</code> and course number and returns the course.
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getCourseById</code></td>
@@ -159,7 +158,7 @@
                         <li><code>id : int</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing course with the given course number.</td>
+                    <td class="tg-0lax">This method searches the database for an existing course with the given course id.</td>
                   </tr>
                 </tbody>
                 </table>
@@ -191,7 +190,7 @@
                     <td class="tg-0lax">
                   </tr>
                   <tr>
-                    <td class="tg-0lax">int</td>
+                    <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getCourseNum</code></td>
                     <td class="tg-0lax params">
                     </td>
@@ -206,19 +205,19 @@
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setDepartment</code></td>
-                    <td class="tg-0lax params">department : Department</td>
+                    <td class="tg-0lax params"><code>department : Department</code></td>
                     <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCourseNum</code></td>
-                    <td class="tg-0lax params">course_num : int</td>
+                    <td class="tg-0lax params"><code>course_num : int</code></td>
                     <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setTitle</code></td>
-                    <td class="tg-0lax params">title : string</td>
+                    <td class="tg-0lax params"><code>title : string</code></td>
                     <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
@@ -262,7 +261,7 @@
                         <li><code>description : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing semester with the given description.
+                    <td class="tg-0lax">This method searches the database for an existing semester with the given <code>description</code>.
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSemesterByCode</code></td>
@@ -321,13 +320,13 @@
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>setSemesterCode</code></td>
-                    <td class="tg-0lax params">string : semester</td>
+                    <td class="tg-0lax params"><code>string : semester</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>setDescription</code></td>
-                    <td class="tg-0lax params">string : description</td>
+                    <td class="tg-0lax params"><code>string : description</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
@@ -389,7 +388,7 @@
                         <li><code>semeter : Semester</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing section with the given crn and Semster.
+                    <td class="tg-0lax">This method searches the database for an existing section with the given <code>crn</code> and <code>Semester</code>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSectionById</code></td>
@@ -451,25 +450,25 @@
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCourse</code></td>
-                    <td class="tg-0lax params">course : Course</td>
+                    <td class="tg-0lax params"><code>course : Course</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setSemster</code></td>
-                    <td class="tg-0lax params">semester : Semester</td>
+                    <td class="tg-0lax params"><code>semester : Semester</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCrn</code></td>
-                    <td class="tg-0lax params">crn : string</td>
+                    <td class="tg-0lax params"><code>crn : string</code></td>
                     <td class="tg-0lax">Must be string with four characters</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setSectionNum</code></td>
-                    <td class="tg-0lax params">section : int</td>
+                    <td class="tg-0lax params"><code>section : int</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
