@@ -1,6 +1,6 @@
 $(document).ready(function() {
   const dismissible = new Dismissible(document.querySelector('#dismissible-container'));
-  const profile;
+  var profile;
   $("#crn, #classtitle").val(null);
 
   /* Load Profile */
