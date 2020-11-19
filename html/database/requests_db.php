@@ -5,6 +5,7 @@ include_once 'students_db.php';
 
 class OverrideRequest
 {
+  public $id;
   public $student;
   public $section;
   public $last_modified;
@@ -12,8 +13,9 @@ class OverrideRequest
   public $reason;
   public $explanation;
   
-  function __construct(Student $student, Section $section, string $last_modified, string $status, string $reason, string $explanation)
+  function __construct(Student $student, Section $section, string $last_modified, string $status, string $reason, string $explanation, int $id=null)
   {
+    $this->id = $id;
     $this->student = $student;
     $this->section = $section;
     $this->last_modified = $last_modified;
@@ -34,6 +36,7 @@ class OverrideRequest
   } 
   */
   
+  public function getId()           { return $this->id; }
   public function getStudent()      { return $this->student; }
   public function getSection()      { return $this->section; }
   public function getLastModified() { return $this->last_modified; }
@@ -60,6 +63,8 @@ class OverrideRequest
     $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
      
     $smt->execute();
+
+    $this->id = $pdo->lastInsertId();
   }
   
   public static function listStatuses()
@@ -104,7 +109,7 @@ class OverrideRequest
   	foreach ($requestsList as $row)
     {
       $section = Section::getSectionById($row['section_id']);
-      $request = new OverrideRequest($student, $section, $row['last_modified'], $row['status'], $row['reason'], $row['explanation']);
+      $request = new OverrideRequest($student, $section, $row['last_modified'], $row['status'], $row['reason'], $row['explanation'], $row['id']);
       array_push($returnList, $request);
     }
     
@@ -127,7 +132,7 @@ class OverrideRequest
    
     $student = Student::getStudentById($data['student_id']);
     $section = Section::getSectionById($data['section_id']);
-	 return new OverrideRequest($student, $section, $data['last_modified'], $data['status'], $data['reason'], $data['explanation']);
+    return new OverrideRequest($student, $section, $data['last_modified'], $data['status'], $data['reason'], $data['explanation'], $data['id']);
   }
   
   /**
@@ -147,7 +152,7 @@ class OverrideRequest
     {
       $student = Student::getStudentById($row['student_id']);
       $section = Section::getSectionById($row['section_id']);
-      $request = new OverrideRequest($student, $section, $row['last_modified'], $row['status'], $row['reason'], $row['explanation']);
+      $request = new OverrideRequest($student, $section, $row['last_modified'], $row['status'], $row['reason'], $row['explanation'], $row['id']);
       array_push($returnList, $request);
     }
     
@@ -155,11 +160,5 @@ class OverrideRequest
   }
   
 }
-
-//TESTING
-/*$me = Student::getStudent('mmk9999');
-$sec = Section::getSectionById(66);
-$ob = OverrideRequest::buildRequest($me, $sec, OverrideRequest::listStatuses()[1], OverrideRequest::listOverrideReasons()[0], 'testexplanations_bla_bla');
-$ob->storeInDB();*/
 
 ?>

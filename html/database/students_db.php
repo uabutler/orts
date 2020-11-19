@@ -1,6 +1,8 @@
 <?php
 include_once 'common_db.php';
+include_once 'courses_db.php';
 // TODO: Data validation on constructor and setters
+// TODO: Last semester
 // TODO: Error-handling
 
 /**
@@ -17,18 +19,20 @@ class Student
   private $standing;
   private $majors;
   private $minors;
+  private $last_active_sem;
 
   private function __construct(string $email, string $first_name, string $last_name, string $banner_id,
-    string $grad_month, string $standing, array $majors, array $minors, int $id=null)
+    string $grad_month, string $standing, array $majors, array $minors, Semester $last_active_sem=null, int $id=null)
   {
     $this->email = $email;
     $this->first_name = $first_name;
     $this->last_name = $last_name;
     $this->banner_id = $banner_id;
     $this->grad_month = $grad_month;
+    $this->standing = $standing;
     $this->majors = $majors;
     $this->minors = $minors;
-    $this->standing = $standing;
+    $this->last_active_sem = $last_active_sem;
     $this->id = $id;
   }
 
@@ -44,6 +48,7 @@ class Student
   public function getStanding() { return $this->standing; }
   public function getMajors() { return $this->majors; }
   public function getMinors() { return $this->minors; }
+  public function getLastActiveSem() { return $this->last_active_sem; }
 
   /**
    * Setters
@@ -172,10 +177,7 @@ class Student
     $smt->execute();
 
     // get the newly created ID
-    $smt = $pdo->prepare("SELECT id FROM $student_tbl WHERE email=:email");
-    $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
-    $smt->execute();
-    $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
+    $this->id = $pdo->lastInsertId();
 
     // Insert information about majors and minors
     $this->add_majors($this->majors, $pdo);

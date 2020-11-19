@@ -42,10 +42,7 @@ class Department
     $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
     $smt->execute();
 
-    $smt = $pdo->prepare("SELECT id FROM $department_tbl WHERE department=:department");
-    $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
-    $smt->execute();
-    $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
+    $this->id = $pdo->lastInsertId();
   }
 
   private function updateDB()
@@ -158,11 +155,7 @@ class Course
     $smt->bindParam(":title", $this->title, PDO::PARAM_STR);
     $smt->execute();
 
-    $smt = $pdo->prepare("SELECT id FROM $course_tbl WHERE department_id=:department_id AND course_num=:course_num");
-    $smt->bindParam(":department_id", $department_id, PDO::PARAM_INT);
-    $smt->bindParam(":course_num", $this->course_num, PDO::PARAM_INT);
-    $smt->execute();
-    $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
+    $this->id = $pdo->lastInsertId();
   }
 
   private function updateDB()
@@ -236,10 +229,13 @@ class Semester
   private $id;
   private $semester;
   private $description;
+  private $active;
 
   public function getId() { return $this->id; }
   public function getSemesterCode() { return $this->semester; }
   public function getDescription() { return $this->description; }
+  // TODO: Add to doc
+  public function isActive() { return $this->active; }
 
   /**
    * Setters
@@ -254,6 +250,33 @@ class Semester
     $this->description = $description;
   }
 
+  // TODO: Add to doc
+  public function setActive(boolean $active)
+  {
+    $this->active = $active;
+  }
+
+  // TODO: Add to doc
+  public static function listActiveSemesters(): array
+  {
+    global $semester_tbl;
+    $pdo = connectDB();
+
+    $smt = $pdo->query("SELECT * FROM $semester_tbl WHERE active=true");
+
+    $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+    // TODO: Ensure this is the convention for all list functions
+    if(!$data) return [];
+
+    $out = [];
+
+    foreach($data as $row)
+      array_push(new Semester(new Semester($row['semester'], $row['description'], $row['id'])));
+
+    return $out;
+  }
+
   private function __construct(string $semester, string $description, int $id=null)
   {
     $this->id = $id;
@@ -261,14 +284,8 @@ class Semester
     $this->description = $description;
   }
 
-  public static function activeSemester(): Semester
-  {
-    // TODO
-  }
-
   private function insertDB()
   {
-    // TODO: exactly one item is active
     global $semester_tbl;
     $pdo = connectDB();
 
@@ -277,10 +294,7 @@ class Semester
     $smt->bindParam(":description", $this->description, PDO::PARAM_STR);
     $smt->execute();
 
-    $smt = $pdo->prepare("SELECT id FROM $semester_tbl WHERE semester=:semester");
-    $smt->bindParam(":semester", $this->semester, PDO::PARAM_STR);
-    $smt->execute();
-    $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
+    $this->id = $pdo->lastInsertId();
   }
 
   private function updateDB()
@@ -373,7 +387,7 @@ class Section
   private $crn; // String
 
 
-  function __construct(Course $course, Semester $semester, int $section, string $crn, int $id)
+  function __construct(Course $course, Semester $semester, int $section, string $crn, int $id=null)
   {
     $this->id = $id;
     $this->course = $course;
@@ -422,12 +436,7 @@ class Section
     $smt->bindParam(":crn", $this->crn, PDO::PARAM_STR);
     $smt->execute();
 
-    $smt = $pdo->prepare("SELECT id FROM $section_tbl WHERE course_id=:course_id AND semester_id=:semester_id AND section=:section LIMIT 1");
-    $smt->bindParam(":course_id", $course_id, PDO::PARAM_INT);
-    $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
-    $smt->bindParam(":section", $section, PDO::PARAM_INT);
-    $smt->execute();
-    $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
+    $this->id = $pdo->lastInsertId();
   }
 
   private function updateDB()
@@ -468,8 +477,8 @@ class Section
   {
     global $section_tbl;
     $pdo = connectDB();
-    $course_id = $this->course->getId();
-    $semester_id = $this->semester->getId();
+    $course_id = $course->getId();
+    $semester_id = $semester->getId();
     $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE course_id=:course_id AND semester_id=:semester_id AND section=:section LIMIT 1");
     $smt->bindParam(":course_id", $course_id, PDO::PARAM_INT);
     $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
@@ -487,10 +496,10 @@ class Section
   {
     global $section_tbl;
     $pdo = connectDB();
-    $semester_id = $this->semester->getId();
+    $semester_id = $semester->getId();
     $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE semester_id=:semester_id AND crn=:crn LIMIT 1");
     $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
-    $smt->bindParam(":crn", $crn, PDO::PARAM_INT);
+    $smt->bindParam(":crn", $crn, PDO::PARAM_STR);
     $smt->execute();
 
     $data = $smt->fetch(PDO::FETCH_ASSOC);
