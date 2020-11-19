@@ -185,7 +185,9 @@ $(document).ready(function() {
       classnumber: "Not a valid class number.",
       sectionnumber: "Not a valid section.",
       crn: "CRN is invalid.",
-      explanation: "Please shorten your explanation. Character limit is 65,535.",
+      explanation: {
+        maxlength: "Please shorten your explanation. Character limit is 65,535."
+      },
       terms: "You must agree to the Terms and Conditions."
     },
 
