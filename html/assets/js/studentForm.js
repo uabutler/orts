@@ -95,18 +95,6 @@ $(document).ready(function() {
       }
     );
 
-  $("#type").select2({
-    multiple: true,
-    closeOnSelect: true,
-    width: 'auto',
-    dropdownAutoWidth: 'true'
-  });
-
-  //initially clear select otherwise first option is selected
-  // can also set default value(s) here
-  // ex .val(["2020-08", "2020-07"])
-  $('.select2').val(null).trigger('change');
-
   // Deal with loading CRN and Title
   $("#semester, #department, #classnumber, #sectionnumber").change(function(){
     if($("#semester").val() != "zzzdefault" && 
@@ -175,6 +163,9 @@ $(document).ready(function() {
       crn: {
         regex: /^\d{4}\$/
       },
+      type: {
+        valueNotEquals: "zzzdefault"
+      },
       explanation: {
         maxlength: 65535
       }
@@ -185,6 +176,7 @@ $(document).ready(function() {
       classnumber: "Not a valid class number.",
       sectionnumber: "Not a valid section.",
       crn: "CRN is invalid.",
+      type: "Please select a request type.",
       explanation: {
         maxlength: "Please shorten your explanation. Character limit is 65,535."
       },
