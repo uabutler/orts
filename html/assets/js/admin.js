@@ -195,6 +195,7 @@ $(document).ready(function() {
                     $("#overrideType").append("<li>" + this + "</li>");
                   });
                   $("#explanation").text(data.explanation);
+                  $("#studentEmail").html("<a href=\"mailto:" + data.email + "\">" + data.email + "</a>");
                   //TODO: Files
                   //TODO: Messages to student
                   //TODO: Admin Messages
