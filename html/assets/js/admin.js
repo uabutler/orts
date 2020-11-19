@@ -295,5 +295,43 @@ $(document).ready(function() {
                          "Denied",
                          $(this));        
     });
+
+    function archiveRequest(id){
+        var confirmation = confirm("Are you sure you want to archive this request?");
+        if (confirmation){
+            // Prevent viewing any other requests
+            $(".viewRequest").attr("disabled", true);
+
+            // Prevent clicking on status buttons
+            $("#decisionBox button").attr("disabled", true);
+
+            // Request the change
+            $.ajax({
+                method: "DELETE",
+                url: BASE_URL+"/requests?id=" + encodeURIComponent(parseInt(id)),
+                complete: function(request, status){
+                    if (request.status == 200){
+                        // Hide the detailed view
+                        $("#requestInformation").removeClass("visible");
+                        table.row($("#requests tbody tr.selected")).remove().draw(false);
+                    } else if(request.status == 404){
+                        setDecisionButtons();
+                        dismissible.error("The specified request was not found. Was it archived already?");
+                    } else {
+                        setDecisionButtons();
+                        var data = $.parseJSON(request.responseText);
+                        dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
+                    }
+                    // Re-enable buttons
+                    $(".viewRequest").attr("disabled", false);
+                    $("#requests tbody tr.selected .viewRequest").text(HIDE_TEXT);
+                }
+            });
+        }
+    }
+
+    $("#archive").click(function(){
+        archiveRequest(table.row($("#requests tbody tr.selected")).data().id);
+    })
     
 }); // document ready
