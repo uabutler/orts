@@ -160,7 +160,7 @@ function createAttachmentTbl($pdo)
     id int PRIMARY KEY AUTO_INCREMENT,
     request_id int NOT NULL,
     name varchar(255) NOT NULL,
-    path text NOT NULL,
+    path text NOT NULL UNIQUE,
     FOREIGN KEY (request_id) REFERENCES $request_tbl(id))");
 }
 

@@ -22,7 +22,7 @@ $notification_tbl = "notifications";
 /**
  * This funciton returns a connection to the MySQL DB
  */
-function connectDB()
+function connectDB(): PDO
 {
   $dbname = "group1";
   $dbhost = "borax.truman.edu";
