@@ -91,6 +91,13 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getDept</code></td>
+                    <td class="tg-0lax params">
+                    </td>
+                    <td class="tg-0lax"> Returns the department name of the current <code>Department</code> object.</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>setDept</code></td>
                     <td class="tg-0lax params"><code>department : string</code></td>
                     <td class="tg-0lax">Must be a department name eg:"CS" or "MATH"</td>
@@ -367,7 +374,7 @@
                         <li><code>crn : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This is a method for creating a new Section with given Semester, Course, section and crn.</td>
+                    <td class="tg-0lax">This is a method for creating a new Section with given <code>Semester</code>, <code>Course</code>, section and crn.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSection</code></td>
@@ -429,7 +436,7 @@
                     <td class="tg-0lax">Returns Course object of the current section.
                   </tr>
                   <tr>
-                    <td class="tg-0lax">Semester</td>
+                    <td class="tg-0lax"><code>Semester</code></td>
                     <td class="tg-0lax"><code>getSemester</code></td>
                     <td class="tg-0lax params">
                     </td>
@@ -475,10 +482,38 @@
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>storeInDB</code></td>
                     <td class="tg-0lax params">
-                    <td class="tg-0lax">If this is a newly created Section object (made using buildSection()) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
+                    <td class="tg-0lax">If this is a newly created Section object (made using <code>buildSection()</code>) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
                   </tr>
                 </tbody>
                 </table>
+                <div><b>Example</b></div>
+                Here, we demonstate some use cases of all the classes.
+<pre><code>
+// First, we create a new department object
+$cs_dept = Department::buildDepartment("CS");
+
+//We store the department in the database
+$cs_dept->storeInDB();
+
+//Now, we create new course object
+$dataStructures = Course::buildCourse($math_dept, 310, "Data Structures and Algorithms");
+
+//We store the course object in the table
+$dataStructures->storeInDB();
+
+//We get a semester by using the semester code
+$fallsem = Semester::getSemesterByCode("202060");
+
+//finally we can create a section
+$csSection = Section::buildSection($dataStructures, $fallsem, 1, "1234");
+
+//We can retrieve a section using crn
+$section = Section::getSectionByCrn($fallsem, "1234");
+
+/We can also retrieve a section using id.
+$section1 = Section::getSectionById(1);
+
+</code></pre>
         </div>
     </body>
 </html>
