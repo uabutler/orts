@@ -1,3 +1,19 @@
+function setIcon(status) {
+    if(status == "Received" || status == "Awaiting Action") {
+	return "<i class=\"lni lni-exit-down\"></i>";
+    } else if(status == "Approved") {
+	return "<i class=\"lni lni-checkmark\"></i>";
+    } else if(status == "Provisionally Approved") {
+	return "<i class=\"lni lni-flag\"></i>";
+    } else if(status == "Denied") {
+	return "<i class=\"lni lni-close\"></i>";
+    } else if(status == "Requires Faculty Approval") {
+	return "<i class=\"lni lni-enter\"></i>";
+    } else {
+	return "";
+    }
+}
+
 $(document).ready(function() {
     // Clone the header row into the footer and to make a row for later filters
     $("#requestsTable thead tr").clone(true).appendTo("#requestsTable tfoot")
@@ -38,7 +54,7 @@ $(document).ready(function() {
                 targets: 1,
                 data: "status",
                 render: function(data, type, row){
-                    return "<i></i><span class='statusText'>" + data + "</span>";
+                    return setIcon(data) + "<span class='statusText'> " + data + " </span>";
                 }
             },
             {
