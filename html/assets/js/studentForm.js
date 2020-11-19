@@ -128,20 +128,45 @@ $(document).ready(function() {
   $.validator.addMethod("valueNotEquals", function(value, element, arg) {
     return arg !== value;
   }, "Value must not equal arg.");
+  /**
+   * Validator method to accept regex values
+   */
+  $.validator.addMethod('regex', function(value, element, param) {
+    return this.optional(element) ||
+        value.match(typeof param == 'string' ? new RegExp(param) : param);
+  }, 'Please enter a value in the correct format.');
 
   var validator = $("#requestForm").validate({
     rules: {
       semester: {
         valueNotEquals: "zzzdefault"
       },
+      department: { 
+        valueNotEquals: "zzzdefault"
+      },
       classnumber: {
         min: 0,
         max: 499
+      },
+      sectionnumber: {
+        min: 1
+      },
+      crn: {
+        regex: /^\d{4}\$/
+      },
+      explanation: {
+        maxlength: 65535
       }
     },
     messages: {
-      semester: "Please select a semester."
+      semester: "Please select a semester.",
+      department: "Please select a department.",
+      classnumber: "Not a valid class number.",
+      sectionnumber: "Not a valid section.",
+      crn: "Please type in a valid crn",
+      maxlength: "Character limit: 65,535"
     },
+
     submitHandler: function(form, event){
       event.preventDefault();
 
