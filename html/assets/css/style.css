@@ -303,3 +303,7 @@ main#termsAndConditions li{
     text-decoration: none;
     cursor: pointer;
 }
+
+i.lni{
+    padding-right: 5px;
+}

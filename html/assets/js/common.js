@@ -64,6 +64,22 @@ function clearCookie(name) {
 
 $(document).ready(function () {document.getElementById("userName").textContent = getCookie("userName");})
 
+function setIcon(status) {
+  if(status == "Received" || status == "Awaiting Action") {
+    return "<i class=\"lni lni-exit-down\"></i>";
+  } else if(status == "Approved") {
+    return "<i class=\"lni lni-checkmark\"></i>";
+  } else if(status == "Provisionally Approved") {
+    return "<i class=\"lni lni-flag\"></i>";
+  } else if(status == "Denied") {
+    return "<i class=\"lni lni-close\"></i>";
+  } else if(status == "Requires Faculty Approval") {
+    return "<i class=\"lni lni-enter\"></i>";
+  } else {
+    return "";
+  }
+}
+
 // MOCK; REMOVE FOR PRODUCTION
 setCookie("userName", "Abby Example");
 setCookie("userEmail", "ane1234@truman.edu");
