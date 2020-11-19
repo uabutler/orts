@@ -250,7 +250,7 @@
                             },
                             {
                                 "uuid": "",
-                                "body": "{\n  \"firstname\": \"Abby\",\n  \"lastname\": \"Example\",\n  \"bannerid\": \"001234567\",\n  \"email\": \"ane1234@truman.edu\",\n  \"gradmonth\": \"05/2021\",\n  \"majors\": [\"Computer Science\", \"Mathematics\"],\n  \"minors\": [\"Statistics\", \"Photography\"],\n  \"class-standing\": \"Junior\"\n}",
+                                "body": "{\n  \"firstname\": \"Abby\",\n  \"lastname\": \"Example\",\n  \"banner-id\": \"001234567\",\n  \"email\": \"ane1234@truman.edu\",\n  \"grad-month\": \"05/2021\",\n  \"major\": [\"Computer Science\", \"Mathematics\"],\n  \"minor\": [\"Statistics\", \"Photography\"],\n  \"class-standing\": \"Junior\"\n}",
                                 "latency": 0,
                                 "statusCode": 200,
                                 "label": "",
