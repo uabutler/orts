@@ -192,6 +192,12 @@ $(document).ready(function() {
     submitHandler: function(form, event){
       event.preventDefault();
 
+      // Make sure the profile is loaded
+      if (profile === undefined || profile === null){
+        dismissible.error("An Error Occurred: Profile data could not be read.");
+        return false;
+      }
+
       // Collect Override Types
       var selectedTypes = [];
       $("#type option:selected").each(function(){
@@ -204,19 +210,19 @@ $(document).ready(function() {
           url: BASE_URL+"/requests",
           contentType: "application/json",
           data: JSON.stringify({
-            "last-name": "", //TODO
-            "first-name": "", //TODO
-            "grad-month": "", //TODO
-            "banner-id": "", //TODO
+            "last-name": profile['last-name'],
+            "first-name": profile['first-name'],
+            "grad-month": profile['grad-month'],
+            "banner-id": profile['banner-id'],
             "crn": $("#crn").val(),
             "department": $("#department").val(),
             "class-number": $("#classnumber").val(),
-            "class-standing": "", //TODO
+            "class-standing": profile['class-standing'],
             "semester": $("#semester").val(),
             "types": selectedTypes,
             "email": getCookie("userEmail"),
-            "major": "", //TODO
-            "minor": "", //TODO
+            "major": profile.major,
+            "minor": profile.minor,
             "explanation": $("#explanation").val()
           }),
           complete: function(request, status){
