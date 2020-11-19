@@ -1,6 +1,27 @@
 $(document).ready(function() {
   const dismissible = new Dismissible(document.querySelector('#dismissible-container'));
+  const profile;
   $("#crn, #classtitle").val(null);
+
+  /* Load Profile */
+    $.ajax(
+        BASE_URL+"/profile",
+        {
+            type: "get",
+            data: {
+                email: getCookie("userEmail")
+            },
+            success: function(data, status, xhr){
+                profile = $.parseJSON(data);
+                $("#profileLoading").css("display", "none");
+                
+            },
+            error: function(request, status, error){
+                var data = $.parseJSON(request.responseText);
+                dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
+            }
+        }
+    );
   /* Load Semesters */
   $.ajax(
     BASE_URL+"/semesters",
