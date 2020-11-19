@@ -64,16 +64,16 @@
                 </div>
                 <div class="formElement">
                     <label for="sectionnumber">Section Number: </label>
-                    <input type="number" name="sectionnumber" id="sectionnumber" placeholder="1">
+                    <input type="number" name="sectionnumber" id="sectionnumber" placeholder="1" required>
                 </div>
                 <div class="formElement">
                     <label for="crn">CRN: </label>
-                    <input type="text" name="crn" id="crn" size="6" disabled>
+                    <input type="text" name="crn" id="crn" size="6" disabled required>
                     <span id="crnLoading">Loading...</span>
                 </div>
                 <div class="formElement">
                     <label for="classtitle">Class Title: </label>
-                    <input type="text" name="classtitle" id="classtitle" size="40" disabled>
+                    <input type="text" name="classtitle" id="classtitle" size="40" disabled required>
                     <span id="titleLoading">Loading...</span>
                 </div>
                 <div class="formElement">
@@ -87,7 +87,7 @@
                 </div>
                 <div class="formElement">
                     <label for="explanation" class="block">Please give a detailed, thorough explanation as to why you need the override.</label>
-                    <textarea name="explanation" id="explanation" cols="70" rows="10"></textarea>
+                    <textarea name="explanation" id="explanation" cols="70" rows="10" required></textarea>
                 </div>
                 <div class="formElement">
                     <input type="checkbox" name="terms" id="terms" required><label for="terms">I have read and agree to the <a href="overrideRequestTermsAndConditions.html" rel="modal:open">Terms and Conditions</a> and understand all fees that may apply.</label>

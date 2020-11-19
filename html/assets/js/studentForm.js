@@ -163,8 +163,9 @@ $(document).ready(function() {
       department: "Please select a department.",
       classnumber: "Not a valid class number.",
       sectionnumber: "Not a valid section.",
-      crn: "Please type in a valid crn",
-      maxlength: "Character limit: 65,535"
+      crn: "CRN is invalid.",
+      explanation: "Please shorten your explanation. Character limit is 65,535.",
+      terms: "You must agree to the Terms and Conditions."
     },
 
     submitHandler: function(form, event){
