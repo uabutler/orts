@@ -56,7 +56,7 @@
                         <li><code>department : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing department with the given department name.
+                    <td class="tg-0lax">This method searches the database for an existing department with the given department name.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getDepartmentById</code></td>
@@ -91,13 +91,19 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
-                    <td class="tg-0lax"><code>setDept</code></td>
+                    <td class="tg-0lax"><code>getDept</code></td>
                     <td class="tg-0lax params">
                     </td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax"> Returns the department name of the current <code>Department</code> object.</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax">array</td>
+                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>setDept</code></td>
+                    <td class="tg-0lax params"><code>department : string</code></td>
+                    <td class="tg-0lax">Must be a department name eg:"CS" or "MATH"</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>array</code></td>
                     <td class="tg-0lax"><code>listDepartments</code></td>
                     <td class="tg-0lax params">
                     </td>
@@ -107,7 +113,7 @@
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>storeInDB</code></td>
                     <td class="tg-0lax params">
-                    <td class="tg-0lax">If this is a newly created department object (made using buildDepartment()) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
+                    <td class="tg-0lax">If this is a newly created department object (made using <code>buildDepartment()</code>) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
                   </tr>
                 </tbody>
                 </table>
@@ -150,7 +156,7 @@
                         <li><code>course_num : int</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing course with the given <code>Department</code> and course number and returns the courese.
+                    <td class="tg-0lax">This method searches the database for an existing course with the given <code>Department</code> and course number and returns the course.
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getCourseById</code></td>
@@ -159,7 +165,7 @@
                         <li><code>id : int</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing course with the given course number.</td>
+                    <td class="tg-0lax">This method searches the database for an existing course with the given course id.</td>
                   </tr>
                 </tbody>
                 </table>
@@ -191,7 +197,7 @@
                     <td class="tg-0lax">
                   </tr>
                   <tr>
-                    <td class="tg-0lax">int</td>
+                    <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getCourseNum</code></td>
                     <td class="tg-0lax params">
                     </td>
@@ -206,19 +212,19 @@
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setDepartment</code></td>
-                    <td class="tg-0lax params">department : Department</td>
+                    <td class="tg-0lax params"><code>department : Department</code></td>
                     <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCourseNum</code></td>
-                    <td class="tg-0lax params">course_num : int</td>
+                    <td class="tg-0lax params"><code>course_num : int</code></td>
                     <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setTitle</code></td>
-                    <td class="tg-0lax params">title : string</td>
+                    <td class="tg-0lax params"><code>title : string</code></td>
                     <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
@@ -262,7 +268,7 @@
                         <li><code>description : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing semester with the given description.
+                    <td class="tg-0lax">This method searches the database for an existing semester with the given <code>description</code>.
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSemesterByCode</code></td>
@@ -321,13 +327,13 @@
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>setSemesterCode</code></td>
-                    <td class="tg-0lax params">string : semester</td>
+                    <td class="tg-0lax params"><code>string : semester</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>setDescription</code></td>
-                    <td class="tg-0lax params">string : description</td>
+                    <td class="tg-0lax params"><code>string : description</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
@@ -368,7 +374,7 @@
                         <li><code>crn : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This is a method for creating a new Section with given Semester, Course, section and crn.</td>
+                    <td class="tg-0lax">This is a method for creating a new Section with given <code>Semester</code>, <code>Course</code>, section and crn.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSection</code></td>
@@ -389,7 +395,7 @@
                         <li><code>semeter : Semester</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing section with the given crn and Semster.
+                    <td class="tg-0lax">This method searches the database for an existing section with the given <code>crn</code> and <code>Semester</code>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSectionById</code></td>
@@ -430,7 +436,7 @@
                     <td class="tg-0lax">Returns Course object of the current section.
                   </tr>
                   <tr>
-                    <td class="tg-0lax">Semester</td>
+                    <td class="tg-0lax"><code>Semester</code></td>
                     <td class="tg-0lax"><code>getSemester</code></td>
                     <td class="tg-0lax params">
                     </td>
@@ -451,35 +457,63 @@
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCourse</code></td>
-                    <td class="tg-0lax params">course : Course</td>
+                    <td class="tg-0lax params"><code>course : Course</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setSemster</code></td>
-                    <td class="tg-0lax params">semester : Semester</td>
+                    <td class="tg-0lax params"><code>semester : Semester</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCrn</code></td>
-                    <td class="tg-0lax params">crn : string</td>
+                    <td class="tg-0lax params"><code>crn : string</code></td>
                     <td class="tg-0lax">Must be string with four characters</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setSectionNum</code></td>
-                    <td class="tg-0lax params">section : int</td>
+                    <td class="tg-0lax params"><code>section : int</code></td>
                     <td class="tg-0lax">
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>storeInDB</code></td>
                     <td class="tg-0lax params">
-                    <td class="tg-0lax">If this is a newly created Section object (made using buildSection()) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
+                    <td class="tg-0lax">If this is a newly created Section object (made using <code>buildSection()</code>) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
                   </tr>
                 </tbody>
                 </table>
+                <div><b>Example</b></div>
+                Here, we demonstate some use cases of all the classes.
+<pre><code>
+// First, we create a new department object
+$cs_dept = Department::buildDepartment("CS");
+
+//We store the department in the database
+$cs_dept->storeInDB();
+
+//Now, we create new course object
+$dataStructures = Course::buildCourse($math_dept, 310, "Data Structures and Algorithms");
+
+//We store the course object in the table
+$dataStructures->storeInDB();
+
+//We get a semester by using the semester code
+$fallsem = Semester::getSemesterByCode("202060");
+
+//finally we can create a section
+$csSection = Section::buildSection($dataStructures, $fallsem, 1, "1234");
+
+//We can retrieve a section using crn
+$section = Section::getSectionByCrn($fallsem, "1234");
+
+/We can also retrieve a section using id.
+$section1 = Section::getSectionById(1);
+
+</code></pre>
         </div>
     </body>
 </html>
