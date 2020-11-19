@@ -85,19 +85,17 @@
                   <tr>
                     <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getId</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax"> Returns the unique numerical id for a department in the system. This id is only used locally.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>getDept</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax"> Returns the department name of the current <code>Department</code> object.</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setDept</code></td>
                     <td class="tg-0lax params"><code>department : string</code></td>
                     <td class="tg-0lax">Must be a department name eg:"CS" or "MATH"</td>
@@ -105,14 +103,13 @@
                   <tr>
                     <td class="tg-0lax"><code>array</code></td>
                     <td class="tg-0lax"><code>listDepartments</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax">Ruturns array of strings representing all of the departments </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>storeInDB</code></td>
-                    <td class="tg-0lax params">
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax">If this is a newly created department object (made using <code>buildDepartment()</code>) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
                   </tr>
                 </tbody>
@@ -156,7 +153,7 @@
                         <li><code>course_num : int</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing course with the given <code>Department</code> and course number and returns the course.
+                    <td class="tg-0lax">This method searches the database for an existing course with the given <code>Department</code> and course number and returns the course. </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getCourseById</code></td>
@@ -185,29 +182,26 @@
                   <tr>
                     <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getId</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax"> Returns the unique numerical id for a course in the system. This id is only used locally.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>Department</code></td>
                     <td class="tg-0lax"><code>getDepartment</code></td>
-                    <td class="tg-0lax params">
-                    </td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax params"> </td>
+                    <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getCourseNum</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax">Returns the course number of a course object </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>getTitle</code></td>
                     <td class="tg-0lax params"></td>
-                    <td class="tg-0lax"> Returns the title of a course object</td>
+                    <td class="tg-0lax"> Returns the title of a course object. E.g., "Software Engineering"</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
@@ -219,7 +213,7 @@
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCourseNum</code></td>
                     <td class="tg-0lax params"><code>course_num : int</code></td>
-                    <td class="tg-0lax"> </td>
+                    <td class="tg-0lax"> E.g., the number 370 in "CS 370"</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
@@ -268,7 +262,7 @@
                         <li><code>description : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing semester with the given <code>description</code>.
+                    <td class="tg-0lax">This method searches the database for an existing semester with the given <code>description</code>. </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSemesterByCode</code></td>
@@ -277,7 +271,7 @@
                         <li><code>semester : string</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing semester with the given semester code.
+                    <td class="tg-0lax">This method searches the database for an existing semester with the given semester code. </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSemesterById</code></td>
@@ -286,7 +280,7 @@
                         <li><code>id : int</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing semester with the given unique id.
+                    <td class="tg-0lax">This method searches the database for an existing semester with the given unique id. </td>
                   </tr>
                 </tbody>
                 </table>
@@ -306,40 +300,37 @@
                   <tr>
                     <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getId</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax"> Returns the unique numerical id for a section in the system. This id is only used locally.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
                     <td class="tg-0lax"><code>getSemesterCode</code></td>
-                    <td class="tg-0lax params">
-                    </td>
-                    <td class="tg-0lax">
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax">string</td>
-                    <td class="tg-0lax"><code>getDescription</code></td>
-                    <td class="tg-0lax params">
-                    </td>
-                    <td class="tg-0lax">Returns the description of the semester object</td>
+                    <td class="tg-0lax params"> </td>
+                    <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>getDescription</code></td>
+                    <td class="tg-0lax params"> </td>
+                    <td class="tg-0lax">Returns the human readable description of the semester. E.g., "Fall 2020"</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setSemesterCode</code></td>
                     <td class="tg-0lax params"><code>string : semester</code></td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax"> Gets the internal code for the semester. E.g., "202060"</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax"><code>string</code></td>
+                    <td class="tg-0lax"><code>voic</code></td>
                     <td class="tg-0lax"><code>setDescription</code></td>
                     <td class="tg-0lax params"><code>string : description</code></td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>storeInDB</code></td>
-                    <td class="tg-0lax params">
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax">If this is a newly created Semster object (made using buildSemester()) and not yet stored in the DB, this function will create a new entry in the DB. Otherwise, this function will update the exising entry. </td>
                   </tr>
                 </tbody>
@@ -395,7 +386,7 @@
                         <li><code>semeter : Semester</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing section with the given <code>crn</code> and <code>Semester</code>
+                    <td class="tg-0lax">This method searches the database for an existing section with the given <code>crn</code> and <code>Semester</code></td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>getSectionById</code></td>
@@ -404,7 +395,7 @@
                         <li><code>id : int</code></li>
                       </ul>
                     </td>
-                    <td class="tg-0lax">This method searches the database for an existing section with the given unique id.
+                    <td class="tg-0lax">This method searches the database for an existing section with the given unique id. </td>
                   </tr>
                 </tbody>
                 </table>
@@ -424,29 +415,26 @@
                   <tr>
                     <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getId</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax"> Returns the unique numerical id for a section in the system. This id is only used locally.</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>Course</code></td>
                     <td class="tg-0lax"><code>getCourse</code></td>
-                    <td class="tg-0lax params">
-                    </td>
-                    <td class="tg-0lax">Returns Course object of the current section.
+                    <td class="tg-0lax params"> </td>
+                    <td class="tg-0lax">Returns Course object of the current section. </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>Semester</code></td>
                     <td class="tg-0lax"><code>getSemester</code></td>
-                    <td class="tg-0lax params">
-                    </td>
+                    <td class="tg-0lax params"> </td>
                     <td class="tg-0lax">Returns semester object of cuurent section</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>int</code></td>
                     <td class="tg-0lax"><code>getSectionNum</code></td>
                     <td class="tg-0lax params"></td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>string</code></td>
@@ -458,13 +446,13 @@
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setCourse</code></td>
                     <td class="tg-0lax params"><code>course : Course</code></td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
                     <td class="tg-0lax"><code>setSemster</code></td>
                     <td class="tg-0lax params"><code>semester : Semester</code></td>
-                    <td class="tg-0lax">
+                    <td class="tg-0lax"> </td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"><code>void</code></td>
