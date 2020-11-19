@@ -114,11 +114,11 @@ $(document).ready(function() {
         selectedMinors.push($(this).val());
       });
       var payload = {
-        firstname: $("#firstname").val(),
-        lastname: $("#lastname").val(),
-        bannerid: $("#bannerid").val(),
+        "first-name": $("#firstname").val(),
+        "last-name": $("#lastname").val(),
+        "banner-id": $("#bannerid").val(),
         email: $("#email").val(),
-        gradmonth: $("#gradmonth option:selected").val() + "/" + $("#gradyear").val(),
+        "grad-month": $("#gradmonth option:selected").val() + "/" + $("#gradyear").val(),
         majors: selectedMajors,
         minors: selectedMinors,
         "class-standing": $("#class option:selected").val()

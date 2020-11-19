@@ -22,8 +22,8 @@ $(document).ready(function() {
     submitHandler: function(form, event){
       event.preventDefault();
       var payload = {
-        firstname: $("#firstname").val(),
-        lastname: $("#lastname").val(),
+        "first-name": $("#firstname").val(),
+        "last-name": $("#lastname").val(),
         email: $("#email").val()
       }
       console.log(payload);
