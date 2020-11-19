@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    const dismissible = new Dismissible(document.querySelector('#dismissible-container'));
     // Clone the header row into the footer and to make a row for later filters
     $("#requestsTable thead tr").clone(true).appendTo("#requestsTable tfoot")
     $("#requestsTable tfoot tr th:eq(0)").empty();
@@ -186,6 +187,8 @@ $(document).ready(function() {
                   });
                   theRow.addClass("selected");
 
+                  setDecisionButtons();
+
                   // Insert Data
                   const data = table.row(theRow).data();
                   $("#status").text(data.status);
@@ -204,5 +207,93 @@ $(document).ready(function() {
             } // initComplete
     }); // var table
 
+    function setDecisionButtons(){
+        var newStatus = table.row($("#requests tbody tr.selected")).data().status;
+        $("#decisionBox button").attr("disabled", false);
+        switch(newStatus) {
+            case "Received":
+            case "Awaiting Action":
+                $("#markReceived").attr("disabled", true);
+                break;
+            case "Approved":
+                $("#approve").attr("disabled", true);
+                break;
+            case "Provisionally Approved":
+                $("#provApprove").attr("disabled", true);
+                break;
+            case "Denied":
+                $("#deny").attr("disabled", true);
+                break;
+            case "Requires Faculty Approval":
+                $("#sendToChair").attr("disabled", true);
+                break;
+        }
+    }
+
+    function setRequestStatus(theid, newStatus, button=null){
+        
+        // Prevent clicking this button again
+        button.attr("disabled", true);
+
+        // Prevent viewing any other requests
+        $(".viewRequest").attr("disabled", true);
+
+        // Request the change
+        $.ajax({
+            method: "PATCH",
+            url: BASE_URL+"/requests",
+            contentType: "application/json",
+            data: JSON.stringify({
+              id: theid,
+              status: newStatus
+            }),
+            complete: function(request, status){
+                if (request.status == 200){
+                    $("#status").text(newStatus);
+                    var row = table.row($("#requests tbody tr.selected"));
+                    row.data().status = newStatus;
+                    row.invalidate();
+                    table.draw(false);
+                    setDecisionButtons();
+                } else if(request.status == 404){
+                    button.attr("disabled", false);
+                    dismissible.error("The specified request was not found. Was it archived?");
+                } else {
+                    button.attr("disabled", false);
+                    var data = $.parseJSON(request.responseText);
+                    dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
+                }
+                // Re-enable view buttons
+                $(".viewRequest").attr("disabled", false);
+                $("#requests tbody tr.selected .viewRequest").text(HIDE_TEXT);
+            }
+          });
+    }
+
+    $("#markReceived").click(function(){
+        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
+                         "Received",
+                         $(this));        
+    });
+    $("#sendToChair").click(function(){
+        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
+                         "Requires Faculty Approval",
+                         $(this));      
+    });
+    $("#approve").click(function(){
+        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
+                         "Approved",
+                         $(this));        
+    });
+    $("#provApprove").click(function(){
+        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
+                         "Provisionally Approved",
+                         $(this));        
+    });
+    $("#deny").click(function(){
+        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
+                         "Denied",
+                         $(this));        
+    });
     
 }); // document ready

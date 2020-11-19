@@ -223,7 +223,6 @@ $(document).ready(function() {
             if (request.status == 201){
               dismissible.success("Request Created Successfully");
               form.reset();
-              $('.select2').val(null).trigger('change');
             } else {
               var data = $.parseJSON(request.responseText);
               dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
