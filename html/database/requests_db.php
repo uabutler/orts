@@ -5,15 +5,57 @@ include_once 'students_db.php';
 
 class OverrideRequest
 {
-  public $id;
-  public $student;
-  public $section;
-  public $last_modified;
-  public $status;
-  public $reason;
-  public $explanation;
+  private $id;
+  private $student;
+  private $section;
+  private $last_modified;
+  private $status;
+  private $reason;
+  private $explanation;
   
-  function __construct(Student $student, Section $section, string $last_modified, string $status, string $reason, string $explanation, int $id=null)
+  public function getId()           { return $this->id; }
+  public function getStudent()      { return $this->student; }
+  public function getSection()      { return $this->section; }
+  public function getLastModified() { return $this->last_modified; }
+  public function getStatus()       { return $this->status; }
+  public function getReason()       { return $this->reason; }
+  public function getExplanation()  { return $this->explanation; }
+  
+  /**
+   * Setters
+   */
+  public function setStudent(Student $student)
+  {
+    $this->student = $student;
+  }
+
+  public function setSection(Section $section)
+  {
+    $this->section = $section;
+  }
+
+  public function setLastModified(string $last_modified)
+  {
+	$this->last_modified = $last_modified;
+  }
+
+  public function setStatus(string $status)
+  {
+	$this->status = $status;
+  }
+
+  public function setReason(string $reason)
+  {
+	$this->reason = $reason;
+  }
+
+  public function setExplanation(string $explanation)
+  {
+	$this->explanation = $explanation;
+  }
+
+  
+  private function __construct(Student $student, Section $section, string $last_modified, string $status, string $reason, string $explanation, int $id=null)
   {
     $this->id = $id;
     $this->student = $student;
@@ -35,16 +77,8 @@ class OverrideRequest
    $this->explanation = $explanation;
   } 
   */
-  
-  public function getId()           { return $this->id; }
-  public function getStudent()      { return $this->student; }
-  public function getSection()      { return $this->section; }
-  public function getLastModified() { return $this->last_modified; }
-  public function getStatus()       { return $this->status; }
-  public function getReason()       { return $this->reason; }
-  public function getExplanation()  { return $this->explanation; }
 
-  public function storeInDB()
+  private function insertDB()
   {
     global $request_tbl;
     
@@ -65,6 +99,41 @@ class OverrideRequest
     $smt->execute();
 
     $this->id = $pdo->lastInsertId();
+  }
+  
+  private function updateDB()
+  {
+    global $request_tbl;
+    
+    $pdo = connectDB();
+    
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
+    $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, status=:status, reason=:reason, explanation=:explanation WHERE id=:id");
+    
+    $studentid = OverrideRequest::getStudent()->getId();
+    $sectionid = OverrideRequest::getSection()->getId();
+    $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
+    $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
+    $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
+    $smt->bindParam(":section_id", $sectionid, PDO::PARAM_INT);
+    $smt->bindParam(":status", $this->status, PDO::PARAM_STR);
+    $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
+    $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR); 
+    $smt->execute();
+  }
+  
+  /**
+   * Stores the current object in the database. If the object is newly created,
+   * a new entry into the DB is made. If the request has been stored in the DB,
+   * we update the existing entry
+   */
+  public function storeInDB()
+  {
+    // The id is set only when the student is already in the database
+    if(is_null($this->id))
+      $this->insertDB();
+    else
+      $this->updateDB();
   }
   
   public static function listStatuses()
