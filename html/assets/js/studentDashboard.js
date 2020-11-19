@@ -55,7 +55,6 @@ $(document).ready(function() {
         ]
     }); // var activetable
 
-    /*
     var archiveTable = $("#studentArchivedRequestsTable").DataTable({
         dom: "lfrt",
         paging: false,
@@ -69,7 +68,7 @@ $(document).ready(function() {
                 targets: 0,
                 data: "status",
                 render: function(data, type, row){
-                    return "<i></i><span class='statusText'>" + data + "</span>";
+                    return setIcon(data) + "<span class='statusText'>" + data + "</span>";
                 }
             },
             {
@@ -101,6 +100,5 @@ $(document).ready(function() {
             [1, "desc"]
         ]
     }); // var archivetable
-    */
     
 }); // document ready
