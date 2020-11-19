@@ -190,10 +190,7 @@ $(document).ready(function() {
                   const data = table.row(theRow).data();
                   $("#status").text(data.status);
                   $("#classStanding").text(data["class-standing"]);
-                  $("#overrideType").empty();
-                  $(data.types).each(function(){
-                    $("#overrideType").append("<li>" + this + "</li>");
-                  });
+                  $("#overrideType").text(data.type);
                   $("#explanation").text(data.explanation);
                   $("#studentEmail").html("<a href=\"mailto:" + data.email + "\">" + data.email + "</a>");
                   //TODO: Files

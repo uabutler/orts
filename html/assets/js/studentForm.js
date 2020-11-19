@@ -213,7 +213,7 @@ $(document).ready(function() {
             "class-number": $("#classnumber").val(),
             "class-standing": profile['class-standing'],
             "semester": $("#semester").val(),
-            "types": selectedTypes,
+            "type": $("#type").val(),
             "email": getCookie("userEmail"),
             "major": profile.major,
             "minor": profile.minor,
