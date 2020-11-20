@@ -230,10 +230,10 @@ $(document).ready(function() {
         }
     }
 
-    function setRequestStatus(theid, newStatus, button=null){
+    function setRequestStatus(theid, newStatus){
         
-        // Prevent clicking this button again
-        button.attr("disabled", true);
+        // Prevent clicking on status buttons
+        $("#decisionBox button").attr("disabled", true);
 
         // Prevent viewing any other requests
         $(".viewRequest").attr("disabled", true);
@@ -254,16 +254,14 @@ $(document).ready(function() {
                     row.data().status = newStatus;
                     row.invalidate();
                     table.draw(false);
-                    setDecisionButtons();
                 } else if(request.status == 404){
-                    button.attr("disabled", false);
                     dismissible.error("The specified request was not found. Was it archived?");
                 } else {
-                    button.attr("disabled", false);
                     var data = $.parseJSON(request.responseText);
                     dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
                 }
-                // Re-enable view buttons
+                // Re-enable view and status buttons
+                setDecisionButtons();
                 $(".viewRequest").attr("disabled", false);
                 $("#requests tbody tr.selected .viewRequest").text(HIDE_TEXT);
             }
@@ -272,28 +270,23 @@ $(document).ready(function() {
 
     $("#markReceived").click(function(){
         setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Received",
-                         $(this));        
+                         "Received");        
     });
     $("#sendToChair").click(function(){
         setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Requires Faculty Approval",
-                         $(this));      
+                         "Requires Faculty Approval");      
     });
     $("#approve").click(function(){
         setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Approved",
-                         $(this));        
+                         "Approved");        
     });
     $("#provApprove").click(function(){
         setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Provisionally Approved",
-                         $(this));        
+                         "Provisionally Approved");        
     });
     $("#deny").click(function(){
         setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Denied",
-                         $(this));        
+                         "Denied");        
     });
 
     function archiveRequest(id){
