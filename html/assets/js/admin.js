@@ -252,6 +252,9 @@ $(document).ready(function() {
                     $("#status").text(newStatus);
                     var row = table.row($("#requests tbody tr.selected"));
                     row.data().status = newStatus;
+                    const date = new Date();
+                    row.data()["last-modified"] = (date.getUTCMonth()+1) + "/" + date.getUTCDate() + "/" + date.getUTCFullYear() + " " +
+                                                  date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds();
                     row.invalidate();
                     table.draw(false);
                 } else if(request.status == 404){
