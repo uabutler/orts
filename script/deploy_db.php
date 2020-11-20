@@ -9,7 +9,7 @@ $departments = ['CS', 'MATH', 'STAT'];
 // Student table
 function createStudentTbl($pdo)
 {
-  global $student_tbl;
+  global $student_tbl, $semester_tbl;
   echo "  $student_tbl\n";
   $pdo->exec("CREATE TABLE $student_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
@@ -18,7 +18,9 @@ function createStudentTbl($pdo)
     last_name varchar(255),
     banner_id varchar(9) NOT NULL UNIQUE,
     grad_month varchar(7) NOT NULL,
-    standing enum('Freshman', 'Sophomore', 'Junior', 'Senior') NOT NULL)");
+    standing enum('Freshman', 'Sophomore', 'Junior', 'Senior') NOT NULL,
+    last_active_sem int,
+    FOREIGN KEY (semester_id) REFERENCES $semester_tbl(id))");
 }
 
 // Major and minor tables

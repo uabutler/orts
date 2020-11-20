@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>phpDox - Notification</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <nav class="topnav">
+      <ul>
+        <li>
+          <div class="logo"><span>/**</span>phpDox</div>
+        </li>
+        <li class="separator">
+          <a href="../index.xhtml">Overview</a>
+        </li>
+        <li class="separator">
+          <a href="../namespaces.xhtml">Namespaces</a>
+        </li>
+        <li>
+          <a href="../classes.xhtml">Classes</a>
+        </li>
+        <li class="separator">
+          <a href="../source/index.xhtml">Source</a>
+        </li>
+      </ul>
+    </nav>
+    <div id="mainstage">
+      <div class="box">
+        <ul class="breadcrumb">
+          <li>
+            <a href="../index.xhtml">Overview</a>
+          </li>
+          <li class="separator">
+            <a href="../classes.xhtml">Classes</a>
+          </li>
+          <li class="separator">Notification</li>
+        </ul>
+      </div>
+      <nav class="box">
+        <ul>
+          <li>
+            <a href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#synopsis">Synopsis</a>
+          </li>
+          <li>
+            <a href="#members">Members</a>
+          </li>
+          <li>
+            <a href="#methods">Methods</a>
+          </li>
+          <li>
+            <a href="../source/notifications_db.php.xhtml#line4">Source</a>
+          </li>
+        </ul>
+      </nav>
+      <section>
+        <h1 id="introduction"><small>\</small>Notification</h1>
+        <h4/>
+        <p/>
+        <h2 id="synopsis">Synopsis</h2>
+        <div class="synopsis">class Notification
+            {<br/><ul class="none"><li>// members</li><li>private  <a href="#members">$id</a>;
+                    </li><li>private  <a href="#members">$request</a>;
+                    </li><li>private  <a href="#members">$sender_email</a>;
+                    </li><li>private  <a href="#members">$receiver_email</a>;
+                    </li><li>private  <a href="#members">$body</a>;
+                    </li></ul><ul class="none"><li>// methods</li><li>public void <a title="Notification" href="../classes/Notification/getId.xhtml">getId</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/getRequest.xhtml">getRequest</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/getSenderEmail.xhtml">getSenderEmail</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/getReceiverEmail.xhtml">getReceiverEmail</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/getBody.xhtml">getBody</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/setRequest.xhtml">setRequest</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/setSenderEmail.xhtml">setSenderEmail</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/setReceiverEmail.xhtml">setReceiverEmail</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/setBody.xhtml">setBody</a>()
+                    </li><li>private void <a title="Notification" href="../classes/Notification/__construct.xhtml">__construct</a>()
+                    </li><li>private void <a title="Notification" href="../classes/Notification/insertDB.xhtml">insertDB</a>()
+                    </li><li>private void <a title="Notification" href="../classes/Notification/updateDB.xhtml">updateDB</a>()
+                    </li><li>public void <a title="Notification" href="../classes/Notification/storeInDB.xhtml">storeInDB</a>()
+                    </li><li>public static <span title="Notification">Notification</span> <a title="Notification" href="../classes/Notification/buildNotification.xhtml">buildNotification</a>()
+                    </li><li>private static array <a title="Notification" href="../classes/Notification/listNotificationsHelper.xhtml">listNotificationsHelper</a>()
+                    </li><li>public static array <a title="Notification" href="../classes/Notification/listNotifications.xhtml">listNotifications</a>()
+                    </li><li>public static array <a title="Notification" href="../classes/Notification/listSentNotifications.xhtml">listSentNotifications</a>()
+                    </li><li>public static array <a title="Notification" href="../classes/Notification/listReceivedNotifications.xhtml">listReceivedNotifications</a>()
+                    </li><li>public static ?<span title="Notification">Notification</span> <a title="Notification" href="../classes/Notification/getNotificationId.xhtml">getNotificationId</a>()
+                    </li></ul>
+
+            }<br/></div>
+        <h2 id="members">Members</h2>
+        <div class="styled members">
+          <h4>private</h4>
+          <ul class="members">
+            <li id="body">
+              <strong>$body</strong>
+            </li>
+            <li id="id">
+              <strong>$id</strong>
+            </li>
+            <li id="receiver_email">
+              <strong>$receiver_email</strong>
+            </li>
+            <li id="request">
+              <strong>$request</strong>
+            </li>
+            <li id="sender_email">
+              <strong>$sender_email</strong>
+            </li>
+          </ul>
+        </div>
+        <h2 id="methods">Methods</h2>
+        <div class="styled">
+          <h4>private</h4>
+          <ul>
+            <li id="__construct">
+              <a title="Notification" href="../classes/Notification/__construct.xhtml">__construct()</a>
+            </li>
+            <li id="insertDB">
+              <a title="Notification" href="../classes/Notification/insertDB.xhtml">insertDB()</a>
+            </li>
+            <li id="listNotificationsHelper">
+              <a title="Notification" href="../classes/Notification/listNotificationsHelper.xhtml">listNotificationsHelper()</a>
+            </li>
+            <li id="updateDB">
+              <a title="Notification" href="../classes/Notification/updateDB.xhtml">updateDB()</a>
+            </li>
+          </ul>
+          <h4>public</h4>
+          <ul>
+            <li id="buildNotification">
+              <a title="Notification" href="../classes/Notification/buildNotification.xhtml">buildNotification()</a>
+            </li>
+            <li id="getBody">
+              <a title="Notification" href="../classes/Notification/getBody.xhtml">getBody()</a>
+            </li>
+            <li id="getId">
+              <a title="Notification" href="../classes/Notification/getId.xhtml">getId()</a>
+            </li>
+            <li id="getNotificationId">
+              <a title="Notification" href="../classes/Notification/getNotificationId.xhtml">getNotificationId()</a>
+            </li>
+            <li id="getReceiverEmail">
+              <a title="Notification" href="../classes/Notification/getReceiverEmail.xhtml">getReceiverEmail()</a>
+            </li>
+            <li id="getRequest">
+              <a title="Notification" href="../classes/Notification/getRequest.xhtml">getRequest()</a>
+            </li>
+            <li id="getSenderEmail">
+              <a title="Notification" href="../classes/Notification/getSenderEmail.xhtml">getSenderEmail()</a>
+            </li>
+            <li id="listNotifications">
+              <a title="Notification" href="../classes/Notification/listNotifications.xhtml">listNotifications()</a>
+            </li>
+            <li id="listReceivedNotifications">
+              <a title="Notification" href="../classes/Notification/listReceivedNotifications.xhtml">listReceivedNotifications()</a>
+            </li>
+            <li id="listSentNotifications">
+              <a title="Notification" href="../classes/Notification/listSentNotifications.xhtml">listSentNotifications()</a>
+            </li>
+            <li id="setBody">
+              <a title="Notification" href="../classes/Notification/setBody.xhtml">setBody()</a>
+            </li>
+            <li id="setReceiverEmail">
+              <a title="Notification" href="../classes/Notification/setReceiverEmail.xhtml">setReceiverEmail()</a>
+            </li>
+            <li id="setRequest"><a title="Notification" href="../classes/Notification/setRequest.xhtml">setRequest()</a>
+                — Setters</li>
+            <li id="setSenderEmail">
+              <a title="Notification" href="../classes/Notification/setSenderEmail.xhtml">setSenderEmail()</a>
+            </li>
+            <li id="storeInDB"><a title="Notification" href="../classes/Notification/storeInDB.xhtml">storeInDB()</a>
+                — Stores the current object in the database. If the object is newly created, a new entry into the DB is made. If the student has been stored in the DB, we update the existing entry</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <footer>
+      <span>Generated using phpDox 0.12.0 - Copyright (C) 2010 - 2020 by Arne Blankerts and Contributors</span>
+    </footer>
+  </body>
+</html>

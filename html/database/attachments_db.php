@@ -2,6 +2,11 @@
 include_once 'common_db.php';
 include_once 'requests_db.php';
 
+/**
+ * Helpful for tracking what files on an OS are attachments for requests and what the
+ * original name of the file was. The databse does not store the file itself, that task
+ * is left to the file system of the server.
+ */
 class Attachment
 {
   private $id;
@@ -9,25 +14,61 @@ class Attachment
   private $name;
   private $path;
 
-  public function getId() { return $this->id; }
-  public function getRequest() { return $this->request; }
-  public function getName() { return $this->name; }
-  public function getPath() { return $this->path; }
+  /**
+   * The database id. Null if it hasn't been stored
+   * @return int|null
+   */
+  public function getId(): ?int
+  {
+    return $this->id;
+  }
 
   /**
-   * Setters
+   * The request this attachment is associated with
+   * @return OverrideRequest
    */
-  public function setName(string $email)
+  public function getRequest(): OverrideRequest
+  {
+    return $this->request;
+  }
+
+  /**
+   * The original name of the file
+   * @return string
+   */
+  public function getName(): string
+  {
+      return $this->name;
+  }
+
+  /**
+   * The path to the local version of the file in the server's filesystem
+   * @return string
+   */
+  public function getPath(): string
+  {
+      return $this->path;
+  }
+
+  /**
+   * Set the original name of the file
+   * @param string $name The original name of the file
+   */
+  public function setName(string $name)
   {
     $this->name = $name;
   }
 
-  public function setPath(string $first_name)
+  /**
+   * Set the path to the local version of the file in the server's filesystem
+   * @param string $path The path to the file in the local operating system
+   */
+  public function setPath(string $path)
   {
-    $this->first_name = $first_name;
+    $this->path = $path;
   }
 
-  private function __construct(Request $request, string $name, string $path, int $id=null)
+  private function __construct(OverrideRequest $request, string $name, string $path, int $id=null)
   {
     $this->id = $id;
     $this->request = $request;
@@ -78,17 +119,29 @@ class Attachment
       $this->updateDB();
   }
 
-  public static function buildAttachment(Request $request, string $name, string $path): Attachment
+  /**
+   * Given the attachment info, this method builds a local attachment object
+   * @param OverrideRequest $request The request this attachment is associated with, must have already been stored in DB
+   * @param string $name The original name of the file
+   * @param string $path The path to the file in the host OS
+   * @return Attachment An object that only exists locally, isn't stored in DB
+   */
+  public static function buildAttachment(OverrideRequest $request, string $name, string $path): Attachment
   {
     return new Attachment($request, $name, $path);
   }
 
-  public static function listAttachments(Request $request): array
+  /**
+   * List all of the attachments associated with a given request, must have already been stored in the DB
+   * @param OverrideRequest $request
+   * @return array
+   */
+  public static function listAttachments(OverrideRequest $request): array
   {
     global $attachment_tbl;
     $pdo = connectDB();
 
-    $request_id = $this->request->getId();
+    $request_id = $request->getId();
     $smt = $pdo->prepare("SELECT * FROM $attachment_tbl WHERE request_id=:request_id");
     $smt->bindParam(":request_id", $request_id, PDO::PARAM_INT);
     $smt->execute();
@@ -100,12 +153,16 @@ class Attachment
     $out = [];
 
     foreach($data as $row)
-      array_push(new Attachment(new Request($row['request_id'], $row['name'], $row['path'], $row['id'])));
+      array_push($out, new Attachment(OverrideRequest::getOverrideRequestById($row['request_id']), $row['name'], $row['path'], $row['id']));
 
     return $out;
   }
 
-
+  /**
+   * Returns the attachment object given it's location in the OS, null if not found
+   * @param string $path
+   * @return Attachment|null
+   */
   public static function getAttachment(string $path): ?Attachment
   {
     global $attachment_tbl;
@@ -119,7 +176,7 @@ class Attachment
 
     if(!$data) return null;
 
-    return new Attachment($request, $data['name'], $data['path'], $data['id']);
+    return new Attachment(OverrideRequest::getOverrideRequestById($data['request_id']),  $data['name'], $data['path'], $data['id']);
   }
 }
 
