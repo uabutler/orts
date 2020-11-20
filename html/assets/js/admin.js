@@ -230,8 +230,10 @@ $(document).ready(function() {
         }
     }
 
-    function setRequestStatus(theid, newStatus){
+    function setSelectedRequestStatus(newStatus){
         
+        const selectedRow = $("#requests tbody tr.selected");
+
         // Prevent clicking on status buttons
         $("#decisionBox button").attr("disabled", true);
 
@@ -244,19 +246,18 @@ $(document).ready(function() {
             url: BASE_URL+"/requests",
             contentType: "application/json",
             data: JSON.stringify({
-              id: theid,
+              id: table.row(selectedRow).data().id,
               status: newStatus
             }),
             complete: function(request, status){
                 if (request.status == 200){
                     $("#status").text(newStatus);
-                    var row = table.row($("#requests tbody tr.selected"));
-                    row.data().status = newStatus;
+                    table.row(selectedRow).data().status = newStatus;
+                    table.cell($(selectedRow).find("td:eq(1)")).invalidate().draw(false);
                     const date = new Date();
-                    row.data()["last-modified"] = (date.getUTCMonth()+1) + "/" + date.getUTCDate() + "/" + date.getUTCFullYear() + " " +
+                    table.row(selectedRow).data()["last-modified"] = (date.getUTCMonth()+1) + "/" + date.getUTCDate() + "/" + date.getUTCFullYear() + " " +
                                                   date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds();
-                    row.invalidate();
-                    table.draw(false);
+                    table.cell($(selectedRow).find("td:eq(2)")).invalidate().draw(false);
                 } else if(request.status == 404){
                     dismissible.error("The specified request was not found. Was it archived?");
                 } else {
@@ -272,24 +273,19 @@ $(document).ready(function() {
     }
 
     $("#markReceived").click(function(){
-        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Received");        
+        setSelectedRequestStatus("Received");        
     });
     $("#sendToChair").click(function(){
-        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Requires Faculty Approval");      
+        setSelectedRequestStatus("Requires Faculty Approval");      
     });
     $("#approve").click(function(){
-        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Approved");        
+        setSelectedRequestStatus("Approved");        
     });
     $("#provApprove").click(function(){
-        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Provisionally Approved");        
+        setSelectedRequestStatus("Provisionally Approved");        
     });
     $("#deny").click(function(){
-        setRequestStatus(table.row($("#requests tbody tr.selected")).data().id, 
-                         "Denied");        
+        setSelectedRequestStatus("Denied");        
     });
 
     function archiveRequest(id){
