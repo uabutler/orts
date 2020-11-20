@@ -1,6 +1,10 @@
 <?php
 include_once 'common_db.php';
 
+/**
+ * Represents a notification send in the system. This class relates the notification to a request, and to the sender and
+ * receiver's email
+ */
 class Notification
 {
   private $id;

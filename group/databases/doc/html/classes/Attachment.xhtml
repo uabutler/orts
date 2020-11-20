@@ -53,13 +53,13 @@
             <a href="#methods">Methods</a>
           </li>
           <li>
-            <a href="../source/attachments_db.php.xhtml#line9">Source</a>
+            <a href="../source/attachments_db.php.xhtml#line10">Source</a>
           </li>
         </ul>
       </nav>
       <section>
         <h1 id="introduction"><small>\</small>Attachment</h1>
-        <h4>Helpful for tracking what files on an OS are attachments for requests and what the original name of the file was.</h4>
+        <h4>Helpful for tracking what files on an OS are attachments for requests and what the original name of the file was. The databse does not store the file itself, that task is left to the file system of the server.</h4>
         <p/>
         <ul/>
         <h2 id="synopsis">Synopsis</h2>
@@ -68,7 +68,7 @@
                     </li><li>private  <a href="#members">$request</a>;
                     </li><li>private  <a href="#members">$name</a>;
                     </li><li>private  <a href="#members">$path</a>;
-                    </li></ul><ul class="none"><li>// methods</li><li>public int <a title="Attachment" href="../classes/Attachment/getId.xhtml">getId</a>()
+                    </li></ul><ul class="none"><li>// methods</li><li>public ?int <a title="Attachment" href="../classes/Attachment/getId.xhtml">getId</a>()
                     </li><li>public <span title="OverrideRequest">OverrideRequest</span> <a title="Attachment" href="../classes/Attachment/getRequest.xhtml">getRequest</a>()
                     </li><li>public string <a title="Attachment" href="../classes/Attachment/getName.xhtml">getName</a>()
                     </li><li>public string <a title="Attachment" href="../classes/Attachment/getPath.xhtml">getPath</a>()
@@ -119,11 +119,11 @@
           <h4>public</h4>
           <ul>
             <li id="buildAttachment"><a title="Attachment" href="../classes/Attachment/buildAttachment.xhtml">buildAttachment()</a>
-                — Create a new attachment locally</li>
+                — Given the attachment info, this method builds a local attachment object</li>
             <li id="getAttachment"><a title="Attachment" href="../classes/Attachment/getAttachment.xhtml">getAttachment()</a>
                 — Returns the attachment object given it's location in the OS, null if not found</li>
             <li id="getId"><a title="Attachment" href="../classes/Attachment/getId.xhtml">getId()</a>
-                — The internal id</li>
+                — The database id. Null if it hasn't been stored</li>
             <li id="getName"><a title="Attachment" href="../classes/Attachment/getName.xhtml">getName()</a>
                 — The original name of the file</li>
             <li id="getPath"><a title="Attachment" href="../classes/Attachment/getPath.xhtml">getPath()</a>

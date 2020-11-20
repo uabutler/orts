@@ -71,7 +71,7 @@
                     </li><li>private  <a href="#members">$semester</a>;
                     </li><li>private  <a href="#members">$description</a>;
                     </li><li>private  <a href="#members">$active</a>;
-                    </li></ul><ul class="none"><li>// methods</li><li>public int <a title="Semester" href="../classes/Semester/getId.xhtml">getId</a>()
+                    </li></ul><ul class="none"><li>// methods</li><li>public ?int <a title="Semester" href="../classes/Semester/getId.xhtml">getId</a>()
                     </li><li>public string <a title="Semester" href="../classes/Semester/getSemesterCode.xhtml">getSemesterCode</a>()
                     </li><li>public string <a title="Semester" href="../classes/Semester/getDescription.xhtml">getDescription</a>()
                     </li><li>public bool <a title="Semester" href="../classes/Semester/isActive.xhtml">isActive</a>()
@@ -143,7 +143,7 @@
             <li id="getDescription"><a title="Semester" href="../classes/Semester/getDescription.xhtml">getDescription()</a>
                 — The human readable form. E.g., "Fall 2021"</li>
             <li id="getId"><a title="Semester" href="../classes/Semester/getId.xhtml">getId()</a>
-                — The database id</li>
+                — The database id. Null if it hasn't been stored</li>
             <li id="getSemester"><a title="Semester" href="../classes/Semester/getSemester.xhtml">getSemester()</a>
                 — Fetch a semester from the database given a human readable description, or null it it's not found</li>
             <li id="getSemesterByCode"><a title="Semester" href="../classes/Semester/getSemesterByCode.xhtml">getSemesterByCode()</a>

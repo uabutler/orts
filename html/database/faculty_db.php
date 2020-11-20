@@ -1,6 +1,9 @@
 <?php
 include_once 'common_db.php';
 
+/**
+ * A class that stores a faculty member, keeps track of name and email
+ */
 class Faculty
 {
   private $id;

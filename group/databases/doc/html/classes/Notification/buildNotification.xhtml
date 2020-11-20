@@ -56,17 +56,21 @@
             <a href="#parameter">Parameter</a>
           </li>
           <li>
-            <a href="../../source/notifications_db.php.xhtml#line94">Source</a>
+            <a href="#return">Return</a>
+          </li>
+          <li>
+            <a href="../../source/notifications_db.php.xhtml#line152">Source</a>
           </li>
         </ul>
       </nav>
       <section>
         <h1><small>Notification::</small>buildNotification</h1>
-        <h4/>
+        <h4>This method build a local notification object</h4>
         <p/>
+        <ul/>
         <h2 id="signature">Signature</h2>
         <div class="styled synopsis">
-          <code>public function buildNotification(<a title="Request" href="../../classes/Request.xhtml">Request</a>
+          <code>public function buildNotification(<a title="OverrideRequest" href="../../classes/OverrideRequest.xhtml">OverrideRequest</a>
         $request,
             string
         $sender_email,
@@ -80,8 +84,8 @@
         <dl class="styled">
           <dt><code>$request</code>
                 —
-                <a title="" href="../../classes/.xhtml"/></dt>
-          <dd/>
+                <a title="OverrideRequest" href="../../classes/OverrideRequest.xhtml">OverrideRequest</a></dt>
+          <dd><br/><br/><br/>      </dd>
           <dt><code>$sender_email</code>
                 —
                 string</dt>
@@ -94,6 +98,12 @@
                 —
                 string</dt>
           <dd/>
+        </dl>
+        <h2 id="return">Returns</h2>
+        <dl class="styled">
+          <dt>Notification</dt>
+          <dd>An object that only exists locally, isn't stored in DB<br/>
+        </dd>
         </dl>
       </section>
     </div>

@@ -69,7 +69,7 @@
                     </li><li>private  <a href="#members">$semester</a>;
                     </li><li>private  <a href="#members">$section</a>;
                     </li><li>private  <a href="#members">$crn</a>;
-                    </li></ul><ul class="none"><li>// methods</li><li>public int <a title="Section" href="../classes/Section/getId.xhtml">getId</a>()
+                    </li></ul><ul class="none"><li>// methods</li><li>public ?int <a title="Section" href="../classes/Section/getId.xhtml">getId</a>()
                     </li><li>public <span title="Course">Course</span> <a title="Section" href="../classes/Section/getCourse.xhtml">getCourse</a>()
                     </li><li>public <span title="Semester">Semester</span> <a title="Section" href="../classes/Section/getSemester.xhtml">getSemester</a>()
                     </li><li>public int <a title="Section" href="../classes/Section/getSectionNum.xhtml">getSectionNum</a>()
@@ -133,7 +133,7 @@
             <li id="getCrn"><a title="Section" href="../classes/Section/getCrn.xhtml">getCrn()</a>
                 — A string representing the four-digit CRN</li>
             <li id="getId"><a title="Section" href="../classes/Section/getId.xhtml">getId()</a>
-                — The database id</li>
+                — The database id. Null if it hasn't been stored</li>
             <li id="getSection"><a title="Section" href="../classes/Section/getSection.xhtml">getSection()</a>
                 — Retrieve a section given the course, semester, and section number from the DB, or null if it can't be found.</li>
             <li id="getSectionByCrn"><a title="Section" href="../classes/Section/getSectionByCrn.xhtml">getSectionByCrn()</a>

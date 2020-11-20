@@ -53,14 +53,15 @@
             <a href="#methods">Methods</a>
           </li>
           <li>
-            <a href="../source/notifications_db.php.xhtml#line4">Source</a>
+            <a href="../source/notifications_db.php.xhtml#line8">Source</a>
           </li>
         </ul>
       </nav>
       <section>
         <h1 id="introduction"><small>\</small>Notification</h1>
-        <h4/>
+        <h4>Represents a notification send in the system. This class relates the notification to a request, and to the sender and receiver's email</h4>
         <p/>
+        <ul/>
         <h2 id="synopsis">Synopsis</h2>
         <div class="synopsis">class Notification
             {<br/><ul class="none"><li>// members</li><li>private  <a href="#members">$id</a>;
@@ -68,11 +69,11 @@
                     </li><li>private  <a href="#members">$sender_email</a>;
                     </li><li>private  <a href="#members">$receiver_email</a>;
                     </li><li>private  <a href="#members">$body</a>;
-                    </li></ul><ul class="none"><li>// methods</li><li>public void <a title="Notification" href="../classes/Notification/getId.xhtml">getId</a>()
-                    </li><li>public void <a title="Notification" href="../classes/Notification/getRequest.xhtml">getRequest</a>()
-                    </li><li>public void <a title="Notification" href="../classes/Notification/getSenderEmail.xhtml">getSenderEmail</a>()
-                    </li><li>public void <a title="Notification" href="../classes/Notification/getReceiverEmail.xhtml">getReceiverEmail</a>()
-                    </li><li>public void <a title="Notification" href="../classes/Notification/getBody.xhtml">getBody</a>()
+                    </li></ul><ul class="none"><li>// methods</li><li>public ?int <a title="Notification" href="../classes/Notification/getId.xhtml">getId</a>()
+                    </li><li>public <span title="OverrideRequest">OverrideRequest</span> <a title="Notification" href="../classes/Notification/getRequest.xhtml">getRequest</a>()
+                    </li><li>public string <a title="Notification" href="../classes/Notification/getSenderEmail.xhtml">getSenderEmail</a>()
+                    </li><li>public string <a title="Notification" href="../classes/Notification/getReceiverEmail.xhtml">getReceiverEmail</a>()
+                    </li><li>public string <a title="Notification" href="../classes/Notification/getBody.xhtml">getBody</a>()
                     </li><li>public void <a title="Notification" href="../classes/Notification/setRequest.xhtml">setRequest</a>()
                     </li><li>public void <a title="Notification" href="../classes/Notification/setSenderEmail.xhtml">setSenderEmail</a>()
                     </li><li>public void <a title="Notification" href="../classes/Notification/setReceiverEmail.xhtml">setReceiverEmail</a>()
@@ -86,7 +87,7 @@
                     </li><li>public static array <a title="Notification" href="../classes/Notification/listNotifications.xhtml">listNotifications</a>()
                     </li><li>public static array <a title="Notification" href="../classes/Notification/listSentNotifications.xhtml">listSentNotifications</a>()
                     </li><li>public static array <a title="Notification" href="../classes/Notification/listReceivedNotifications.xhtml">listReceivedNotifications</a>()
-                    </li><li>public static ?<span title="Notification">Notification</span> <a title="Notification" href="../classes/Notification/getNotificationId.xhtml">getNotificationId</a>()
+                    </li><li>public static ?<span title="Notification">Notification</span> <a title="Notification" href="../classes/Notification/getNotificationById.xhtml">getNotificationById</a>()
                     </li></ul>
 
             }<br/></div>
@@ -130,44 +131,37 @@
           </ul>
           <h4>public</h4>
           <ul>
-            <li id="buildNotification">
-              <a title="Notification" href="../classes/Notification/buildNotification.xhtml">buildNotification()</a>
-            </li>
-            <li id="getBody">
-              <a title="Notification" href="../classes/Notification/getBody.xhtml">getBody()</a>
-            </li>
-            <li id="getId">
-              <a title="Notification" href="../classes/Notification/getId.xhtml">getId()</a>
-            </li>
-            <li id="getNotificationId">
-              <a title="Notification" href="../classes/Notification/getNotificationId.xhtml">getNotificationId()</a>
-            </li>
+            <li id="buildNotification"><a title="Notification" href="../classes/Notification/buildNotification.xhtml">buildNotification()</a>
+                — This method build a local notification object</li>
+            <li id="getBody"><a title="Notification" href="../classes/Notification/getBody.xhtml">getBody()</a>
+                — The text to be sent with the notification</li>
+            <li id="getId"><a title="Notification" href="../classes/Notification/getId.xhtml">getId()</a>
+                — The database id. Null if it hasn't been stored</li>
+            <li id="getNotificationById"><a title="Notification" href="../classes/Notification/getNotificationById.xhtml">getNotificationById()</a>
+                — Retrieves a notification by its database id if it exists, null otherwise.</li>
             <li id="getReceiverEmail">
               <a title="Notification" href="../classes/Notification/getReceiverEmail.xhtml">getReceiverEmail()</a>
             </li>
-            <li id="getRequest">
-              <a title="Notification" href="../classes/Notification/getRequest.xhtml">getRequest()</a>
-            </li>
+            <li id="getRequest"><a title="Notification" href="../classes/Notification/getRequest.xhtml">getRequest()</a>
+                — The request this notification is associated with</li>
             <li id="getSenderEmail">
               <a title="Notification" href="../classes/Notification/getSenderEmail.xhtml">getSenderEmail()</a>
             </li>
-            <li id="listNotifications">
-              <a title="Notification" href="../classes/Notification/listNotifications.xhtml">listNotifications()</a>
-            </li>
-            <li id="listReceivedNotifications">
-              <a title="Notification" href="../classes/Notification/listReceivedNotifications.xhtml">listReceivedNotifications()</a>
-            </li>
-            <li id="listSentNotifications">
-              <a title="Notification" href="../classes/Notification/listSentNotifications.xhtml">listSentNotifications()</a>
-            </li>
+            <li id="listNotifications"><a title="Notification" href="../classes/Notification/listNotifications.xhtml">listNotifications()</a>
+                — List all of the notification associated with a given request</li>
+            <li id="listReceivedNotifications"><a title="Notification" href="../classes/Notification/listReceivedNotifications.xhtml">listReceivedNotifications()</a>
+                — List all of the notification received by a given user</li>
+            <li id="listSentNotifications"><a title="Notification" href="../classes/Notification/listSentNotifications.xhtml">listSentNotifications()</a>
+                — List all of the notification sent by a given user</li>
             <li id="setBody">
               <a title="Notification" href="../classes/Notification/setBody.xhtml">setBody()</a>
             </li>
             <li id="setReceiverEmail">
               <a title="Notification" href="../classes/Notification/setReceiverEmail.xhtml">setReceiverEmail()</a>
             </li>
-            <li id="setRequest"><a title="Notification" href="../classes/Notification/setRequest.xhtml">setRequest()</a>
-                — Setters</li>
+            <li id="setRequest">
+              <a title="Notification" href="../classes/Notification/setRequest.xhtml">setRequest()</a>
+            </li>
             <li id="setSenderEmail">
               <a title="Notification" href="../classes/Notification/setSenderEmail.xhtml">setSenderEmail()</a>
             </li>
