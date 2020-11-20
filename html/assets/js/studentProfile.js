@@ -119,11 +119,27 @@ $(document).ready(function() {
         "banner-id": $("#bannerid").val(),
         email: $("#email").val(),
         "grad-month": $("#gradmonth option:selected").val() + "/" + $("#gradyear").val(),
-        majors: selectedMajors,
-        minors: selectedMinors,
+        major: selectedMajors,
+        minor: selectedMinors,
         "class-standing": $("#class option:selected").val()
       }
-      console.log(payload);
+      $.ajax({
+        method: "PUT",
+        url: BASE_URL+"/profile",
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        complete: function(request, status){
+          if (request.status == 200){
+            setCookie("userName", payload["first-name"] + " " + payload["last-name"]);
+            $("#userName").text(getCookie("userName"));
+            dismissible.success("Profile Updated Successfully");
+            form.reset();
+          } else {
+            var data = $.parseJSON(request.responseText);
+            dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
+          }
+        }
+      });
       return false;
     }
   });

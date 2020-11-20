@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+  const dismissible = new Dismissible(document.querySelector('#dismissible-container'));
    /**
    * A validator method to match a regex pattern
    */
@@ -26,7 +26,23 @@ $(document).ready(function() {
         "last-name": $("#lastname").val(),
         email: $("#email").val()
       }
-      console.log(payload);
+      $.ajax({
+        method: "PUT",
+        url: BASE_URL+"/profile",
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        complete: function(request, status){
+          if (request.status == 200){
+            setCookie("userName", payload["first-name"] + " " + payload["last-name"]);
+            $("#userName").text(getCookie("userName"));
+            dismissible.success("Profile Updated Successfully");
+            form.reset();
+          } else {
+            var data = $.parseJSON(request.responseText);
+            dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
+          }
+        }
+      });
       return false;
     }
   });
