@@ -2,8 +2,6 @@
 include_once 'common_db.php';
 include_once 'courses_db.php';
 // TODO: Data validation on constructor and setters
-// TODO: Last semester
-// TODO: Error-handling
 
 /**
  * This class wraps a student entry in the database
@@ -234,6 +232,36 @@ class Student
     return getEnums($student_tbl, "standing");
   }
 
+  /**
+   * Add a string representing a major directly into the database
+   * @param string $major
+   */
+  public static function addMajor(string $major)
+  {
+    global $major_tbl;
+
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("INSERT INTO $major_tbl (major) VALUES (:major)");
+    $smt->bindParam(":major", $major, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
+  /**
+   * Add a string representing a minor directly into the database
+   * @param string $minor
+   */
+  public static function addMinor(string $minor)
+  {
+    global $minor_tbl;
+
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("INSERT INTO $minor_tbl (minor) VALUES (:minor)");
+    $smt->bindParam(":minor", $minor, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
   // Adds the list of majors to the database
   private function add_majors(array $majors, $pdo)
   {
@@ -407,9 +435,7 @@ class Student
     $minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
 
     // Build the student and return the object
-    $out = new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
-
-    return $out;
+    return new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
   }
 
   /**
