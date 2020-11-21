@@ -147,9 +147,15 @@ class OverrideRequest
     global $request_tbl;
     return getEnums($request_tbl, "reason");
   }
-  
+
   /**
    * Constructs a new request locally
+   * @param Student $student
+   * @param Section $section
+   * @param string $status Must match a value from {@link OverrideRequest::listStatuses()}
+   * @param string $reason Must match a value from {@link OverrideRequest::listOverrideReasons()}
+   * @param string $explanation
+   * @return OverrideRequest|null
    */
   public static function buildRequest(Student $student, Section $section, string $status, string $reason, string $explanation) //Need?: OverrideRequest
   {
@@ -188,7 +194,7 @@ class OverrideRequest
   /**
    * Retrieve a request from the database by ID
    */ 
-  public static function getOverrideRequest(int $id) : OverrideRequest
+  public static function getOverrideRequestById(int $id) : OverrideRequest
   {
   	global $request_tbl;
   	$pdo = connectDB();

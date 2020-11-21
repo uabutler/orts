@@ -1,6 +1,10 @@
 <?php
 include_once 'common_db.php';
 
+/**
+ * Represents a notification send in the system. This class relates the notification to a request, and to the sender and
+ * receiver's email
+ */
 class Notification
 {
   private $id;
@@ -9,39 +13,85 @@ class Notification
   private $receiver_email;
   private $body;
 
-  public function getId() { return $this->id; }
-  public function getRequest() { return $this->request; }
-  public function getSenderEmail() { return $this->sender_email; }
-  public function getReceiverEmail() { return $this->receiver_email; }
-  public function getBody() { return $this->body; }
+  /**
+   * The database id. Null if it hasn't been stored
+   * @return int|null
+   */
+  public function getId(): ?int
+  {
+    return $this->id;
+  }
 
   /**
-   * Setters
+   * The request this notification is associated with
+   * @return OverrideRequest
    */
-  public function setRequest(Request $request)
+  public function getRequest(): OverrideRequest
+  {
+    return $this->request;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSenderEmail(): string
+  {
+    return $this->sender_email;
+  }
+
+  /**
+   * @return string
+   */
+  public function getReceiverEmail(): string
+  {
+    return $this->receiver_email;
+  }
+
+  /**
+   * The text to be sent with the notification
+   * @return string
+   */
+  public function getBody(): string
+  {
+    return $this->body;
+  }
+
+  /**
+   * @param OverrideRequest $request
+   */
+  public function setRequest(OverrideRequest $request)
   {
     $this->request = $request;
   }
 
+  /**
+   * @param string $sender_email
+   */
   public function setSenderEmail(string $sender_email)
   {
     $this->sender_email = $sender_email;
   }
 
+  /**
+   * @param string $receiver_email
+   */
   public function setReceiverEmail(string $receiver_email)
   {
-    $this->last_name = $last_name;
+    $this->receiver_email = $receiver_email;
   }
 
+  /**
+   * @param string $body
+   */
   public function setBody(string $body)
   {
     $this->body = $body;
   }
 
-  private function __construct(Request $request, string $sender_email, string $receiver_email, string $body, int $id=null)
+  private function __construct(OverrideRequest $request, string $sender_email, string $receiver_email, string $body, int $id=null)
   {
     $this->id = $id;
-    $this->email = $email;
+    $this->request = $request;
     $this->sender_email = $sender_email;
     $this->receiver_email = $receiver_email;
     $this->body = $body;
@@ -91,7 +141,15 @@ class Notification
       $this->updateDB();
   }
 
-  public static function buildNotification(Request $request, string $sender_email, string $receiver_email, string $body): Notification
+  /**
+   * This method build a local notification object
+   * @param OverrideRequest $request
+   * @param string $sender_email
+   * @param string $receiver_email
+   * @param string $body
+   * @return Notification An object that only exists locally, isn't stored in DB
+   */
+  public static function buildNotification(OverrideRequest $request, string $sender_email, string $receiver_email, string $body): Notification
   {
     return new Notification($request, $sender_email, $receiver_email, $body);
   }
@@ -112,32 +170,52 @@ class Notification
     $out = [];
 
     foreach($data as $row)
-      array_push(new Notification(new Request($row['request_id'], $row['sender_email'], $row['receiver_email'], $row['body'], $row['id'])));
+      array_push($out, new Notification(OverrideRequest::getOverrideRequestById($row['request_id']), $row['sender_email'], $row['receiver_email'], $row['body'], $row['id']));
 
     return $out;
   }
 
-  public static function listNotifications(Request $request): array
+    /**
+     * List all of the notification associated with a given request
+     * @param OverrideRequest $request Must be stored in the DB
+     * @return array
+     */
+  public static function listNotifications(OverrideRequest $request): array
   {
-    return listNotificationsHelper($request->getId(), "request_id", PDO::PARAM_INT);
+    return Notification::listNotificationsHelper($request->getId(), "request_id", PDO::PARAM_INT);
   }
 
+  /**
+   * List all of the notification sent by a given user
+   * @param string $sender_email Should represent a user that exists in the database
+   * @return array
+   */
   public static function listSentNotifications(string $sender_email): array
   {
-    return listNotificationsHelper($sender_email, "sender_email", PDO::PARAM_STR);
+    return Notification::listNotificationsHelper($sender_email, "sender_email", PDO::PARAM_STR);
   }
 
+  /**
+   * List all of the notification received by a given user
+   * @param string $receiver_email Should represent a user that exists in the databse
+   * @return array
+   */
   public static function listReceivedNotifications(string $receiver_email): array
   {
-    return listNotificationsHelper($receiver_email, "receiver_email", PDO::PARAM_STR);
+    return Notification::listNotificationsHelper($receiver_email, "receiver_email", PDO::PARAM_STR);
   }
 
-  public static function getNotificationId(int $id): ?Notification
+  /**
+   * Retrieves a notification by its database id if it exists, null otherwise.
+   * @param int $id
+   * @return Notification|null
+   */
+  public static function getNotificationById(int $id): ?Notification
   {
     global $notification_tbl;
     $pdo = connectDB();
 
-    $smt = $pdo->prepare("SELECT * FROM $faculty_tbl WHERE id=:id LIMIT 1");
+    $smt = $pdo->prepare("SELECT * FROM $notification_tbl WHERE id=:id LIMIT 1");
     $smt->bindParam(":id", $id, PDO::PARAM_INT);
     $smt->execute();
 
@@ -145,7 +223,7 @@ class Notification
 
     if(!$data) return null;
 
-    return new Faculty($data['email'], $data['first_name'], $data['last_name'], $id);
+    return new Notification(OverrideRequest::getOverrideRequestById($data['request_id']), $data['sender_email'], $data['receiver_email'], $data['body']);
   }
 }
 

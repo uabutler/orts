@@ -1,6 +1,9 @@
 <?php
 include_once 'common_db.php';
 
+/**
+ * A class that stores a faculty member, keeps track of name and email
+ */
 class Faculty
 {
   private $id;
@@ -8,24 +11,58 @@ class Faculty
   private $first_name;
   private $last_name;
 
-  public function getId() { return $this->id; }
-  public function getEmail() { return $this->email; }
-  public function getFirstName() { return $this->first_name; }
-  public function getLastName() { return $this->last_name; }
+  /**
+   * The database id. Null if it hasn't been stored
+   * @return int|null
+   */
+  public function getId(): ?int
+  {
+    return $this->id;
+  }
 
   /**
-   * Setters
+   * @return string
+   */
+  public function getEmail(): string
+  {
+    return $this->email;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFirstName(): string
+  {
+    return $this->first_name;
+  }
+
+  /**
+   * @return string
+   */
+  public function getLastName(): string
+  {
+    return $this->last_name;
+  }
+
+  /**
+   * @param string $email
    */
   public function setEmail(string $email)
   {
     $this->email = $email;
   }
 
+  /**
+   * @param string $first_name
+   */
   public function setFirstName(string $first_name)
   {
     $this->first_name = $first_name;
   }
 
+  /**
+   * @param string $last_name
+   */
   public function setLastName(string $last_name)
   {
     $this->last_name = $last_name;
@@ -83,11 +120,23 @@ class Faculty
       $this->updateDB();
   }
 
-  public static function buildFaculty(string $email, string $first_name, string $last_name): Facluty
+  /**
+   * Create a local object representing a faculty member
+   * @param string $email
+   * @param string $first_name
+   * @param string $last_name
+   * @return Faculty An object that only exists locally, isn't stored in DB
+   */
+  public static function buildFaculty(string $email, string $first_name, string $last_name): Faculty
   {
     return new Faculty($email, $first_name, $last_name);
   }
 
+  /**
+   * Retrieve a faculty member given their email, null if not found
+   * @param string $email
+   * @return Faculty|null
+   */
   public static function getFaculty(string $email): ?Faculty
   {
     global $faculty_tbl;
@@ -104,7 +153,12 @@ class Faculty
     return new Faculty($email, $data['first_name'], $data['last_name'], $data['id']);
   }
 
-  public static function getFacultyById(int $id): ?Department
+  /**
+   * Retrieve a faculty member by their database id, null if not found
+   * @param int $id
+   * @return Faculty|null
+   */
+  public static function getFacultyById(int $id): ?Faculty
   {
     global $faculty_tbl;
     $pdo = connectDB();

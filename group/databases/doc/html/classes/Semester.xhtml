@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>phpDox - Semester</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <nav class="topnav">
+      <ul>
+        <li>
+          <div class="logo"><span>/**</span>phpDox</div>
+        </li>
+        <li class="separator">
+          <a href="../index.xhtml">Overview</a>
+        </li>
+        <li class="separator">
+          <a href="../namespaces.xhtml">Namespaces</a>
+        </li>
+        <li>
+          <a href="../classes.xhtml">Classes</a>
+        </li>
+        <li class="separator">
+          <a href="../source/index.xhtml">Source</a>
+        </li>
+      </ul>
+    </nav>
+    <div id="mainstage">
+      <div class="box">
+        <ul class="breadcrumb">
+          <li>
+            <a href="../index.xhtml">Overview</a>
+          </li>
+          <li class="separator">
+            <a href="../classes.xhtml">Classes</a>
+          </li>
+          <li class="separator">Semester</li>
+        </ul>
+      </div>
+      <nav class="box">
+        <ul>
+          <li>
+            <a href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#synopsis">Synopsis</a>
+          </li>
+          <li>
+            <a href="#tasks">Tasks</a>
+          </li>
+          <li>
+            <a href="#members">Members</a>
+          </li>
+          <li>
+            <a href="#methods">Methods</a>
+          </li>
+          <li>
+            <a href="../source/courses_db.php.xhtml#line416">Source</a>
+          </li>
+        </ul>
+      </nav>
+      <section>
+        <h1 id="introduction"><small>\</small>Semester</h1>
+        <h4>Represents a semester. This is used to relate the semester code (e.g., "202160") to its human readable form (e.g., Fall 2021)</h4>
+        <p/>
+        <ul/>
+        <h2 id="synopsis">Synopsis</h2>
+        <div class="synopsis">class Semester
+            {<br/><ul class="none"><li>// members</li><li>private  <a href="#members">$id</a>;
+                    </li><li>private  <a href="#members">$semester</a>;
+                    </li><li>private  <a href="#members">$description</a>;
+                    </li><li>private  <a href="#members">$active</a>;
+                    </li></ul><ul class="none"><li>// methods</li><li>public ?int <a title="Semester" href="../classes/Semester/getId.xhtml">getId</a>()
+                    </li><li>public string <a title="Semester" href="../classes/Semester/getSemesterCode.xhtml">getSemesterCode</a>()
+                    </li><li>public string <a title="Semester" href="../classes/Semester/getDescription.xhtml">getDescription</a>()
+                    </li><li>public bool <a title="Semester" href="../classes/Semester/isActive.xhtml">isActive</a>()
+                    </li><li>public void <a title="Semester" href="../classes/Semester/setSemesterCode.xhtml">setSemesterCode</a>()
+                    </li><li>public void <a title="Semester" href="../classes/Semester/setDescription.xhtml">setDescription</a>()
+                    </li><li>public void <a title="Semester" href="../classes/Semester/setActive.xhtml">setActive</a>()
+                    </li><li>public void <a title="Semester" href="../classes/Semester/setInactive.xhtml">setInactive</a>()
+                    </li><li>public static array <a title="Semester" href="../classes/Semester/listActiveSemesters.xhtml">listActiveSemesters</a>()
+                    </li><li>private void <a title="Semester" href="../classes/Semester/__construct.xhtml">__construct</a>()
+                    </li><li>private void <a title="Semester" href="../classes/Semester/insertDB.xhtml">insertDB</a>()
+                    </li><li>private void <a title="Semester" href="../classes/Semester/updateDB.xhtml">updateDB</a>()
+                    </li><li>public void <a title="Semester" href="../classes/Semester/storeInDB.xhtml">storeInDB</a>()
+                    </li><li>public static Semster <a title="Semester" href="../classes/Semester/buildSemester.xhtml">buildSemester</a>()
+                    </li><li>public static ?<span title="Semester">Semester</span> <a title="Semester" href="../classes/Semester/getSemester.xhtml">getSemester</a>()
+                    </li><li>public static ?<span title="Semester">Semester</span> <a title="Semester" href="../classes/Semester/getSemesterByCode.xhtml">getSemesterByCode</a>()
+                    </li><li>public static ?<span title="Semester">Semester</span> <a title="Semester" href="../classes/Semester/getSemesterById.xhtml">getSemesterById</a>()
+                    </li></ul>
+
+            }<br/></div>
+        <h2 id="tasks">Tasks</h2>
+        <table class="styled">
+          <thead>
+            <tr>
+              <th style="width:3em;">Line</th>
+              <th>Task</th>
+            </tr>
+          </thead>
+          <tr>
+            <td class="nummeric">504</td>
+            <td>Ensure this is the convention for all list functions</td>
+          </tr>
+        </table>
+        <h2 id="members">Members</h2>
+        <div class="styled members">
+          <h4>private</h4>
+          <ul class="members">
+            <li id="active">
+              <strong>$active</strong>
+            </li>
+            <li id="description">
+              <strong>$description</strong>
+            </li>
+            <li id="id">
+              <strong>$id</strong>
+            </li>
+            <li id="semester">
+              <strong>$semester</strong>
+            </li>
+          </ul>
+        </div>
+        <h2 id="methods">Methods</h2>
+        <div class="styled">
+          <h4>private</h4>
+          <ul>
+            <li id="__construct">
+              <a title="Semester" href="../classes/Semester/__construct.xhtml">__construct()</a>
+            </li>
+            <li id="insertDB">
+              <a title="Semester" href="../classes/Semester/insertDB.xhtml">insertDB()</a>
+            </li>
+            <li id="updateDB">
+              <a title="Semester" href="../classes/Semester/updateDB.xhtml">updateDB()</a>
+            </li>
+          </ul>
+          <h4>public</h4>
+          <ul>
+            <li id="buildSemester"><a title="Semester" href="../classes/Semester/buildSemester.xhtml">buildSemester()</a>
+                — Build a semester object locally</li>
+            <li id="getDescription"><a title="Semester" href="../classes/Semester/getDescription.xhtml">getDescription()</a>
+                — The human readable form. E.g., "Fall 2021"</li>
+            <li id="getId"><a title="Semester" href="../classes/Semester/getId.xhtml">getId()</a>
+                — The database id. Null if it hasn't been stored</li>
+            <li id="getSemester"><a title="Semester" href="../classes/Semester/getSemester.xhtml">getSemester()</a>
+                — Fetch a semester from the database given a human readable description, or null it it's not found</li>
+            <li id="getSemesterByCode"><a title="Semester" href="../classes/Semester/getSemesterByCode.xhtml">getSemesterByCode()</a>
+                — Fetch a semester from the database given a code, or null it it's not found</li>
+            <li id="getSemesterById"><a title="Semester" href="../classes/Semester/getSemesterById.xhtml">getSemesterById()</a>
+                — Fetch a semester from the database given its id in the DB, or null it it's not found</li>
+            <li id="getSemesterCode"><a title="Semester" href="../classes/Semester/getSemesterCode.xhtml">getSemesterCode()</a>
+                — The semester code. E.g., "202160"</li>
+            <li id="isActive"><a title="Semester" href="../classes/Semester/isActive.xhtml">isActive()</a>
+                — Is the system currently accepting request for this semester</li>
+            <li id="listActiveSemesters"><a title="Semester" href="../classes/Semester/listActiveSemesters.xhtml">listActiveSemesters()</a>
+                — List all active semesters</li>
+            <li id="setActive"><a title="Semester" href="../classes/Semester/setActive.xhtml">setActive()</a>
+                — Set this semester to active</li>
+            <li id="setDescription">
+              <a title="Semester" href="../classes/Semester/setDescription.xhtml">setDescription()</a>
+            </li>
+            <li id="setInactive"><a title="Semester" href="../classes/Semester/setInactive.xhtml">setInactive()</a>
+                — Set this semester to inactive</li>
+            <li id="setSemesterCode">
+              <a title="Semester" href="../classes/Semester/setSemesterCode.xhtml">setSemesterCode()</a>
+            </li>
+            <li id="storeInDB"><a title="Semester" href="../classes/Semester/storeInDB.xhtml">storeInDB()</a>
+                — Stores the current object in the database. If the object is newly created, a new entry into the DB is made. If the student has been stored in the DB, we update the existing entry</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <footer>
+      <span>Generated using phpDox 0.12.0 - Copyright (C) 2010 - 2020 by Arne Blankerts and Contributors</span>
+    </footer>
+  </body>
+</html>

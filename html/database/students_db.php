@@ -2,8 +2,6 @@
 include_once 'common_db.php';
 include_once 'courses_db.php';
 // TODO: Data validation on constructor and setters
-// TODO: Last semester
-// TODO: Error-handling
 
 /**
  * This class wraps a student entry in the database
@@ -37,63 +35,173 @@ class Student
   }
 
   /**
-   * Getters
+   * The database id (not banner id). Null if it hasn't been stored
+   * @return int|null
    */
-  public function getId() { return $this->id; }
-  public function getEmail() { return $this->email; }
-  public function getFirstName() { return $this->first_name; }
-  public function getLastName() { return $this->last_name; }
-  public function getBannerId() { return $this->banner_id; }
-  public function getGradMonth() { return $this->grad_month; }
-  public function getStanding() { return $this->standing; }
-  public function getMajors() { return $this->majors; }
-  public function getMinors() { return $this->minors; }
-  public function getLastActiveSem() { return $this->last_active_sem; }
+  public function getId(): ?int
+  {
+    return $this->id;
+  }
 
   /**
-   * Setters
+   * @return string
+   */
+  public function getEmail(): string
+  {
+    return $this->email;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFirstName(): string
+  {
+    return $this->first_name;
+  }
+
+  /**
+   * @return string
+   */
+  public function getLastName(): string
+  {
+    return $this->last_name;
+  }
+
+  /**
+   * A string representing the 9-digit banner id
+   * @return string
+   */
+  public function getBannerId(): string
+  {
+    return $this->banner_id;
+  }
+
+  /**
+   * MM/YYYY format
+   * @return string
+   */
+  public function getGradMonth(): string
+  {
+    return $this->grad_month;
+  }
+
+  /**
+   * Checks to see if the last request a student submitted was in an active semester
+   * @return Semester|null
+   */
+  public function isActive(): bool
+  {
+    if(!$this->last_active_sem)
+      return false;
+    else
+      return $this->last_active_sem->isActive();
+  }
+
+  /**
+   * A list of strings representing the student's majors
+   * @return array
+   */
+  public function getMajors(): array
+  {
+    return $this->majors;
+  }
+
+  /**
+   * A list of strings representing the student's minors
+   * @return array
+   */
+  public function getMinors(): array
+  {
+    return $this->minors;
+  }
+
+  /**
+   * @param string $email
    */
   public function setEmail(string $email)
   {
     $this->email = $email;
   }
 
+  /**
+   * @param string $first_name
+   */
   public function setFirstName(string $first_name)
   {
     $this->first_name = $first_name;
   }
 
+  /**
+   * @param string $last_name
+   */
   public function setLastName(string $last_name)
   {
     $this->last_name = $last_name;
   }
 
+  /**
+   * @param string $banner_id
+   */
   public function setBannerId(string $banner_id)
   {
     $this->banner_id = $banner_id;
   }
 
+  /**
+   * @param string $grad_month
+   */
   public function setGradMonth(string $grad_month)
   {
     $this->grad_month = $grad_month;
   }
 
+  /**
+   * @param string $standing
+   */
   public function setStanding(string $standing)
   {
     $this->standing = $standing;
   }
 
+  /**
+   * Academic standing. "Freshman", etc.
+   * @return string
+   */
+  public function getStanding(): string
+  {
+    return $this->standing;
+  }
+
+  /**
+   * @param Semester|null $last_active_sem
+   */
+  public function setLastActiveSem(?Semester $last_active_sem): void
+  {
+    $this->last_active_sem = $last_active_sem;
+  }
+
+  /**
+   * Each value must match one from {@link Student::listMajors()} and be unique
+   * @param array $majors
+   */
   public function setMajors(array $majors)
   {
     $this->majors = $majors;
   }
 
+  /**
+   * Each value must match one from {@link Student::listMinors()} and be unique
+   * @param array $minors
+   */
   public function setMinors(array $minors)
   {
     $this->minors = $minors;
   }
 
-  // List all possible majors
+  /**
+   * An array of strings representing all possible majors
+   * @return array
+   */
   public static function listMajors(): array
   {
     global $major_tbl;
@@ -102,7 +210,10 @@ class Student
     return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
   }
 
-  // List all possible minors
+  /**
+   * An array of strings representing all possible minors
+   * @return array
+   */
   public static function listMinors(): array
   {
     global $minor_tbl;
@@ -111,11 +222,44 @@ class Student
     return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
   }
 
-  // List all possible standings
+  /**
+   * An array of strings representing all possible academic standings, "Freshman", etc.
+   * @return array
+   */
   public static function listStandings(): array
   {
     global $student_tbl;
     return getEnums($student_tbl, "standing");
+  }
+
+  /**
+   * Add a string representing a major directly into the database
+   * @param string $major
+   */
+  public static function addMajor(string $major)
+  {
+    global $major_tbl;
+
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("INSERT INTO $major_tbl (major) VALUES (:major)");
+    $smt->bindParam(":major", $major, PDO::PARAM_STR);
+    $smt->execute();
+  }
+
+  /**
+   * Add a string representing a minor directly into the database
+   * @param string $minor
+   */
+  public static function addMinor(string $minor)
+  {
+    global $minor_tbl;
+
+    $pdo = connectDB();
+
+    $smt = $pdo->prepare("INSERT INTO $minor_tbl (minor) VALUES (:minor)");
+    $smt->bindParam(":minor", $minor, PDO::PARAM_STR);
+    $smt->execute();
   }
 
   // Adds the list of majors to the database
@@ -166,14 +310,16 @@ class Student
     $pdo = connectDB();
 
     // Insert basic student info
-    $smt = $pdo->prepare("INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing)");
+    $smt = $pdo->prepare("INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing, last_active_sem) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing, :last_active_sem)");
 
+    $last_active_sem_id = $this->last_active_sem->getId();
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
     $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
     $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
     $smt->bindParam(":banner_id", $this->banner_id, PDO::PARAM_STR);
     $smt->bindParam(":grad_month", $this->grad_month, PDO::PARAM_STR);
-    $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR); 
+    $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
+    $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
     $smt->execute();
 
     // get the newly created ID
@@ -192,15 +338,16 @@ class Student
     $pdo = connectDB();
 
     // First, update the basic student info
-    $smt = $pdo->prepare("UPDATE $student_tbl SET email=:email, first_name=:first_name, last_name=:last_name, banner_id=:banner_id, grad_month=:grad_month, standing=:standing WHERE id=:id");
-
+    $last_active_sem_id = $this->last_active_sem->getId();
+    $smt = $pdo->prepare("UPDATE $student_tbl SET email=:email, first_name=:first_name, last_name=:last_name, banner_id=:banner_id, grad_month=:grad_month, standing=:standing, last_active_sem=:last_active_sem WHERE id=:id");
+    $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
     $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
     $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
     $smt->bindParam(":banner_id", $this->banner_id, PDO::PARAM_STR);
     $smt->bindParam(":grad_month", $this->grad_month, PDO::PARAM_STR);
     $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
-    $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
+    $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
     $smt->execute();
 
@@ -250,6 +397,15 @@ class Student
 
   /**
    * Constructs a new student locally
+   * @param string $email
+   * @param string $first_name
+   * @param string $last_name
+   * @param string $banner_id
+   * @param string $grad_month
+   * @param string $standing
+   * @param array $majors
+   * @param array $minors
+   * @return Student An object that only exists locally, isn't stored in DB
    */
   public static function buildStudent(string $email, string $first_name, string $last_name, string $banner_id,
     string $grad_month, string $standing, array $majors, array $minors)
@@ -279,13 +435,13 @@ class Student
     $minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
 
     // Build the student and return the object
-    $out = new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
-
-    return $out;
+    return new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
   }
 
   /**
-   * Retrieve a student from the database
+   * Retrieve a student from the database given an email, null if it can't be found
+   * @param string $email
+   * @return Student|null
    */
   public static function getStudent(string $email): ?Student
   {
@@ -302,6 +458,11 @@ class Student
     return Student::loadStudent($data, $pdo);
   }
 
+  /**
+   * Retrieves a student form the database given the database id (not banner id), null if it can't be found
+   * @param int $id
+   * @return Student|null
+   */
   public static function getStudentById(int $id): ?Student
   {
     global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
