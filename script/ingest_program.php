@@ -15,7 +15,7 @@ $file = fopen($argv[1], "r");
 echo "Storing data\n";
 while(!feof($file))
 {
-  $line = fgets($file);
+  $line = substr(fgets($file), 0, -1);
   if(strlen($line) <= 1) exit();
   Student::addMajor($line);
 }
@@ -29,7 +29,7 @@ $file = fopen($argv[1], "r");
 echo "Storing data\n";
 while(!feof($file))
 {
-  $line = fgets($file);
+  $line = substr(fgets($file), 0, -1);
   if(strlen($line) <= 1) exit();
   Student::addMinor($line);
 }
