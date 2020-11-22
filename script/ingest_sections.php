@@ -7,7 +7,6 @@ $pdo = connectDB();
 $argc == 3 or $argc == 4 or die("Please specify an excel file and an output tsv file: $argv[0] excel_file tsv_file [python_script_name]\n");
 
 echo "Converting xlsx to tsv\n";
-$mesg;
 if($argc == 4)
   $mesg = exec("python $argv[3] $argv[1] $argv[2]");
 else

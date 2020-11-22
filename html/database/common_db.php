@@ -19,10 +19,8 @@ $request_tbl = "requests";
 $attachment_tbl = "attachments";
 $notification_tbl = "notifications";
 
-/**
- * This funciton returns a connection to the MySQL DB
- */
-function connectDB()
+// This function returns a connection to the MySQL DB
+function connectDB(): PDO
 {
   $dbname = "group1";
   $dbhost = "borax.truman.edu";
@@ -34,10 +32,6 @@ function connectDB()
   return new PDO($dsn, $user, $passwd);
 }
 
-/**
- * This function takes in a multi-dim array where each smaller array has a single elements and return a
- * one-dim array.
- */
 function flattenResult(array $result): array
 {
   $out = [];
@@ -48,15 +42,10 @@ function flattenResult(array $result): array
   return $out;
 }
 
-/**
- * Takes an array and turns it into a comma seperated string with single
- * quotes around each item.
- */
 function arrayToDbList(array $arr): string
 {
   return implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", $arr)));
 }
-
 
 function getEnums(string $table, string $field, $pdo=null): array
 {

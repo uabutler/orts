@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>phpDox - Student</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <nav class="topnav">
+      <ul>
+        <li>
+          <div class="logo"><span>/**</span>phpDox</div>
+        </li>
+        <li class="separator">
+          <a href="../index.xhtml">Overview</a>
+        </li>
+        <li class="separator">
+          <a href="../namespaces.xhtml">Namespaces</a>
+        </li>
+        <li>
+          <a href="../classes.xhtml">Classes</a>
+        </li>
+        <li class="separator">
+          <a href="../source/index.xhtml">Source</a>
+        </li>
+      </ul>
+    </nav>
+    <div id="mainstage">
+      <div class="box">
+        <ul class="breadcrumb">
+          <li>
+            <a href="../index.xhtml">Overview</a>
+          </li>
+          <li class="separator">
+            <a href="../classes.xhtml">Classes</a>
+          </li>
+          <li class="separator">Student</li>
+        </ul>
+      </div>
+      <nav class="box">
+        <ul>
+          <li>
+            <a href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#synopsis">Synopsis</a>
+          </li>
+          <li>
+            <a href="#members">Members</a>
+          </li>
+          <li>
+            <a href="#methods">Methods</a>
+          </li>
+          <li>
+            <a href="../source/students_db.php.xhtml#line9">Source</a>
+          </li>
+        </ul>
+      </nav>
+      <section>
+        <h1 id="introduction"><small>\</small>Student</h1>
+        <h4>This class wraps a student entry in the database</h4>
+        <p/>
+        <ul/>
+        <h2 id="synopsis">Synopsis</h2>
+        <div class="synopsis">class Student
+            {<br/><ul class="none"><li>// members</li><li>private  <a href="#members">$id</a>;
+                    </li><li>private  <a href="#members">$email</a>;
+                    </li><li>private  <a href="#members">$first_name</a>;
+                    </li><li>private  <a href="#members">$last_name</a>;
+                    </li><li>private  <a href="#members">$banner_id</a>;
+                    </li><li>private  <a href="#members">$grad_month</a>;
+                    </li><li>private  <a href="#members">$standing</a>;
+                    </li><li>private  <a href="#members">$majors</a>;
+                    </li><li>private  <a href="#members">$minors</a>;
+                    </li><li>private  <a href="#members">$last_active_sem</a>;
+                    </li></ul><ul class="none"><li>// methods</li><li>private void <a title="Student" href="../classes/Student/__construct.xhtml">__construct</a>()
+                    </li><li>public ?int <a title="Student" href="../classes/Student/getId.xhtml">getId</a>()
+                    </li><li>public string <a title="Student" href="../classes/Student/getEmail.xhtml">getEmail</a>()
+                    </li><li>public string <a title="Student" href="../classes/Student/getFirstName.xhtml">getFirstName</a>()
+                    </li><li>public string <a title="Student" href="../classes/Student/getLastName.xhtml">getLastName</a>()
+                    </li><li>public string <a title="Student" href="../classes/Student/getBannerId.xhtml">getBannerId</a>()
+                    </li><li>public string <a title="Student" href="../classes/Student/getGradMonth.xhtml">getGradMonth</a>()
+                    </li><li>public bool <a title="Student" href="../classes/Student/isActive.xhtml">isActive</a>()
+                    </li><li>public array <a title="Student" href="../classes/Student/getMajors.xhtml">getMajors</a>()
+                    </li><li>public array <a title="Student" href="../classes/Student/getMinors.xhtml">getMinors</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setEmail.xhtml">setEmail</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setFirstName.xhtml">setFirstName</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setLastName.xhtml">setLastName</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setBannerId.xhtml">setBannerId</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setGradMonth.xhtml">setGradMonth</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setStanding.xhtml">setStanding</a>()
+                    </li><li>public string <a title="Student" href="../classes/Student/getStanding.xhtml">getStanding</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setLastActiveSem.xhtml">setLastActiveSem</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setMajors.xhtml">setMajors</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/setMinors.xhtml">setMinors</a>()
+                    </li><li>public static array <a title="Student" href="../classes/Student/listMajors.xhtml">listMajors</a>()
+                    </li><li>public static array <a title="Student" href="../classes/Student/listMinors.xhtml">listMinors</a>()
+                    </li><li>public static array <a title="Student" href="../classes/Student/listStandings.xhtml">listStandings</a>()
+                    </li><li>public static void <a title="Student" href="../classes/Student/addMajor.xhtml">addMajor</a>()
+                    </li><li>public static void <a title="Student" href="../classes/Student/addMinor.xhtml">addMinor</a>()
+                    </li><li>private void <a title="Student" href="../classes/Student/add_majors.xhtml">add_majors</a>()
+                    </li><li>private void <a title="Student" href="../classes/Student/add_minors.xhtml">add_minors</a>()
+                    </li><li>private void <a title="Student" href="../classes/Student/remove_major.xhtml">remove_major</a>()
+                    </li><li>private void <a title="Student" href="../classes/Student/remove_minor.xhtml">remove_minor</a>()
+                    </li><li>private void <a title="Student" href="../classes/Student/insertDB.xhtml">insertDB</a>()
+                    </li><li>private void <a title="Student" href="../classes/Student/updateDB.xhtml">updateDB</a>()
+                    </li><li>public void <a title="Student" href="../classes/Student/storeInDB.xhtml">storeInDB</a>()
+                    </li><li>public static Student <a title="Student" href="../classes/Student/buildStudent.xhtml">buildStudent</a>()
+                    </li><li>private static <span title="Student">Student</span> <a title="Student" href="../classes/Student/loadStudent.xhtml">loadStudent</a>()
+                    </li><li>public static ?<span title="Student">Student</span> <a title="Student" href="../classes/Student/getStudent.xhtml">getStudent</a>()
+                    </li><li>public static ?<span title="Student">Student</span> <a title="Student" href="../classes/Student/getStudentById.xhtml">getStudentById</a>()
+                    </li></ul>
+
+            }<br/></div>
+        <h2 id="members">Members</h2>
+        <div class="styled members">
+          <h4>private</h4>
+          <ul class="members">
+            <li id="banner_id">
+              <strong>$banner_id</strong>
+            </li>
+            <li id="email">
+              <strong>$email</strong>
+            </li>
+            <li id="first_name">
+              <strong>$first_name</strong>
+            </li>
+            <li id="grad_month">
+              <strong>$grad_month</strong>
+            </li>
+            <li id="id">
+              <strong>$id</strong>
+            </li>
+            <li id="last_active_sem">
+              <strong>$last_active_sem</strong>
+            </li>
+            <li id="last_name">
+              <strong>$last_name</strong>
+            </li>
+            <li id="majors">
+              <strong>$majors</strong>
+            </li>
+            <li id="minors">
+              <strong>$minors</strong>
+            </li>
+            <li id="standing">
+              <strong>$standing</strong>
+            </li>
+          </ul>
+        </div>
+        <h2 id="methods">Methods</h2>
+        <div class="styled">
+          <h4>private</h4>
+          <ul>
+            <li id="__construct">
+              <a title="Student" href="../classes/Student/__construct.xhtml">__construct()</a>
+            </li>
+            <li id="add_majors">
+              <a title="Student" href="../classes/Student/add_majors.xhtml">add_majors()</a>
+            </li>
+            <li id="add_minors">
+              <a title="Student" href="../classes/Student/add_minors.xhtml">add_minors()</a>
+            </li>
+            <li id="insertDB">
+              <a title="Student" href="../classes/Student/insertDB.xhtml">insertDB()</a>
+            </li>
+            <li id="loadStudent">
+              <a title="Student" href="../classes/Student/loadStudent.xhtml">loadStudent()</a>
+            </li>
+            <li id="remove_major">
+              <a title="Student" href="../classes/Student/remove_major.xhtml">remove_major()</a>
+            </li>
+            <li id="remove_minor">
+              <a title="Student" href="../classes/Student/remove_minor.xhtml">remove_minor()</a>
+            </li>
+            <li id="updateDB">
+              <a title="Student" href="../classes/Student/updateDB.xhtml">updateDB()</a>
+            </li>
+          </ul>
+          <h4>public</h4>
+          <ul>
+            <li id="addMajor"><a title="Student" href="../classes/Student/addMajor.xhtml">addMajor()</a>
+                — Add a string representing a major directly into the database</li>
+            <li id="addMinor"><a title="Student" href="../classes/Student/addMinor.xhtml">addMinor()</a>
+                — Add a string representing a minor directly into the database</li>
+            <li id="buildStudent"><a title="Student" href="../classes/Student/buildStudent.xhtml">buildStudent()</a>
+                — Constructs a new student locally</li>
+            <li id="getBannerId"><a title="Student" href="../classes/Student/getBannerId.xhtml">getBannerId()</a>
+                — A string representing the 9-digit banner id</li>
+            <li id="getEmail">
+              <a title="Student" href="../classes/Student/getEmail.xhtml">getEmail()</a>
+            </li>
+            <li id="getFirstName">
+              <a title="Student" href="../classes/Student/getFirstName.xhtml">getFirstName()</a>
+            </li>
+            <li id="getGradMonth"><a title="Student" href="../classes/Student/getGradMonth.xhtml">getGradMonth()</a>
+                — MM/YYYY format</li>
+            <li id="getId"><a title="Student" href="../classes/Student/getId.xhtml">getId()</a>
+                — The database id (not banner id). Null if it hasn't been stored</li>
+            <li id="getLastName">
+              <a title="Student" href="../classes/Student/getLastName.xhtml">getLastName()</a>
+            </li>
+            <li id="getMajors"><a title="Student" href="../classes/Student/getMajors.xhtml">getMajors()</a>
+                — A list of strings representing the student's majors</li>
+            <li id="getMinors"><a title="Student" href="../classes/Student/getMinors.xhtml">getMinors()</a>
+                — A list of strings representing the student's minors</li>
+            <li id="getStanding"><a title="Student" href="../classes/Student/getStanding.xhtml">getStanding()</a>
+                — Academic standing. "Freshman", etc.</li>
+            <li id="getStudent"><a title="Student" href="../classes/Student/getStudent.xhtml">getStudent()</a>
+                — Retrieve a student from the database given an email, null if it can't be found</li>
+            <li id="getStudentById"><a title="Student" href="../classes/Student/getStudentById.xhtml">getStudentById()</a>
+                — Retrieves a student form the database given the database id (not banner id), null if it can't be found</li>
+            <li id="isActive"><a title="Student" href="../classes/Student/isActive.xhtml">isActive()</a>
+                — Checks to see if the last request a student submitted was in an active semester</li>
+            <li id="listMajors"><a title="Student" href="../classes/Student/listMajors.xhtml">listMajors()</a>
+                — An array of strings representing all possible majors</li>
+            <li id="listMinors"><a title="Student" href="../classes/Student/listMinors.xhtml">listMinors()</a>
+                — An array of strings representing all possible minors</li>
+            <li id="listStandings"><a title="Student" href="../classes/Student/listStandings.xhtml">listStandings()</a>
+                — An array of strings representing all possible academic standings, "Freshman", etc.</li>
+            <li id="setBannerId">
+              <a title="Student" href="../classes/Student/setBannerId.xhtml">setBannerId()</a>
+            </li>
+            <li id="setEmail">
+              <a title="Student" href="../classes/Student/setEmail.xhtml">setEmail()</a>
+            </li>
+            <li id="setFirstName">
+              <a title="Student" href="../classes/Student/setFirstName.xhtml">setFirstName()</a>
+            </li>
+            <li id="setGradMonth">
+              <a title="Student" href="../classes/Student/setGradMonth.xhtml">setGradMonth()</a>
+            </li>
+            <li id="setLastActiveSem">
+              <a title="Student" href="../classes/Student/setLastActiveSem.xhtml">setLastActiveSem()</a>
+            </li>
+            <li id="setLastName">
+              <a title="Student" href="../classes/Student/setLastName.xhtml">setLastName()</a>
+            </li>
+            <li id="setMajors"><a title="Student" href="../classes/Student/setMajors.xhtml">setMajors()</a>
+                — Each value must match one from {@link Student::listMajors()} and be unique</li>
+            <li id="setMinors"><a title="Student" href="../classes/Student/setMinors.xhtml">setMinors()</a>
+                — Each value must match one from {@link Student::listMinors()} and be unique</li>
+            <li id="setStanding">
+              <a title="Student" href="../classes/Student/setStanding.xhtml">setStanding()</a>
+            </li>
+            <li id="storeInDB"><a title="Student" href="../classes/Student/storeInDB.xhtml">storeInDB()</a>
+                — Stores the current object in the database. If the object is newly created, a new entry into the DB is made. If the student has been stored in the DB, we update the existing entry</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <footer>
+      <span>Generated using phpDox 0.12.0 - Copyright (C) 2010 - 2020 by Arne Blankerts and Contributors</span>
+    </footer>
+  </body>
+</html>
