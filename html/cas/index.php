@@ -47,12 +47,13 @@ $smt->execute();
 
 $returnedRecords = $smt->fetchAll();
 
-//if faculty: direct to admin.php
+
 if(count($returnedRecords) >= 1){
-  echo "<h1>Hello, $username!</h1>";
   //redirect to admin.html
+  header('location: ./admin.html');
 } else {
   //redirect to studentDashboard.html
+  header('location: ./studentDashboard.html');
 }
 
 ?>
