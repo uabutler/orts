@@ -33,5 +33,27 @@ phpCAS::forceAuthentication();
 $username = phpCAS::getUser();
 
 // the rest of what you want index.html to do ...
+$dbname = "group1";
+$dbhost = "borax.truman.edu";
+$user = "group1";
+$passwd = "370145";
+
+$dsn = "mysql:host=$dbhost;dbname=$dbname";
+$pdo = new PDO($dsn, $user, $passwd);
+
+$smt = $pdo->prepare("SELECT * FROM faculty WHERE email=:username");
+$smt->bindParam(':username', $username);   
+$smt->execute();
+
+$returnedRecords = $smt->fetchAll();
+
+//if faculty: direct to admin.php
+if(count($returnedRecords) >= 1){
+  echo "<h1>Hello, $username!</h1>";
+  //redirect to admin.html
+} else {
+  //redirect to studentDashboard.html
+}
+
 ?>
-<h1>Hello, world!</h1>
+
