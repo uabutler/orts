@@ -1,0 +1,47 @@
+% Unofficial Beamer Color Theme for Truman
+% Brandon Ingli
+% Truman State Class of Winter 2020
+% https://github.com/brandoningli/beamer-theme-truman
+
+\ProvidesPackage{beamercolorthemeTruman}
+
+\mode<presentation>{
+
+  \definecolor{TrumanPurple}{HTML}{510c76}
+  \definecolor{TrumanGold}{HTML}{87714d} %eac883
+  % \definecolor{TrumanDarkGold}{HTML}{B6985A}
+  \definecolor{BGGray}{HTML}{edf0f4}
+  \definecolor{TrumanBlue}{HTML}{00a8e2}
+
+  % \usecolortheme{default}
+
+  \setbeamercolor{background canvas}{bg=white} % Slide Background
+  \setbeamercolor{normal text}{fg=black}
+  \setbeamercolor{alerted text}{fg=TrumanBlue}
+
+  \setbeamercolor{titlelike}{bg=TrumanPurple,fg=white} % Slide Titles
+  \setbeamercolor{frametitle}{bg=TrumanPurple,fg=white} % Slide Titles
+  \setbeamercolor{block title}{bg=TrumanPurple,fg=white} % Block Titles
+  \setbeamercolor{caption name}{bg=TrumanPurple,fg=TrumanPurple} % Caption "Titles"
+
+  \setbeamercolor{logo}{bg=TrumanPurple}
+  
+  \setbeamercolor{item}{fg=TrumanPurple} % Bullet color
+  \setbeamercolor{subitem}{fg=TrumanPurple} % Bullet color
+  
+  \setbeamercolor{sidebar}{bg=TrumanPurple} % Sidebar Background Color
+  \setbeamercolor{title in sidebar}{fg=white} % Short Title Color in Sidebar
+  \setbeamercolor{author in sidebar}{fg=white} % Author Color in Sidebar
+                                              % Short Author displayed if given
+  \setbeamercolor{section in sidebar}{fg=TrumanBlue} % Focused Section Title in Sidebar
+  \setbeamercolor{subsection in sidebar}{fg=TrumanBlue} % Focused Subsection Title in Sidebar
+  \setbeamercolor{subsubsection in sidebar}{fg=TrumanBlue} % Focused Subsubsection Title in Sidebar
+  \setbeamercolor{section in sidebar shaded}{fg=TrumanGold} % Idle Section Title in Sidebar
+  \setbeamercolor{subsection in sidebar shaded}{fg=TrumanGold} % Idle Subsection Title in Sidebar
+  \setbeamercolor{subsubsection in sidebar shaded}{fg=TrumanGold} % Idle Subsubsection Title in Sidebar
+
+  \setbeamercolor{section in toc}{fg=black}
+  \setbeamercolor{subsection in toc}{fg=black}
+  \setbeamercolor{subsubsection in toc}{fg=black}
+  
+}

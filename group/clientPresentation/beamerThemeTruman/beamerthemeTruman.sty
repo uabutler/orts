@@ -1,0 +1,169 @@
+% Unofficial Beamer Theme for Truman
+% Brandon Ingli
+% Truman State Class of Winter 2020
+% https://github.com/brandoningli/beamer-theme-truman
+% Based on the Caltech-beamer-theme [https://github.com/jsh9/Caltech-beamer-theme]
+
+% --------  Formally establish Beamer theme package  ----------------
+\ProvidesPackage{beamerthemeTruman}
+
+\RequirePackage[english]{babel}
+\RequirePackage[utf8]{inputenc}
+% \RequirePackage{float}
+\RequirePackage{hyperref}
+% \RequirePackage{subfig}
+\RequirePackage{graphicx}
+\RequirePackage{ifthen}
+\RequirePackage{tikz}
+\usetikzlibrary{positioning}
+
+% --------  Invoke presentation mode  ----------------
+\mode<presentation>
+
+% --------  Set inner theme, font theme, navigation, etc.  ------------
+\useinnertheme{circles}
+\setbeamertemplate{subsection in toc}{\leavevmode\leftskip=1em{\usebeamercolor[fg]{subitem}$\bullet$}\hskip1em\inserttocsubsection\par}
+\setbeamerfont{frametitle}{size=\Large}
+\usefonttheme{default}
+\setbeamertemplate{navigation symbols}{} % Hides Navigation Symbols
+\setbeamertemplate{caption}[numbered] % Numbers captions
+
+%%% New Brand lookalike font
+\RequirePackage[T1]{fontenc}
+\RequirePackage[default]{raleway}
+\renewcommand{\rmdefault}{\sfdefault}
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamerfont{caption name}{series=\bfseries}
+\setbeamerfont{titlelike}{series=\bfseries}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamerfont{title}{series=\bfseries}
+\setbeamerfont{subtitle}{series=\bfseries}
+\setbeamerfont{block title}{series=\bfseries}
+\setbeamerfont{title in sidebar}{series=\bfseries}
+\setbeamerfont{author in sidebar}{series=\bfseries}
+\setbeamerfont{section in sidebar}{series=\bfseries}
+\setbeamerfont{subsection in sidebar}{series=\bfseries}
+
+% --------  Creates Title Frame without a colored frame title bar  ----------------
+
+\renewcommand{\maketitle}{
+    { % to delimit a block (we only want to remove the header for this frame)
+        \makeatletter % to change template
+        \setbeamercolor{frametitle}{bg=background canvas.bg} % Title bg will match the canvas background
+        \def\beamer@entrycode{\vspace*{-\headheight}} % Shifts content up to compensate for "removed" title bar
+        \makeatother
+        \begin{frame} % Make the title frame
+            \titlepage
+        \end{frame}
+    }
+}
+
+\newcommand{\sectiontitle}[2]{
+    {
+        \makeatletter % to change template
+        \setbeamercolor{frametitle}{bg=background canvas.bg} % Title bg will match the canvas background
+        \makeatother
+        \begin{frame}
+            \centering
+            \begin{beamercolorbox}[sep=10pt,center]{title}
+                \usebeamerfont{title}#1
+                
+                \usebeamerfont{subtitle}#2
+            \end{beamercolorbox}
+            \vfill
+        \end{frame}
+    }
+}
+
+\newcommand{\sidebarembelish}[1]{
+    \ifthenelse{\equal{#1}{left}}{
+        \addtobeamertemplate{footline}{
+            \begin{tikzpicture}[remember picture,overlay]
+                \node [shift={(1.62cm,-4.5cm)}]  at (current page.north west){
+                    \includegraphics[
+                        width=0.1cm,
+                        height=1.1\paperheight]{trumangradient.png}
+                };
+            \end{tikzpicture}
+        }
+    }
+    {
+        \addtobeamertemplate{footline}{
+            \begin{tikzpicture}[remember picture,overlay]
+                \node [shift={(-1.62cm,-4.5cm)}]  at (current page.north east){
+                    \includegraphics[
+                        width=0.1cm,
+                        height=1.1\paperheight]{trumangradient.png}
+                };
+            \end{tikzpicture}
+        }
+    }
+}
+
+% --------  Get the width of the sidebar for use in logo sizing ----------------
+\newcommand{\getsidebarwidth}{\beamer@sidebarwidth}
+
+% --------  "minimal" option  ----------------
+% - No Sidebar
+% - Logo in bottom right corner
+
+\DeclareOptionBeamer{minimal}{
+    \setbeamertemplate{frametitle}
+    {
+        \nointerlineskip
+        \begin{beamercolorbox}[sep=0.3cm,ht=27pt,wd=\paperwidth]{frametitle}
+            \vbox{}\vskip-2ex%
+            \strut\insertframetitle\strut
+            \vskip-0.8ex%
+        \end{beamercolorbox}
+    } % Reference: https://bloerg.net/2012/06/21/customizing-the-frametitle-of-beamer-presentation.html
+    \logo{\includegraphics[width=1.25cm]{truman.png}\hspace{0.1cm}}
+}
+
+% --------  "sidebarleft" option  ----------------
+% - Sidebar on Left
+% - Logo in top left corner
+
+\DeclareOptionBeamer{sidebarleft}{
+    \useoutertheme[logo,left,hideothersubsections]{sidebar}
+    \logo{\includegraphics[width=1.25cm]{truman_invert.png}}
+    \sidebarembelish{left}
+}
+
+% --------  "sidebarright" option  ----------------
+% - Sidebar on Right
+% - Logo in top right corner
+
+\DeclareOptionBeamer{sidebarright}{
+    \useoutertheme[logo,right,hideothersubsections]{sidebar}
+    \logo{\includegraphics[width=1.25cm]{truman_invert.png}}
+    \sidebarembelish{right}
+}
+
+% --------  "sidebarleftnosub" option  ----------------
+% - Sidebar on Left
+% - Logo in top left corner
+% - No subsections appear
+
+\DeclareOptionBeamer{sidebarleftnosub}{
+    \useoutertheme[logo,left,hideallsubsections]{sidebar}
+    \logo{\includegraphics[width=1.25cm]{truman_invert.png}}
+    \sidebarembelish{left}
+}
+
+% --------  "sidebarrightnosub" option  ----------------
+% - Sidebar on Right
+% - Logo in top right corner
+% - No subsections appear
+
+\DeclareOptionBeamer{sidebarrightnosub}{
+    \useoutertheme[logo,right,hideallsubsections]{sidebar}
+    \logo{\includegraphics[width=1.25cm]{truman_invert.png}}
+    \sidebarembelish{right}
+}
+
+\ProcessOptionsBeamer
+
+% --------  Finally, Invoke all mode
+\mode<all>
