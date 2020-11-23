@@ -43,6 +43,7 @@ while(!feof($file))
     $course->storeInDB();
   }
 
+  echo "Building section";
   $section = Section::buildSection($course, $semester, $section_num, $crn);
 
   $section->storeInDB();

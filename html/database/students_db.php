@@ -311,8 +311,7 @@ class Student
 
     // Insert basic student info
     $smt = $pdo->prepare("INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing, last_active_sem) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing, :last_active_sem)");
-
-    $last_active_sem_id = $this->last_active_sem->getId();
+    $last_active_sem_id = $this->last_active_sem ? $this->last_active_sem->getId() : null;
     $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
     $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
     $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
@@ -435,7 +434,7 @@ class Student
     $minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
 
     // Build the student and return the object
-    return new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['id']);
+    return new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'], $data['grad_month'], $data['standing'], $majors, $minors, $data['last_active_sem'] ? Semester::getSemesterById($data['last_active_sem']) : null, $data['id']);
   }
 
   /**

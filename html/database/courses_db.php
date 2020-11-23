@@ -655,6 +655,7 @@ class Section
   private $semester;
   private $section;
   private $crn;
+  private $active;
 
   /**
    * The database id. Null if it hasn't been stored
@@ -702,6 +703,14 @@ class Section
   }
 
   /**
+   * @return bool
+   */
+  public function isActive(): bool
+  {
+    return $this->active;
+  }
+
+  /**
    * @param Course $course
    */
   public function setCourse(Course $course)
@@ -733,13 +742,31 @@ class Section
     $this->crn = $crn;
   }
 
-  function __construct(Course $course, Semester $semester, int $section, string $crn, int $id=null)
+  /**
+   * Active this section
+   */
+  public function setActive(): void
+  {
+    $this->active = true;
+  }
+
+  /**
+   * Inactive this section
+   */
+  public function setInactive(): void
+  {
+    $this->active = false;
+  }
+
+
+  private function __construct(Course $course, Semester $semester, int $section, string $crn, int $id=null)
   {
     $this->id = $id;
     $this->course = $course;
     $this->semester = $semester;
     $this->section = $section;
     $this->crn = $crn;
+    $this->active = true;
   }
 
   private function insertDB()
