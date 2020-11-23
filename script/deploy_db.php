@@ -4,7 +4,7 @@ include_once '../html/database/common_db.php';
 /* The inital lists to populate tables */
 $majors = ['Computer Science', 'Mathematics', 'Statistics'];
 $minors = ['Computer Science', 'Mathematics', 'Statistics'];
-$departments = ['CS', 'MATH', 'STAT'];
+$departments = ['CS', 'MATH', 'STAT', 'TRU', 'JINS'];
 
 // Student table
 function createStudentTbl($pdo)
@@ -20,7 +20,7 @@ function createStudentTbl($pdo)
     grad_month varchar(7) NOT NULL,
     standing enum('Freshman', 'Sophomore', 'Junior', 'Senior') NOT NULL,
     last_active_sem int,
-    FOREIGN KEY (semester_id) REFERENCES $semester_tbl(id))");
+    FOREIGN KEY (last_active_sem) REFERENCES $semester_tbl(id))");
 }
 
 // Major and minor tables
@@ -162,7 +162,7 @@ function createAttachmentTbl($pdo)
     id int PRIMARY KEY AUTO_INCREMENT,
     request_id int NOT NULL,
     name varchar(255) NOT NULL,
-    path text NOT NULL UNIQUE,
+    path varchar(255) NOT NULL UNIQUE,
     FOREIGN KEY (request_id) REFERENCES $request_tbl(id))");
 }
 
@@ -239,6 +239,7 @@ $pdo = connectDB();
 
 echo "Creating tables...\n";
 
+createSemesterTbl($pdo);
 createStudentTbl($pdo);
 createMajorTbl($pdo);
 createMinorTbl($pdo);
@@ -247,7 +248,6 @@ createStudentMinorTbl($pdo);
 createFacultyTbl($pdo);
 createDepartmentTbl($pdo);
 createCourseTbl($pdo);
-createSemesterTbl($pdo);
 createSectionTbl($pdo);
 createRequestTbl($pdo);
 createAttachmentTbl($pdo);
@@ -268,12 +268,15 @@ populateDepartments($pdo);
 populateSemester($pdo);
 
 echo "done\n\n";
+
 echo "Loading current semester sections...\n";
-
-$mesg = exec("php ingest_sections.php swrprof_202110.xlsx out.tsv");
-echo $mesg;
-
+exec("php ingest_sections.php swrprof_202110.xlsx out.tsv");
 echo "done\n";
+
+echo "Loading current programs...\n";
+exec("php ingest_programs.php ../data/majors ../data/minors");
+echo "done\n";
+
 echo "[DEPLOY SCRIPT COMPLETE]\n";
 
 ?>
