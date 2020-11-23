@@ -1,5 +1,39 @@
 $(document).ready(function() {
   const dismissible = new Dismissible(document.querySelector('#dismissible-container'));
+  var currProfile;
+   /* Load Profile */
+   $("#email").val(getCookie("userEmail"));
+   $.ajax(
+    BASE_URL+"/profile",
+    {
+        type: "get",
+        data: {
+            email: getCookie("userEmail")
+        },
+        complete: function(request, status){
+          if (request.status == 200){
+            currProfile = $.parseJSON(request.responseText);
+            $("#firstname").val(currProfile["first-name"]);
+            $("#lastname").val(currProfile["last-name"]);
+            $("#bannerid").val(currProfile["banner-id"]);
+            $("#class").val(currProfile["class-standing"]);
+            const gradDate = currProfile["grad-month"].split("/");
+            $("#gradmonth").val(gradDate[0]);
+            $("#gradyear").val(gradDate[1]);
+            if(!$("#majors").is(":empty") && !$("#minors").is(":empty")){
+              $("#majors").val(currProfile.major);
+              $("#minors").val(currProfile.minor);
+            }
+            $("#profileLoading").css("display", "none");
+          } else if (request.status == 404){
+            $("#profileLoading").text("No current profile found. Please enter your information below.");
+          } else {
+            var data = $.parseJSON(request.responseText);
+            dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
+          }
+        }
+    }
+);
   /* Load Majors */
   $.ajax(
     BASE_URL+"/majors",
@@ -15,6 +49,9 @@ $(document).ready(function() {
           // to change to descending order switch "<" for ">"
           return $(x).text() > $(y).text() ? 1 : -1;
         }));
+        if(currProfile !== undefined && currProfile !== null){
+          $("#majors").val(currProfile.major);
+        }
         $("#majors").prop("disabled", false);
         $("#majorsLoading").css("display", "none");
       },
@@ -40,6 +77,9 @@ $(document).ready(function() {
           // to change to descending order switch "<" for ">"
           return $(x).text() > $(y).text() ? 1 : -1;
         }));
+        if(currProfile !== undefined && currProfile !== null){
+          $("#minors").val(currProfile.minor);
+        }
         $("#minors").prop("disabled", false);
         $("#minorsLoading").css("display", "none");
       },
