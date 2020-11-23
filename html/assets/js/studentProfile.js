@@ -33,7 +33,7 @@ $(document).ready(function() {
           }
         }
     }
-);
+  );
   /* Load Majors */
   $.ajax(
     BASE_URL+"/majors",
