@@ -62,7 +62,6 @@ $(document).ready(function() {
             setCookie("userName", payload["first-name"] + " " + payload["last-name"]);
             $("#userName").text(getCookie("userName"));
             dismissible.success("Profile Updated Successfully");
-            form.reset();
           } else {
             var data = $.parseJSON(request.responseText);
             dismissible.error("An Error Occurred: " + data.message + " (Code " + data.code + ")");
