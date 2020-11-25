@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>phpDox - Request</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <nav class="topnav">
+      <ul>
+        <li>
+          <div class="logo"><span>/**</span>phpDox</div>
+        </li>
+        <li class="separator">
+          <a href="../index.xhtml">Overview</a>
+        </li>
+        <li class="separator">
+          <a href="../namespaces.xhtml">Namespaces</a>
+        </li>
+        <li>
+          <a href="../classes.xhtml">Classes</a>
+        </li>
+        <li class="separator">
+          <a href="../source/index.xhtml">Source</a>
+        </li>
+      </ul>
+    </nav>
+    <div id="mainstage">
+      <div class="box">
+        <ul class="breadcrumb">
+          <li>
+            <a href="../index.xhtml">Overview</a>
+          </li>
+          <li class="separator">
+            <a href="../classes.xhtml">Classes</a>
+          </li>
+          <li class="separator">Request</li>
+        </ul>
+      </div>
+      <nav class="box">
+        <ul>
+          <li>
+            <a href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#synopsis">Synopsis</a>
+          </li>
+          <li>
+            <a href="#members">Members</a>
+          </li>
+          <li>
+            <a href="#methods">Methods</a>
+          </li>
+          <li>
+            <a href="../source/requests_db.php.xhtml#line6">Source</a>
+          </li>
+        </ul>
+      </nav>
+      <section>
+        <h1 id="introduction"><small>\</small>Request</h1>
+        <h4/>
+        <p/>
+        <h2 id="synopsis">Synopsis</h2>
+        <div class="synopsis">class Request
+            {<br/><ul class="none"><li>// members</li><li>private  <a href="#members">$id</a>;
+                    </li><li>private  <a href="#members">$student</a>;
+                    </li><li>private  <a href="#members">$section</a>;
+                    </li><li>private  <a href="#members">$last_modified</a>;
+                    </li><li>private  <a href="#members">$status</a>;
+                    </li><li>private  <a href="#members">$reason</a>;
+                    </li><li>private  <a href="#members">$explanation</a>;
+                    </li><li>private  <a href="#members">$active</a>;
+                    </li></ul><ul class="none"><li>// methods</li><li>public ?int <a title="Request" href="../classes/Request/getId.xhtml">getId</a>()
+                    </li><li>public <span title="Student">Student</span> <a title="Request" href="../classes/Request/getStudent.xhtml">getStudent</a>()
+                    </li><li>public <span title="Section">Section</span> <a title="Request" href="../classes/Request/getSection.xhtml">getSection</a>()
+                    </li><li>public string <a title="Request" href="../classes/Request/getLastModified.xhtml">getLastModified</a>()
+                    </li><li>public string <a title="Request" href="../classes/Request/getStatus.xhtml">getStatus</a>()
+                    </li><li>public string <a title="Request" href="../classes/Request/getReason.xhtml">getReason</a>()
+                    </li><li>public string <a title="Request" href="../classes/Request/getExplanation.xhtml">getExplanation</a>()
+                    </li><li>public bool <a title="Request" href="../classes/Request/isActive.xhtml">isActive</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setStudent.xhtml">setStudent</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setSection.xhtml">setSection</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setLastModified.xhtml">setLastModified</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setStatus.xhtml">setStatus</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setReason.xhtml">setReason</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setExplanation.xhtml">setExplanation</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setActive.xhtml">setActive</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/setInactive.xhtml">setInactive</a>()
+                    </li><li>private void <a title="Request" href="../classes/Request/__construct.xhtml">__construct</a>()
+                    </li><li>private void <a title="Request" href="../classes/Request/insertDB.xhtml">insertDB</a>()
+                    </li><li>private void <a title="Request" href="../classes/Request/updateDB.xhtml">updateDB</a>()
+                    </li><li>public void <a title="Request" href="../classes/Request/storeInDB.xhtml">storeInDB</a>()
+                    </li><li>public static array <a title="Request" href="../classes/Request/listStatuses.xhtml">listStatuses</a>()
+                    </li><li>public static array <a title="Request" href="../classes/Request/listReasons.xhtml">listReasons</a>()
+                    </li><li>public static Request|null <a title="Request" href="../classes/Request/build.xhtml">build</a>()
+                    </li><li>public static array <a title="Request" href="../classes/Request/get.xhtml">get</a>()
+                    </li><li>public static <span title="Request">Request</span> <a title="Request" href="../classes/Request/getById.xhtml">getById</a>()
+                    </li><li>public static array <a title="Request" href="../classes/Request/getOverrideRequests.xhtml">getOverrideRequests</a>()
+                    </li></ul>
+
+            }<br/></div>
+        <h2 id="members">Members</h2>
+        <div class="styled members">
+          <h4>private</h4>
+          <ul class="members">
+            <li id="active">
+              <strong>$active</strong>
+            </li>
+            <li id="explanation">
+              <strong>$explanation</strong>
+            </li>
+            <li id="id">
+              <strong>$id</strong>
+            </li>
+            <li id="last_modified">
+              <strong>$last_modified</strong>
+            </li>
+            <li id="reason">
+              <strong>$reason</strong>
+            </li>
+            <li id="section">
+              <strong>$section</strong>
+            </li>
+            <li id="status">
+              <strong>$status</strong>
+            </li>
+            <li id="student">
+              <strong>$student</strong>
+            </li>
+          </ul>
+        </div>
+        <h2 id="methods">Methods</h2>
+        <div class="styled">
+          <h4>private</h4>
+          <ul>
+            <li id="__construct">
+              <a title="Request" href="../classes/Request/__construct.xhtml">__construct()</a>
+            </li>
+            <li id="insertDB">
+              <a title="Request" href="../classes/Request/insertDB.xhtml">insertDB()</a>
+            </li>
+            <li id="updateDB">
+              <a title="Request" href="../classes/Request/updateDB.xhtml">updateDB()</a>
+            </li>
+          </ul>
+          <h4>public</h4>
+          <ul>
+            <li id="build"><a title="Request" href="../classes/Request/build.xhtml">build()</a>
+                — Constructs a new request locally</li>
+            <li id="get"><a title="Request" href="../classes/Request/get.xhtml">get()</a>
+                — Retrieve a students requests from the database</li>
+            <li id="getById"><a title="Request" href="../classes/Request/getById.xhtml">getById()</a>
+                — Retrieve a request from the database by ID</li>
+            <li id="getExplanation"><a title="Request" href="../classes/Request/getExplanation.xhtml">getExplanation()</a>
+                — The text the student submitted for their explaination</li>
+            <li id="getId"><a title="Request" href="../classes/Request/getId.xhtml">getId()</a>
+                — The database id. Null if it hasn't been stored</li>
+            <li id="getLastModified"><a title="Request" href="../classes/Request/getLastModified.xhtml">getLastModified()</a>
+                — A timestamp representing the last time the request was modified</li>
+            <li id="getOverrideRequests"><a title="Request" href="../classes/Request/getOverrideRequests.xhtml">getOverrideRequests()</a>
+                — Retrieve all requests from the database</li>
+            <li id="getReason"><a title="Request" href="../classes/Request/getReason.xhtml">getReason()</a>
+                — The reason the student submitted the override request</li>
+            <li id="getSection">
+              <a title="Request" href="../classes/Request/getSection.xhtml">getSection()</a>
+            </li>
+            <li id="getStatus"><a title="Request" href="../classes/Request/getStatus.xhtml">getStatus()</a>
+                — The status of the override request: Denied, Approved, etc. Must equal a value from {@link OverrideRequest::listStatuses()}.</li>
+            <li id="getStudent">
+              <a title="Request" href="../classes/Request/getStudent.xhtml">getStudent()</a>
+            </li>
+            <li id="isActive"><a title="Request" href="../classes/Request/isActive.xhtml">isActive()</a>
+                — Is the request active or in the archive</li>
+            <li id="listReasons"><a title="Request" href="../classes/Request/listReasons.xhtml">listReasons()</a>
+                — A list of strings representing all of the options for request reasons</li>
+            <li id="listStatuses"><a title="Request" href="../classes/Request/listStatuses.xhtml">listStatuses()</a>
+                — A list of strings representing all the options for statuses</li>
+            <li id="setActive"><a title="Request" href="../classes/Request/setActive.xhtml">setActive()</a>
+                — Activate the request, this moves it out of the archive</li>
+            <li id="setExplanation">
+              <a title="Request" href="../classes/Request/setExplanation.xhtml">setExplanation()</a>
+            </li>
+            <li id="setInactive"><a title="Request" href="../classes/Request/setInactive.xhtml">setInactive()</a>
+                — Deactivate the request, this effectively archives it</li>
+            <li id="setLastModified">
+              <a title="Request" href="../classes/Request/setLastModified.xhtml">setLastModified()</a>
+            </li>
+            <li id="setReason">
+              <a title="Request" href="../classes/Request/setReason.xhtml">setReason()</a>
+            </li>
+            <li id="setSection">
+              <a title="Request" href="../classes/Request/setSection.xhtml">setSection()</a>
+            </li>
+            <li id="setStatus">
+              <a title="Request" href="../classes/Request/setStatus.xhtml">setStatus()</a>
+            </li>
+            <li id="setStudent">
+              <a title="Request" href="../classes/Request/setStudent.xhtml">setStudent()</a>
+            </li>
+            <li id="storeInDB"><a title="Request" href="../classes/Request/storeInDB.xhtml">storeInDB()</a>
+                — Stores the current object in the database. If the object is newly created, a new entry into the DB is made. If the request has been stored in the DB, we update the existing entry</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <footer>
+      <span>Generated using phpDox 0.12.0 - Copyright (C) 2010 - 2020 by Arne Blankerts and Contributors</span>
+    </footer>
+  </body>
+</html>

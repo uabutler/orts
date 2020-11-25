@@ -56,7 +56,7 @@
             <a href="#parameter">Parameter</a>
           </li>
           <li>
-            <a href="../../source/courses_db.php.xhtml#line736">Source</a>
+            <a href="../../source/courses_db.php.xhtml#line765">Source</a>
           </li>
         </ul>
       </nav>
@@ -66,7 +66,7 @@
         <p/>
         <h2 id="signature">Signature</h2>
         <div class="styled synopsis">
-          <code>public function __construct(<a title="Course" href="../../classes/Course.xhtml">Course</a>
+          <code>private function __construct(<a title="Course" href="../../classes/Course.xhtml">Course</a>
         $course,
             <a title="Semester" href="../../classes/Semester.xhtml">Semester</a>
         $semester,
@@ -74,8 +74,10 @@
         $section,
             string
         $crn,
+            [boolean
+        $active = true,
             [int
-        $id = NULL] )
+        $id = NULL]] )
             </code>
         </div>
         <h2 id="parameterlist">Parameters</h2>
@@ -95,6 +97,10 @@
           <dt><code>$crn</code>
                 —
                 string</dt>
+          <dd/>
+          <dt><code>$active</code>
+                —
+                boolean</dt>
           <dd/>
           <dt><code>$id</code>
                 —

@@ -94,11 +94,7 @@
                     </li><li>public void <a title="Student" href="../classes/Student/setLastActiveSem.xhtml">setLastActiveSem</a>()
                     </li><li>public void <a title="Student" href="../classes/Student/setMajors.xhtml">setMajors</a>()
                     </li><li>public void <a title="Student" href="../classes/Student/setMinors.xhtml">setMinors</a>()
-                    </li><li>public static array <a title="Student" href="../classes/Student/listMajors.xhtml">listMajors</a>()
-                    </li><li>public static array <a title="Student" href="../classes/Student/listMinors.xhtml">listMinors</a>()
                     </li><li>public static array <a title="Student" href="../classes/Student/listStandings.xhtml">listStandings</a>()
-                    </li><li>public static void <a title="Student" href="../classes/Student/addMajor.xhtml">addMajor</a>()
-                    </li><li>public static void <a title="Student" href="../classes/Student/addMinor.xhtml">addMinor</a>()
                     </li><li>private void <a title="Student" href="../classes/Student/add_majors.xhtml">add_majors</a>()
                     </li><li>private void <a title="Student" href="../classes/Student/add_minors.xhtml">add_minors</a>()
                     </li><li>private void <a title="Student" href="../classes/Student/remove_major.xhtml">remove_major</a>()
@@ -106,10 +102,10 @@
                     </li><li>private void <a title="Student" href="../classes/Student/insertDB.xhtml">insertDB</a>()
                     </li><li>private void <a title="Student" href="../classes/Student/updateDB.xhtml">updateDB</a>()
                     </li><li>public void <a title="Student" href="../classes/Student/storeInDB.xhtml">storeInDB</a>()
-                    </li><li>public static Student <a title="Student" href="../classes/Student/buildStudent.xhtml">buildStudent</a>()
+                    </li><li>public static Student <a title="Student" href="../classes/Student/build.xhtml">build</a>()
                     </li><li>private static <span title="Student">Student</span> <a title="Student" href="../classes/Student/loadStudent.xhtml">loadStudent</a>()
-                    </li><li>public static ?<span title="Student">Student</span> <a title="Student" href="../classes/Student/getStudent.xhtml">getStudent</a>()
-                    </li><li>public static ?<span title="Student">Student</span> <a title="Student" href="../classes/Student/getStudentById.xhtml">getStudentById</a>()
+                    </li><li>public static ?<span title="Student">Student</span> <a title="Student" href="../classes/Student/get.xhtml">get</a>()
+                    </li><li>public static ?<span title="Student">Student</span> <a title="Student" href="../classes/Student/getById.xhtml">getById</a>()
                     </li></ul>
 
             }<br/></div>
@@ -180,14 +176,14 @@
           </ul>
           <h4>public</h4>
           <ul>
-            <li id="addMajor"><a title="Student" href="../classes/Student/addMajor.xhtml">addMajor()</a>
-                — Add a string representing a major directly into the database</li>
-            <li id="addMinor"><a title="Student" href="../classes/Student/addMinor.xhtml">addMinor()</a>
-                — Add a string representing a minor directly into the database</li>
-            <li id="buildStudent"><a title="Student" href="../classes/Student/buildStudent.xhtml">buildStudent()</a>
+            <li id="build"><a title="Student" href="../classes/Student/build.xhtml">build()</a>
                 — Constructs a new student locally</li>
+            <li id="get"><a title="Student" href="../classes/Student/get.xhtml">get()</a>
+                — Retrieve a student from the database given an email, null if it can't be found</li>
             <li id="getBannerId"><a title="Student" href="../classes/Student/getBannerId.xhtml">getBannerId()</a>
                 — A string representing the 9-digit banner id</li>
+            <li id="getById"><a title="Student" href="../classes/Student/getById.xhtml">getById()</a>
+                — Retrieves a student form the database given the database id (not banner id), null if it can't be found</li>
             <li id="getEmail">
               <a title="Student" href="../classes/Student/getEmail.xhtml">getEmail()</a>
             </li>
@@ -207,16 +203,8 @@
                 — A list of strings representing the student's minors</li>
             <li id="getStanding"><a title="Student" href="../classes/Student/getStanding.xhtml">getStanding()</a>
                 — Academic standing. "Freshman", etc.</li>
-            <li id="getStudent"><a title="Student" href="../classes/Student/getStudent.xhtml">getStudent()</a>
-                — Retrieve a student from the database given an email, null if it can't be found</li>
-            <li id="getStudentById"><a title="Student" href="../classes/Student/getStudentById.xhtml">getStudentById()</a>
-                — Retrieves a student form the database given the database id (not banner id), null if it can't be found</li>
             <li id="isActive"><a title="Student" href="../classes/Student/isActive.xhtml">isActive()</a>
                 — Checks to see if the last request a student submitted was in an active semester</li>
-            <li id="listMajors"><a title="Student" href="../classes/Student/listMajors.xhtml">listMajors()</a>
-                — An array of strings representing all possible majors</li>
-            <li id="listMinors"><a title="Student" href="../classes/Student/listMinors.xhtml">listMinors()</a>
-                — An array of strings representing all possible minors</li>
             <li id="listStandings"><a title="Student" href="../classes/Student/listStandings.xhtml">listStandings()</a>
                 — An array of strings representing all possible academic standings, "Freshman", etc.</li>
             <li id="setBannerId">
