@@ -1,6 +1,7 @@
 <?php
 include_once '../html/database/common_db.php';
 include_once '../html/database/students_db.php';
+include_once '../html/database/programs_db.php';
 
 $pdo = connectDB();
 
@@ -17,7 +18,7 @@ while(!feof($file))
 {
   $line = substr(fgets($file), 0, -1);
   if(strlen($line) <= 1) break;
-  Student::addMajor($line);
+  Major::build($line)->storeInDB();
 }
 
 echo "done\n";
@@ -31,7 +32,7 @@ while(!feof($file))
 {
   $line = substr(fgets($file), 0, -1);
   if(strlen($line) <= 1) break;
-  Student::addMinor($line);
+  Minor::build($line)->storeInDB();
 }
 
 echo "done\n";

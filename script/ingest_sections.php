@@ -20,8 +20,8 @@ $file = fopen($argv[2], "r");
 echo "Establishing connection to database\n";
 $pdo = connectDB();
 echo "Determining current semester...";
-$semester = Semester::getSemesterByCode('202110');
-echo "Found ".$semester->getSemesterCode()."\n";
+$semester = Semester::getByCode('202110');
+echo "Found ".$semester->getCode()."\n";
 
 echo "Storing data\n";
 while(!feof($file))
@@ -36,17 +36,20 @@ while(!feof($file))
   $title = substr(strtok("\t"), 0, -1);
 
 
-  $course = Course::getCourse(Department::getDepartment($department_prefix), $course_num);
+  $course = Course::get(Department::get($department_prefix), $course_num);
   if(is_null($course))
   {
-    $course = Course::buildCourse(Department::getDepartment($department_prefix), $course_num, $title);
+    $course = Course::build(Department::get($department_prefix), $course_num, $title);
     $course->storeInDB();
   }
 
-  echo "Building section";
-  $section = Section::buildSection($course, $semester, $section_num, $crn);
+  echo "Building section\n";
+  $section = Section::build($course, $semester, $section_num, $crn);
+  print_r($section);
 
   $section->storeInDB();
+
+  print_r($section);
 }
 
 echo "done; exiting\n";
