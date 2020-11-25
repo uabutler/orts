@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>phpDox - Attachment</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <nav class="topnav">
+      <ul>
+        <li>
+          <div class="logo"><span>/**</span>phpDox</div>
+        </li>
+        <li class="separator">
+          <a href="../index.xhtml">Overview</a>
+        </li>
+        <li class="separator">
+          <a href="../namespaces.xhtml">Namespaces</a>
+        </li>
+        <li>
+          <a href="../classes.xhtml">Classes</a>
+        </li>
+        <li class="separator">
+          <a href="../source/index.xhtml">Source</a>
+        </li>
+      </ul>
+    </nav>
+    <div id="mainstage">
+      <div class="box">
+        <ul class="breadcrumb">
+          <li>
+            <a href="../index.xhtml">Overview</a>
+          </li>
+          <li class="separator">
+            <a href="../classes.xhtml">Classes</a>
+          </li>
+          <li class="separator">Attachment</li>
+        </ul>
+      </div>
+      <nav class="box">
+        <ul>
+          <li>
+            <a href="#introduction">Introduction</a>
+          </li>
+          <li>
+            <a href="#synopsis">Synopsis</a>
+          </li>
+          <li>
+            <a href="#members">Members</a>
+          </li>
+          <li>
+            <a href="#methods">Methods</a>
+          </li>
+          <li>
+            <a href="../source/attachments_db.php.xhtml#line10">Source</a>
+          </li>
+        </ul>
+      </nav>
+      <section>
+        <h1 id="introduction"><small>\</small>Attachment</h1>
+        <h4>Helpful for tracking what files on an OS are attachments for requests and what the original name of the file was. The databse does not store the file itself, that task is left to the file system of the server.</h4>
+        <p/>
+        <ul/>
+        <h2 id="synopsis">Synopsis</h2>
+        <div class="synopsis">class Attachment
+            {<br/><ul class="none"><li>// members</li><li>private  <a href="#members">$id</a>;
+                    </li><li>private  <a href="#members">$request</a>;
+                    </li><li>private  <a href="#members">$name</a>;
+                    </li><li>private  <a href="#members">$path</a>;
+                    </li></ul><ul class="none"><li>// methods</li><li>public ?int <a title="Attachment" href="../classes/Attachment/getId.xhtml">getId</a>()
+                    </li><li>public <span title="OverrideRequest">OverrideRequest</span> <a title="Attachment" href="../classes/Attachment/getRequest.xhtml">getRequest</a>()
+                    </li><li>public string <a title="Attachment" href="../classes/Attachment/getName.xhtml">getName</a>()
+                    </li><li>public string <a title="Attachment" href="../classes/Attachment/getPath.xhtml">getPath</a>()
+                    </li><li>public void <a title="Attachment" href="../classes/Attachment/setName.xhtml">setName</a>()
+                    </li><li>public void <a title="Attachment" href="../classes/Attachment/setPath.xhtml">setPath</a>()
+                    </li><li>private void <a title="Attachment" href="../classes/Attachment/__construct.xhtml">__construct</a>()
+                    </li><li>private void <a title="Attachment" href="../classes/Attachment/insertDB.xhtml">insertDB</a>()
+                    </li><li>private void <a title="Attachment" href="../classes/Attachment/updateDB.xhtml">updateDB</a>()
+                    </li><li>public void <a title="Attachment" href="../classes/Attachment/storeInDB.xhtml">storeInDB</a>()
+                    </li><li>public static <span title="Attachment">Attachment</span> <a title="Attachment" href="../classes/Attachment/buildAttachment.xhtml">buildAttachment</a>()
+                    </li><li>public static array <a title="Attachment" href="../classes/Attachment/listAttachments.xhtml">listAttachments</a>()
+                    </li><li>public static ?<span title="Attachment">Attachment</span> <a title="Attachment" href="../classes/Attachment/getAttachment.xhtml">getAttachment</a>()
+                    </li></ul>
+
+            }<br/></div>
+        <h2 id="members">Members</h2>
+        <div class="styled members">
+          <h4>private</h4>
+          <ul class="members">
+            <li id="id">
+              <strong>$id</strong>
+            </li>
+            <li id="name">
+              <strong>$name</strong>
+            </li>
+            <li id="path">
+              <strong>$path</strong>
+            </li>
+            <li id="request">
+              <strong>$request</strong>
+            </li>
+          </ul>
+        </div>
+        <h2 id="methods">Methods</h2>
+        <div class="styled">
+          <h4>private</h4>
+          <ul>
+            <li id="__construct">
+              <a title="Attachment" href="../classes/Attachment/__construct.xhtml">__construct()</a>
+            </li>
+            <li id="insertDB">
+              <a title="Attachment" href="../classes/Attachment/insertDB.xhtml">insertDB()</a>
+            </li>
+            <li id="updateDB">
+              <a title="Attachment" href="../classes/Attachment/updateDB.xhtml">updateDB()</a>
+            </li>
+          </ul>
+          <h4>public</h4>
+          <ul>
+            <li id="buildAttachment"><a title="Attachment" href="../classes/Attachment/buildAttachment.xhtml">buildAttachment()</a>
+                — Given the attachment info, this method builds a local attachment object</li>
+            <li id="getAttachment"><a title="Attachment" href="../classes/Attachment/getAttachment.xhtml">getAttachment()</a>
+                — Returns the attachment object given it's location in the OS, null if not found</li>
+            <li id="getId"><a title="Attachment" href="../classes/Attachment/getId.xhtml">getId()</a>
+                — The database id. Null if it hasn't been stored</li>
+            <li id="getName"><a title="Attachment" href="../classes/Attachment/getName.xhtml">getName()</a>
+                — The original name of the file</li>
+            <li id="getPath"><a title="Attachment" href="../classes/Attachment/getPath.xhtml">getPath()</a>
+                — The path to the local version of the file in the server's filesystem</li>
+            <li id="getRequest"><a title="Attachment" href="../classes/Attachment/getRequest.xhtml">getRequest()</a>
+                — The request this attachment is associated with</li>
+            <li id="listAttachments"><a title="Attachment" href="../classes/Attachment/listAttachments.xhtml">listAttachments()</a>
+                — List all of the attachments associated with a given request, must have already been stored in the DB</li>
+            <li id="setName"><a title="Attachment" href="../classes/Attachment/setName.xhtml">setName()</a>
+                — Set the original name of the file</li>
+            <li id="setPath"><a title="Attachment" href="../classes/Attachment/setPath.xhtml">setPath()</a>
+                — Set the path to the local version of the file in the server's filesystem</li>
+            <li id="storeInDB"><a title="Attachment" href="../classes/Attachment/storeInDB.xhtml">storeInDB()</a>
+                — Stores the current object in the database. If the object is newly created, a new entry into the DB is made. If the student has been stored in the DB, we update the existing entry</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+    <footer>
+      <span>Generated using phpDox 0.12.0 - Copyright (C) 2010 - 2020 by Arne Blankerts and Contributors</span>
+    </footer>
+  </body>
+</html>
