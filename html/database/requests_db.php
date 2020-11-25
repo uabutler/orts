@@ -279,7 +279,7 @@ class Request
         {
             $section = Section::getById($row['section_id']);
             $request = new Request($student, $section, $row['last_modified'], $row['status'], $row['reason'],
-                $row['explanation'], $row['id']);
+                $row['explanation'], $row['active'], $row['id']);
             array_push($returnList, $request);
         }
 
@@ -305,7 +305,7 @@ class Request
         $student = Student::getById($data['student_id']);
         $section = Section::getById($data['section_id']);
         return new Request($student, $section, $data['last_modified'], $data['status'], $data['reason'],
-            $data['explanation'], $data['id']);
+            $data['explanation'], $data['active'], $data['id']);
     }
 
     /**
@@ -326,7 +326,7 @@ class Request
             $student = Student::getById($row['student_id']);
             $section = Section::getById($row['section_id']);
             $request = new Request($student, $section, $row['last_modified'], $row['status'], $row['reason'],
-                $row['explanation'], $row['id']);
+                $row['explanation'], $row['active'], $row['id']);
             array_push($returnList, $request);
         }
 

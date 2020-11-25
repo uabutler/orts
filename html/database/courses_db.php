@@ -1,5 +1,6 @@
 <?php
 include_once 'common_db.php';
+include_once 'programs_db.php';
 
 /**
  * Represents a department object from the database. Essentially acts as a wrapper for the department's prefix string
@@ -172,7 +173,7 @@ class Department
 
         if (!$data) return null;
 
-        return new Department($data['department'], $data['id']);
+        return new Department($data['department'], $data['active'], $data['id']);
     }
 
     /**
@@ -193,7 +194,7 @@ class Department
 
         if (!$data) return null;
 
-        return new Department($data['department'], $data['id']);
+        return new Department($data['department'], $data['active'], $data['id']);
     }
 }
 
@@ -208,8 +209,8 @@ class Course
     private $title;
     private $active;
 
-    private function __construct(Department $department, int $course_num, string $title, bool $active = true,
-                                 int $id = null)
+    private function __construct(Department $department, int $course_num, string $title,
+                                 bool $active = true, int $id = null)
     {
         $this->id = $id;
         $this->department = $department;
@@ -387,7 +388,7 @@ class Course
 
         if (!$data) return null;
 
-        return new Course($department, $data['course_num'], $data['title'], $data['id']);
+        return new Course($department, $data['course_num'], $data['title'], $data['active'], $data['id']);
     }
 
     /**
@@ -408,7 +409,7 @@ class Course
         if (!$data) return null;
 
         return new Course(Department::getById($data['department_id']), $data['course_num'], $data['title'],
-            $data['id']);
+            $data['active'], $data['id']);
     }
 }
 
@@ -509,7 +510,7 @@ class Semester
         $out = [];
 
         foreach ($data as $row)
-            array_push($out, new Semester($row['semester'], $row['description'], $row['id']));
+            array_push($out, new Semester($row['semester'], $row['description'], $data['active'], $row['id']));
 
         return $out;
     }
@@ -600,7 +601,7 @@ class Semester
 
         if (!$data) return null;
 
-        return new Semester($data['semester'], $description, $data['id']);
+        return new Semester($data['semester'], $description, $data['active'], $data['id']);
     }
 
     /**
@@ -621,7 +622,7 @@ class Semester
 
         if (!$data) return null;
 
-        return new Semester($semester, $data['description'], $data['id']);
+        return new Semester($semester, $data['description'], $data['active'], $data['id']);
     }
 
     /**
@@ -642,7 +643,7 @@ class Semester
 
         if (!$data) return null;
 
-        return new Semester($data['semester'], $data['description'], $id);
+        return new Semester($data['semester'], $data['description'], $data['active'], $id);
     }
 }
 
