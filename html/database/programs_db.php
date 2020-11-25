@@ -79,13 +79,13 @@ class Major extends Program
     // Create a new entry in the database
     private function insertDB()
     {
-        global $minor_tbl;
+        global $major_tbl;
 
         $pdo = connectDB();
 
         // Insert basic student info
-        $smt = $pdo->prepare("INSERT INTO $minor_tbl (minor, active) VALUES (:minor, :active)");
-        $smt->bindParam(":minor", $this->name, PDO::PARAM_STR);
+        $smt = $pdo->prepare("INSERT INTO $major_tbl (major, active) VALUES (:major, :active)");
+        $smt->bindParam(":major", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
         $smt->execute();
 
@@ -96,14 +96,14 @@ class Major extends Program
     // If the student already exists in the database, this will update their entry with the information from this object
     private function updateDB()
     {
-        global $minor_tbl;
+        global $major_tbl;
 
         $pdo = connectDB();
 
         // First, update the basic student info
-        $smt = $pdo->prepare("UPDATE $minor_tbl SET minor=:minor active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $major_tbl SET major=:major active=:active WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
-        $smt->bindParam(":minor", $this->name, PDO::PARAM_STR);
+        $smt->bindParam(":major", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
         $smt->execute();
     }
@@ -123,7 +123,7 @@ class Major extends Program
     }
 
     /**
-     * Create a local object representing a minor member
+     * Create a local object representing a major member
      * @param string $name
      * @return Major An object that only exists locally, isn't stored in DB
      */
@@ -133,7 +133,7 @@ class Major extends Program
     }
 
     /**
-     * Return an array of Minors given an array of the minor names. Returns null if one of the minors can't be found.
+     * Return an array of Majors given an array of the major names. Returns null if one of the majors can't be found.
      * @param array $names
      * @return array|null
      */
@@ -143,7 +143,7 @@ class Major extends Program
 
         foreach ($names as $name)
         {
-            $minor = Major::get($name);
+            $major = Major::get($name);
             if (is_null($name)) return null;
             array_push($out, $name);
         }
@@ -152,7 +152,7 @@ class Major extends Program
     }
 
     /**
-     * An array of strings representing all possible minors
+     * An array of strings representing all possible majors
      * @return array
      */
     public static function list(): array
