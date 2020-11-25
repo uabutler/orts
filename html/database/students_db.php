@@ -284,7 +284,7 @@ class Student
         $pdo = connectDB();
 
         // First, update the basic student info
-        $last_active_sem_id = $this->last_active_sem->getId();
+        $last_active_sem_id = $this->last_active_sem ? $this->last_active_sem->getId() : null;
         $smt = $pdo->prepare("UPDATE $student_tbl SET email=:email, first_name=:first_name, last_name=:last_name, banner_id=:banner_id, grad_month=:grad_month, standing=:standing, last_active_sem=:last_active_sem WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
@@ -302,29 +302,31 @@ class Student
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->execute();
         $current_majors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        $old_majors = Major::buildStringList($this->majors);
 
         $smt = $pdo->prepare("SELECT minor FROM $student_tbl INNER JOIN $student_minor_tbl ON $student_tbl.id = $student_minor_tbl.student_id  INNER JOIN $minor_tbl ON $student_minor_tbl.minor_id = $minor_tbl.id WHERE $student_tbl.email = :email");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->execute();
         $current_minors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        $old_minors = Minor::buildStringList($this->minors);
 
         // Add all the majors that aren't in the database to the database
         $majors_to_add = [];
-        foreach ($this->majors as $major)
-            if (!in_array($major->getName(), $current_majors)) array_push($majors_to_add, $major);
+        foreach ($old_majors as $major)
+            if (!in_array($major, $current_majors)) array_push($majors_to_add, $major);
         $this->add_majors($majors_to_add, $pdo);
 
         $minors_to_add = [];
-        foreach ($this->minors as $minor)
-            if (!in_array($minor->getName(), $current_minors)) array_push($minors_to_add, $minor);
+        foreach ($old_minors as $minor)
+            if (!in_array($minor, $current_minors)) array_push($minors_to_add, $minor);
         $this->add_minors($minors_to_add, $pdo);
 
         // If a major is in the database, but is no longer a major, remove it
         foreach ($current_majors as $major)
-            if (!in_array($major->getName(), $this->majors)) $this->remove_major($major->getName(), $pdo);
+            if (!in_array($major, $old_majors)) $this->remove_major($major, $pdo);
 
         foreach ($current_minors as $minor)
-            if (!in_array($minor->getName(), $this->minors)) $this->remove_minor($minor->getName(), $pdo);
+            if (!in_array($minor, $old_minors)) $this->remove_minor($minor, $pdo);
     }
 
     /**

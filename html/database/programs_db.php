@@ -70,7 +70,7 @@ class Program
 
     public static function buildListString(array $arr): string
     {
-        return implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", Program::buildStringList($arr))));
+        return implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", $arr)));
     }
 }
 
@@ -276,8 +276,8 @@ class Minor extends Program
         foreach ($names as $name)
         {
             $minor = Minor::get($name);
-            if (is_null($name)) return null;
-            array_push($out, $name);
+            if (is_null($minor)) return null;
+            array_push($out, $minor);
         }
 
         return $out;
