@@ -144,8 +144,8 @@ class Major extends Program
         foreach ($names as $name)
         {
             $major = Major::get($name);
-            if (is_null($name)) return null;
-            array_push($out, $name);
+            if (is_null($major)) return null;
+            array_push($out, $major);
         }
 
         return $out;
@@ -173,7 +173,7 @@ class Major extends Program
         global $major_tbl;
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("SELECT * FROM $major_tbl WHERE name=:name LIMIT 1");
+        $smt = $pdo->prepare("SELECT * FROM $major_tbl WHERE major=:name LIMIT 1");
         $smt->bindParam(":name", $name, PDO::PARAM_STR);
         $smt->execute();
 
@@ -305,7 +305,7 @@ class Minor extends Program
         global $minor_tbl;
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("SELECT * FROM $minor_tbl WHERE name=:name LIMIT 1");
+        $smt = $pdo->prepare("SELECT * FROM $minor_tbl WHERE minor=:name LIMIT 1");
         $smt->bindParam(":name", $name, PDO::PARAM_STR);
         $smt->execute();
 
