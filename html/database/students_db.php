@@ -356,6 +356,11 @@ class Student
     public static function build(string $email, string $first_name, string $last_name, string $banner_id,
                                  string $grad_month, string $standing, array $majors, array $minors)
     {
+        $major_arr = Major::buildArray($majors);
+        $minor_arr = Major::buildArray($minors);
+
+        if(is_null($major_arr) or is_null($minor_arr)) return null;
+
         return new Student($email, $first_name, $last_name, $banner_id,
             $grad_month, $standing, $majors, $minors);
     }
