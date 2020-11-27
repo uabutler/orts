@@ -5,7 +5,7 @@ include_once 'programs_db.php';
 /**
  * Represents a department object from the database. Essentially acts as a wrapper for the department's prefix string
  */
-class Department
+class Department implements JsonSerializable
 {
     private $id;
     private $department;
@@ -196,12 +196,17 @@ class Department
 
         return new Department($data['department'], $data['active'], $data['id']);
     }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    }
 }
 
 /**
  * Represents a course from the database. This holds a {@link Department}, a course number, and a course title. E.g., "CS 370 Software Engineering"
  */
-class Course
+class Course implements JsonSerializable
 {
     private $id;
     private $department;
@@ -411,12 +416,17 @@ class Course
         return new Course(Department::getById($data['department_id']), $data['course_num'], $data['title'],
             $data['active'], $data['id']);
     }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    }
 }
 
 /**
  * Represents a semester. This is used to relate the semester code (e.g., "202160") to its human readable form (e.g., Fall 2021)
  */
-class Semester
+class Semester implements JsonSerializable
 {
     private $id;
     private $semester;
@@ -645,13 +655,18 @@ class Semester
 
         return new Semester($data['semester'], $data['description'], $data['active'], $id);
     }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    }
 }
 
 /**
  * Represents a section, a specific course offering in a given semester. This object relates the {@link Semester} object
  * to a {@link Course} object and stores a section number and CRN
  */
-class Section
+class Section implements JsonSerializable
 {
     private $id;
     private $course;
@@ -903,5 +918,10 @@ class Section
 
         return new Section(Course::getById($data['course_id']), Semester::getById($data['semester_id']),
             $data['section'], $data['crn'], $data['active'], $data['id']);
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

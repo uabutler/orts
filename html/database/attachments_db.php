@@ -7,7 +7,7 @@ include_once 'requests_db.php';
  * original name of the file was. The databse does not store the file itself, that task
  * is left to the file system of the server.
  */
-class Attachment
+class Attachment implements JsonSerializable
 {
     private $id;
     private $request;
@@ -178,5 +178,10 @@ class Attachment
         if (!$data) return null;
 
         return new Attachment(Request::getById($data['request_id']), $data['name'], $data['path'], $data['id']);
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

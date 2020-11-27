@@ -70,11 +70,12 @@ class Program
 
     public static function buildListString(array $arr): string
     {
+        if(empty($arr)) return "";
         return implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", $arr)));
     }
 }
 
-class Major extends Program
+class Major extends Program implements JsonSerializable
 {
     // Create a new entry in the database
     private function insertDB()
@@ -204,9 +205,14 @@ class Major extends Program
 
         return new Major($data['major'], $data['active'], $id);
     }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
+    }
 }
 
-class Minor extends Program
+class Minor extends Program implements JsonSerializable
 {
     // Create a new entry in the database
     private function insertDB()
@@ -335,5 +341,10 @@ class Minor extends Program
         if (!$data) return null;
 
         return new Minor($data['minor'], $data['active'], $id);
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

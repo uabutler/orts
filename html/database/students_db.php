@@ -1,12 +1,13 @@
 <?php
 include_once 'common_db.php';
 include_once 'courses_db.php';
+include_once 'programs_db.php';
 // TODO: Data validation on constructor and setters
 
 /**
  * This class wraps a student entry in the database
  */
-class Student
+class Student implements JsonSerializable
 {
     private $id;
     private $email;
@@ -272,8 +273,8 @@ class Student
         $this->id = $pdo->lastInsertId();
 
         // Insert information about majors and minors
-        $this->add_majors($this->majors, $pdo);
-        $this->add_minors($this->minors, $pdo);
+        $this->add_majors(Major::buildStringList($this->majors), $pdo);
+        $this->add_minors(Major::buildStringList($this->minors), $pdo);
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object
@@ -431,5 +432,10 @@ class Student
         if (!$data) return null;
 
         return Student::loadStudent($data, $pdo);
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

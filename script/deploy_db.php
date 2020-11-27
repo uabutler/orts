@@ -139,18 +139,23 @@ function createSectionTbl($pdo)
 // Override request table
 function createRequestTbl($pdo)
 {
-  global $request_tbl, $student_tbl, $section_tbl;
+  global $request_tbl, $student_tbl, $section_tbl, $faculty_tbl;
   echo "  $request_tbl\n";
   $pdo->exec("CREATE TABLE $request_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     student_id int NOT NULL,
     last_modified datetime NOT NULL,
     section_id int NOT NULL,
+    faculty_id int NOT NULL,
     status enum('Received', 'Approved', 'Provisionally Approved', 'Denied', 'Requires Faculty Approval') NOT NULL,
+    justification text,
+    banner boolean NOT NULL DEFAULT false,
     reason enum('Closed Class', 'Prerequisite', 'Other') NOT NULL,
     explanation text,
+    active bool NOT NULL DEFAULT true,
     FOREIGN KEY (student_id) REFERENCES $student_tbl(id),
     FOREIGN KEY (section_id) REFERENCES $section_tbl(id),
+    FOREIGN KEY (faculty_id) REFERENCES $faculty_tbl(id),
     CONSTRAINT pair UNIQUE (section_id, student_id))");
 }
 

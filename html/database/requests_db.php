@@ -2,14 +2,18 @@
 include_once 'common_db.php';
 include_once 'courses_db.php';
 include_once 'students_db.php';
+include_once 'faculty_db.php';
 
-class Request
+class Request implements JsonSerializable
 {
     private $id;
     private $student;
     private $section;
     private $last_modified;
+    private $faculty;
     private $status;
+    private $justification;
+    private $banner;
     private $reason;
     private $explanation;
     private $active;
@@ -49,6 +53,14 @@ class Request
     }
 
     /**
+     * @return Faculty
+     */
+    public function getFaculty(): Faculty
+    {
+        return $this->faculty;
+    }
+
+    /**
      * The status of the override request: Denied, Approved, etc. Must equal a value from {@link
      * OverrideRequest::listStatuses()}.
      * @return string
@@ -56,6 +68,22 @@ class Request
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getJustification(): ?string
+    {
+        return $this->justification;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInBanner(): bool
+    {
+        return $this->banner;
     }
 
     /**
@@ -110,11 +138,43 @@ class Request
     }
 
     /**
+     * @param Faculty $faculty
+     */
+    public function setFaculty(Faculty $faculty): void
+    {
+        $this->faculty = $faculty;
+    }
+
+    /**
      * @param string $status
      */
     public function setStatus(string $status)
     {
         $this->status = $status;
+    }
+
+    /**
+     * @param string|null $justification
+     */
+    public function setJustification(?string $justification): void
+    {
+        $this->justification = $justification;
+    }
+
+    /**
+     * The request has been put in banner
+     */
+    public function setInBanner(): void
+    {
+        $this->banner = true;
+    }
+
+    /**
+     * The request is not yet in banner
+     */
+    public function setNotInBanner(): void
+    {
+        $this->banner = false;
     }
 
     /**
@@ -149,14 +209,18 @@ class Request
         $this->active = false;
     }
 
-    private function __construct(Student $student, Section $section, string $last_modified, string $status,
-                                 string $reason, string $explanation, bool $active = true, int $id = null)
+    private function __construct(Student $student, Section $section, string $last_modified, Faculty $faculty, string
+    $status, ?string $justification, bool $banner, string $reason, string $explanation, bool $active = true, int $id
+    = null)
     {
         $this->id = $id;
         $this->student = $student;
         $this->section = $section;
         $this->last_modified = $last_modified;
+        $this->faculty = $faculty;
         $this->status = $status;
+        $this->justification = $justification;
+        $this->banner = $banner;
         $this->reason = $reason;
         $this->explanation = $explanation;
         $this->active = $active;
@@ -169,16 +233,21 @@ class Request
         $pdo = connectDB();
 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
-        $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, status, reason, explanation) VALUES (:student_id, :last_modified, :section_id, :status, :reason, :explanation)");
+        $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, faculty_id, status, justification, banner, reason, explanation, active) VALUES (:student_id, :last_modified, :section_id, :faculty_id, :status, :justification, :banner, :reason, :explanation, :active)");
 
-        $studentid = Request::getStudent()->getId();
-        $sectionid = Request::getSection()->getId();
+        $studentid = $this->student->getId();
+        $facultyid = $this->faculty->getId();
+        $sectionid = $this->section->getId();
         $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
         $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
         $smt->bindParam(":section_id", $sectionid, PDO::PARAM_INT);
+        $smt->bindParam(":faculty_id", $facultyid, PDO::PARAM_INT);
         $smt->bindParam(":status", $this->status, PDO::PARAM_STR);
+        $smt->bindParam(":justification", $this->justification, PDO::PARAM_STR);
+        $smt->bindParam(":banner", $this->banner, PDO::PARAM_BOOL);
         $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
+        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
         $smt->execute();
 
@@ -192,17 +261,21 @@ class Request
         $pdo = connectDB();
 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
-        $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, status=:status, reason=:reason, explanation=:explanation WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, faculty=:faculty_id, status=:status, justification=:justification, banner=:banner, reason=:reason, explanation=:explanation, active=:active WHERE id=:id");
 
-        $studentid = Request::getStudent()->getId();
-        $sectionid = Request::getSection()->getId();
-        $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
+        $studentid = $this->student->getId();
+        $facultyid = $this->faculty->getId();
+        $sectionid = $this->section->getId();
         $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
         $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
         $smt->bindParam(":section_id", $sectionid, PDO::PARAM_INT);
+        $smt->bindParam(":faculty_id", $facultyid, PDO::PARAM_INT);
         $smt->bindParam(":status", $this->status, PDO::PARAM_STR);
+        $smt->bindParam(":justification", $this->justification, PDO::PARAM_STR);
+        $smt->bindParam(":banner", $this->banner, PDO::PARAM_BOOL);
         $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
+        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
         $smt->execute();
     }
 
@@ -242,20 +315,21 @@ class Request
 
     /**
      * Constructs a new request locally
-     * @param Student $student
-     * @param Section $section
+     * @param Student $student Must exist in DB
+     * @param Section $section Must exist in DB
+     * @param Faculty $faculty Must exist in DB
      * @param string $status Must match a value from {@link Request::listStatuses()}
      * @param string $reason Must match a value from {@link Request::listOverrideReasons()}
      * @param string $explanation
      * @return Request|null
      */
-    public static function build(Student $student, Section $section, string $status, string $reason,
+    public static function build(Student $student, Section $section, Faculty $faculty, string $status, string $reason,
                                  string $explanation) //Need?: OverrideRequest
     {
         $time = gmmktime();
         $now = date("Y-m-d H:i:s", $time);
         if (in_array($status, Request::listStatuses()) && in_array($reason, Request::listReasons()))
-            return new Request($student, $section, $now, $status, $reason, $explanation);
+            return new Request($student, $section, $now, $faculty, $status, null, false, $reason, $explanation);
         else
             return null; //null? error message?
     }
@@ -269,17 +343,53 @@ class Request
         global $request_tbl;
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl");
+        $studentid = $student->getId();
+        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE student_id=:student_id");
+        $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
         $smt->execute();
 
         $requestsList = $smt->fetchAll();
+
+        if(!$requestsList) return [];
+
         $returnList = array();
 
         foreach ($requestsList as $row)
         {
             $section = Section::getById($row['section_id']);
-            $request = new Request($student, $section, $row['last_modified'], $row['status'], $row['reason'],
-                $row['explanation'], $row['active'], $row['id']);
+            $request = new Request($student, $section, $row['last_modified'], Faculty::getById($row['faculty_id']),
+            $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
+            array_push($returnList, $request);
+        }
+
+        return $returnList;
+    }
+
+    /**
+     * Retrieve a faculty's requests from the database
+     * @param Faculty $faculty
+     */
+    public static function getByFaculty(Faculty $faculty): array
+    {
+        global $request_tbl;
+        $pdo = connectDB();
+
+        $facultyid = $faculty->getId();
+        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE faculty_id=:faculty_id");
+        $smt->bindParam(":faculty_id", $facultyid, PDO::PARAM_INT);
+        $smt->execute();
+
+        $requestsList = $smt->fetchAll();
+
+        if(!$requestsList) return [];
+
+        $returnList = array();
+
+        foreach ($requestsList as $row)
+        {
+            $section = Section::getById($row['section_id']);
+            $request = new Request(Student::getById($row['student_id']), $section, $row['last_modified'],
+            $faculty, $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
             array_push($returnList, $request);
         }
 
@@ -291,7 +401,7 @@ class Request
      * @param int $id
      * @return Request
      */
-    public static function getById(int $id): Request
+    public static function getById(int $id): ?Request
     {
         global $request_tbl;
         $pdo = connectDB();
@@ -302,10 +412,12 @@ class Request
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
 
+        if(!$data) return null;
+
         $student = Student::getById($data['student_id']);
         $section = Section::getById($data['section_id']);
-        return new Request($student, $section, $data['last_modified'], $data['status'], $data['reason'],
-            $data['explanation'], $data['active'], $data['id']);
+        return new Request($student, $section, $data['last_modified'], Faculty::getById($data['faculty_id']),
+        $data['status'], $data['justification'], $data['banner'], $data['reason'], $data['explanation'], $data['active'], $data['id']);
     }
 
     /**
@@ -320,16 +432,50 @@ class Request
         $smt->execute();
 
         $requestsList = $smt->fetchAll();
+
+        if(!$requestsList) return [];
+
         $returnList = array();
         foreach ($requestsList as $row)
         {
             $student = Student::getById($row['student_id']);
             $section = Section::getById($row['section_id']);
-            $request = new Request($student, $section, $row['last_modified'], $row['status'], $row['reason'],
-                $row['explanation'], $row['active'], $row['id']);
+            $request = new Request($student, $section, $row['last_modified'], Faculty::getById($row['faculty_id']),
+            $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
             array_push($returnList, $request);
         }
 
         return $returnList;
+    }
+
+    public static function getStatusHtml(string $status, bool $banner)
+    {
+        switch ($status)
+        {
+            case 'Received':
+                return '<i class="material-icons" style="color:orange">warning</i> Received';
+            case 'Approved':
+                if($banner)
+                    return '<i class="material-icons" style="color:green">done_all</i> Approved';
+                else
+                    return '<i class="material-icons" style="color:green">done</i> Approved';
+            case 'Provisionally Approved':
+                if($banner)
+                    return '<i class="material-icons" style="color:yellowgreen">done_all</i> Provisionally Approved';
+                else
+                    return '<i class="material-icons" style="color:yellowgreen">done</i> Provisionally Approved';
+                break;
+            case 'Denied':
+                return '<i class="material-icons" style="color:red">cancel</i> Provisionally Approved';
+                break;
+            case 'Requires Faculty Approval':
+                return '<i class="material-icons" style="color:orange">warning</i> Requires Faculty Approval';
+                break;
+        }
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

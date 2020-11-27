@@ -4,7 +4,7 @@ include_once 'common_db.php';
 /**
  * A class that stores a faculty member, keeps track of name and email
  */
-class Faculty
+class Faculty implements JsonSerializable
 {
     private $id;
     private $email;
@@ -172,5 +172,10 @@ class Faculty
         if (!$data) return null;
 
         return new Faculty($data['email'], $data['first_name'], $data['last_name'], $id);
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

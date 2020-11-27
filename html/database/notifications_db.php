@@ -5,7 +5,7 @@ include_once 'common_db.php';
  * Represents a notification send in the system. This class relates the notification to a request, and to the sender and
  * receiver's email
  */
-class Notification
+class Notification implements JsonSerializable
 {
     private $id;
     private $request;
@@ -228,5 +228,10 @@ class Notification
 
         return new Notification(Request::getById($data['request_id']), $data['sender_email'],
             $data['receiver_email'], $data['body']);
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }
