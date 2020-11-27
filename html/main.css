@@ -1,0 +1,95 @@
+@font-face {
+  font-family: nexabold;
+  src: url('assets/fonts/nexa-bold.otf');
+}
+
+@font-face {
+  font-family: nexabook;
+  src: url('assets/fonts/nexa-book.ttf');
+}
+
+body {
+  font-family: nexabook;
+}
+
+.grid-container {
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: 200px 1fr 200px;
+  padding: 0;
+  margin: 0;
+}
+
+.grid-item {
+  background-color: white;
+}
+
+.left {
+  grid-column: 1;
+}
+
+.center {
+  grid-column: 2;
+}
+
+.right {
+  grid-column: 3;
+}
+
+.truman-dark-bg {
+  background-color: rgb(81,12,118);
+}
+
+.header {
+  color: white;
+  grid-row: 1;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.navbar {
+  font-family: nexabook;
+  grid-row: 2;
+}
+
+.sidebar {
+  grid-row: 3;
+}
+
+.content {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+#logo {
+  height: 75px;
+  vertical-align: middle;
+}
+
+#main-title {
+  font-size: 50px;
+  font-family: nexabook, Arial, Helvetica, sans-serif;
+}
+
+#nav-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.nav-item {
+  float: left;
+}
+
+.nav-item a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.nav-item a:hover, .active {
+  background-color: #40095d;
+}
