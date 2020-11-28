@@ -3,15 +3,18 @@ include_once 'database/requests_db.php';
 
 if (isset($_GET['semester']))
 {
-    $semester = Semester::getByCode(intval($_GET['semester']));
+    $archive = true;
+
+    $semester = Semester::getByCode(strval($_GET['semester']));
     if(is_null($semester))
         $requests = null;
     else
-        $requests = Request::getBySemester($semester);
+        $requests = Request::getInactive($semester);
 }
 else
 {
-    $requests = Request::getActive();
+    $archive = false;
+    $requests = Request::listActive();
 }
 
 if(is_null($requests))
@@ -28,7 +31,7 @@ if(is_null($requests))
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-96x96.png" sizes="96x96">
     <link rel="stylesheet" href="main.css">
-    <title>ORTS - Override Requests</title>
+    <title>ORTS - <?php echo $archive ? 'Archive':'Override Requests'; ?></title>
     <style>
         h2 {
             text-align: center;
@@ -109,7 +112,7 @@ if(is_null($requests))
 <div class="grid-item header right truman-dark-bg"></div>
 <div class="grid-item header left truman-dark-bg"></div>
 <div class="grid-item header center truman-dark-bg">
-    <center>
+    <div style="text-align: center;">
         <span style="float:left;">
           <img id="logo" src="assets/truman.png"/>
         </span>
@@ -121,7 +124,7 @@ if(is_null($requests))
               Departments of Mathematics, Computer Science, and Statistics
           </div>
         </span>
-    </center>
+    </div>
 </div>
 
 <div class="grid-item navbar left truman-dark-bg"></div>
@@ -140,22 +143,10 @@ if(is_null($requests))
 </div>
 
 <div class="grid-item content">
-    <h2>Override Requests</h2>
+    <h2>Override Requests<?php if ($archive) echo ' - Archive for '.$semester->getDescription(); ?></h2>
     <!-- Table Created By: Thao Phung -->
     <table id="request-table">
         <colgroup>
-            <!--
-            <th>Select</th>
-            <th>Status</th>
-            <th>Recieved</th>
-            <th>Last</th>
-            <th>First</th>
-            <th>Banner ID</th>
-            <th>Dept</th>
-            <th>Num</th>
-            <th>CRN</th>
-            <th>Semester</th>
-            -->
             <col style="width:5%;">
             <col style="width:33%;">
             <col style="width:19%;">
@@ -345,8 +336,22 @@ if(is_null($requests))
      */
     $(function()
     {
+        $(".default").prop('checked', true);
+
+        $(document).on("input", ".numeric", function()
+        {
+            this.value = this.value.replace(/\D/g,'');
+        });
+
         // Import the requests from the database into javascript
         requests = JSON.parse('<?php echo json_encode($requests); ?>');
+
+        if(requests.length === 0)
+        {
+            $("#request-table").after('<h3 style="text-align: center">No relevant entries</h3>');
+            return;
+        }
+
         // construct the html code representing a row
         requests.forEach(function createHtml(request)
         {
@@ -368,13 +373,6 @@ if(is_null($requests))
 
             request.rowHtml = out;
         });
-
-        $(document).on("input", ".numeric", function()
-        {
-            this.value = this.value.replace(/\D/g,'');
-        });
-
-        $(".default").prop('checked', true);
 
         sortTable();
         renderTable();

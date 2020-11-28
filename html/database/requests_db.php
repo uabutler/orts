@@ -401,13 +401,13 @@ class Request implements JsonSerializable
      * Retrieve a faculty's requests from the database
      * @param Semester $semester
      */
-    public static function getBySemester(Semester $semester): array
+    public static function getInactive(Semester $semester): array
     {
         global $request_tbl, $section_tbl;
         $pdo = connectDB();
 
         $semesterid = $semester->getId();
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE section_id IN (SELECT id FROM $section_tbl WHERE semester_id=:semester_id)");
+        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE section_id IN (SELECT id FROM $section_tbl WHERE semester_id=:semester_id) AND active=false");
         $smt->bindParam(":semester_id", $semesterid, PDO::PARAM_INT);
         $smt->execute();
 
@@ -456,7 +456,7 @@ class Request implements JsonSerializable
     /**
      * Retrieve all requests from the database
      */
-    public static function getActive(): array
+    public static function listActive(): array
     {
         global $request_tbl;
         $pdo = connectDB();

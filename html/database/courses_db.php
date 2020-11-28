@@ -505,7 +505,7 @@ class Semester implements JsonSerializable
      * List all active semesters
      * @return array
      */
-    public static function listActiveSemesters(): array
+    public static function listActive(): array
     {
         global $semester_tbl;
         $pdo = connectDB();
@@ -520,7 +520,31 @@ class Semester implements JsonSerializable
         $out = [];
 
         foreach ($data as $row)
-            array_push($out, new Semester($row['semester'], $row['description'], $data['active'], $row['id']));
+            array_push($out, new Semester($row['semester'], $row['description'], $row['active'], $row['id']));
+
+        return $out;
+    }
+
+    /**
+     * List all active semesters
+     * @return array
+     */
+    public static function listInactive(): array
+    {
+        global $semester_tbl;
+        $pdo = connectDB();
+
+        $smt = $pdo->query("SELECT * FROM $semester_tbl WHERE active=false");
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+        // TODO: Ensure this is the convention for all list functions
+        if (!$data) return [];
+
+        $out = [];
+
+        foreach ($data as $row)
+            array_push($out, new Semester($row['semester'], $row['description'], $row['active'], $row['id']));
 
         return $out;
     }
