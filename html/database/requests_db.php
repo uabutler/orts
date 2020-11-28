@@ -158,7 +158,7 @@ class Request implements JsonSerializable
      */
     public function setJustification(?string $justification): void
     {
-        $this->justification = $justification;
+        $this->justification = htmlspecialchars($justification);
     }
 
     /**
@@ -190,7 +190,7 @@ class Request implements JsonSerializable
      */
     public function setExplanation(string $explanation)
     {
-        $this->explanation = $explanation;
+        $this->explanation = htmlspecialchars($explanation);
     }
 
     /**
@@ -219,10 +219,10 @@ class Request implements JsonSerializable
         $this->last_modified = $last_modified;
         $this->faculty = $faculty;
         $this->status = $status;
-        $this->justification = $justification;
+        $this->justification = htmlspecialchars($justification);
         $this->banner = $banner;
         $this->reason = $reason;
-        $this->explanation = $explanation;
+        $this->explanation = htmlspecialchars($explanation);
         $this->active = $active;
     }
 
@@ -261,11 +261,12 @@ class Request implements JsonSerializable
         $pdo = connectDB();
 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
-        $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, faculty=:faculty_id, status=:status, justification=:justification, banner=:banner, reason=:reason, explanation=:explanation, active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, faculty_id=:faculty_id, status=:status, justification=:justification, banner=:banner, reason=:reason, explanation=:explanation, active=:active WHERE id=:id");
 
         $studentid = $this->student->getId();
         $facultyid = $this->faculty->getId();
         $sectionid = $this->section->getId();
+        $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
         $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
         $smt->bindParam(":section_id", $sectionid, PDO::PARAM_INT);
@@ -397,6 +398,38 @@ class Request implements JsonSerializable
     }
 
     /**
+     * Retrieve a faculty's requests from the database
+     * @param Semester $semester
+     */
+    public static function getBySemester(Semester $semester): array
+    {
+        global $request_tbl, $section_tbl;
+        $pdo = connectDB();
+
+        $semesterid = $semester->getId();
+        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE section_id IN (SELECT id FROM $section_tbl WHERE semester_id=:semester_id)");
+        $smt->bindParam(":semester_id", $semesterid, PDO::PARAM_INT);
+        $smt->execute();
+
+        $requestsList = $smt->fetchAll();
+
+        if(!$requestsList) return [];
+
+        $returnList = array();
+
+        foreach ($requestsList as $row)
+        {
+            $section = Section::getById($row['section_id']);
+            $request = new Request(Student::getById($row['student_id']), $section, $row['last_modified'],
+                Faculty::getById($row['faculty_id']), $row['status'], $row['justification'], $row['banner'], $row['reason'],
+                $row['explanation'], $row['active'], $row['id']);
+            array_push($returnList, $request);
+        }
+
+        return $returnList;
+    }
+
+    /**
      * Retrieve a request from the database by ID
      * @param int $id
      * @return Request
@@ -423,12 +456,12 @@ class Request implements JsonSerializable
     /**
      * Retrieve all requests from the database
      */
-    public static function getOverrideRequests(): array
+    public static function getActive(): array
     {
         global $request_tbl;
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl");
+        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE active=true");
         $smt->execute();
 
         $requestsList = $smt->fetchAll();
@@ -448,29 +481,26 @@ class Request implements JsonSerializable
         return $returnList;
     }
 
-    public static function getStatusHtml(string $status, bool $banner)
+    public function getStatusHtml()
     {
-        switch ($status)
+        switch ($this->status)
         {
             case 'Received':
                 return '<i class="material-icons" style="color:orange">warning</i> Received';
             case 'Approved':
-                if($banner)
-                    return '<i class="material-icons" style="color:green">done_all</i> Approved';
+                if($this->banner)
+                    return '<i class="material-icons" style="color:green">done_all</i> Approved: In Banner';
                 else
                     return '<i class="material-icons" style="color:green">done</i> Approved';
             case 'Provisionally Approved':
-                if($banner)
-                    return '<i class="material-icons" style="color:yellowgreen">done_all</i> Provisionally Approved';
+                if($this->banner)
+                    return '<i class="material-icons" style="color:yellowgreen">done_all</i> Provisionally Approved: In Banner';
                 else
                     return '<i class="material-icons" style="color:yellowgreen">done</i> Provisionally Approved';
-                break;
             case 'Denied':
                 return '<i class="material-icons" style="color:red">cancel</i> Provisionally Approved';
-                break;
             case 'Requires Faculty Approval':
                 return '<i class="material-icons" style="color:orange">warning</i> Requires Faculty Approval';
-                break;
         }
     }
 

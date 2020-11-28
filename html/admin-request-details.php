@@ -174,10 +174,10 @@ Departments of Mathematics, Computer Science, and Statistics
 
 <div class="grid-item navbar center">
     <ul id="nav-list" class="truman-dark-bg">
-        <li class="nav-item"><a class="active" href="#">Current Semester</a></li>
-        <li class="nav-item"><a href="#">Archive</a></li>
+        <li class="nav-item"><a class="active" href="admin-request-list.php">Current Semester</a></li>
+        <li class="nav-item"><a href="admin-archive.php">Archive</a></li>
         <li class="nav-item" style="float:right;"><a href="#">Log Out</a></li>
-        <li class="nav-item" style="float:right;"><a href="#">Profile</a></li>
+        <li class="nav-item" style="float:right;"><a href="admin-profile.php">Profile</a></li>
     </ul>
 </div>
 
@@ -187,8 +187,7 @@ Departments of Mathematics, Computer Science, and Statistics
         <table style="padding-bottom:20px;">
             <tr>
                 <th>Status:</th>
-
-                <td><?php echo Request::getStatusHtml($request->getStatus(), $request->isInBanner()); ?></td>
+                <td><?php echo $request->getStatusHtml(); ?></td>
             </tr>
             <tr>
                 <th>Date Modified:</th>
@@ -215,8 +214,7 @@ Departments of Mathematics, Computer Science, and Statistics
             </tr>
             <tr>
                 <td><?php echo $section->getCrn(); ?></td>
-                <td><?php echo $section->getCourse()->getDepartment()->getDept()." "
-                        .$section->getCourse()->getCourseNum(); ?></td>
+                <td><?php echo $section->getCourse()->getDepartment()->getDept()." ".$section->getCourse()->getCourseNum(); ?></td>
                 <td><?php echo $section->getSectionNum(); ?></td>
                 <td><?php echo $section->getCourse()->getTitle(); ?></td>
             </tr>
