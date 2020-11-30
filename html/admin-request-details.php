@@ -6,21 +6,26 @@ if (isset($_GET['id']))
 else
     $request = null;
 
-if(is_null($request))
+if (is_null($request))
 {
-    header("Location: error404.html");
+    http_response_code(400);
+    header("Location: error400.html");
     exit;
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Used for status icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Use Truman's default favicons -->
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-16x16.png" sizes="16x16">
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-96x96.png" sizes="96x96">
+
     <link rel="stylesheet" href="main.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <title>ORTS - Request Details</title>
     <style>
         .content-grid-container {
@@ -157,10 +162,10 @@ if(is_null($request))
         </span>
         <span style="float:right">
           <div id="main-title" style="font-size:50px;font-family:nexabold;">
-Override Tracking System
+              Override Tracking System
           </div>
           <div style="font-size:20px;font-family:nexabook;">
-Departments of Mathematics, Computer Science, and Statistics
+              Departments of Mathematics, Computer Science, and Statistics
           </div>
         </span>
     </div>
@@ -174,8 +179,9 @@ Departments of Mathematics, Computer Science, and Statistics
 
 <div class="grid-item navbar center">
     <ul id="nav-list" class="truman-dark-bg">
-        <li class="nav-item"><a class="active" href="admin-request-list.php">Current Semester</a></li>
-        <li class="nav-item"><a href="admin-archive.php">Archive</a></li>
+        <li class="nav-item"><a <?php if ($request->isActive()) echo 'class="active"'; ?> href="admin-request-list.php">Current Semester</a></li>
+        <li class="nav-item"><a <?php if (!$request->isActive()) echo 'class="active"'; ?> href="admin-archive.php">Archive</a></li>
+        <li class="nav-item"><a href="admin-functions.php">Admin Functions</a></li>
         <li class="nav-item" style="float:right;"><a href="#">Log Out</a></li>
         <li class="nav-item" style="float:right;"><a href="admin-profile.php">Profile</a></li>
     </ul>
@@ -199,7 +205,8 @@ Departments of Mathematics, Computer Science, and Statistics
             </tr>
             <tr>
                 <th style="padding-right:1em">Designated Faculty:</th>
-                <td><?php echo $request->getFaculty()->getLastName().", ".$request->getFaculty()->getFirstName(); ?></td>
+                <td><?php echo $request->getFaculty()->getLastName() . ", " . $request->getFaculty()
+                            ->getFirstName(); ?></td>
             </tr>
         </table>
         <table id="class-info">
@@ -214,7 +221,8 @@ Departments of Mathematics, Computer Science, and Statistics
             </tr>
             <tr>
                 <td><?php echo $section->getCrn(); ?></td>
-                <td><?php echo $section->getCourse()->getDepartment()->getDept()." ".$section->getCourse()->getCourseNum(); ?></td>
+                <td><?php echo $section->getCourse()->getDepartment()->getDept() . " " . $section->getCourse()
+                            ->getCourseNum(); ?></td>
                 <td><?php echo $section->getSectionNum(); ?></td>
                 <td><?php echo $section->getCourse()->getTitle(); ?></td>
             </tr>
