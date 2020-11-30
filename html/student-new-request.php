@@ -105,10 +105,14 @@ $semesters = Semester::listActive();
             height: 40px;
         }
 
+        button {
+            float: right;
+        }
+
         .error {
             outline: none;
-            border-color: red;
-            box-shadow: 0 0 10px pink;
+            border-color: #ff4d61;
+            box-shadow: 0 0 5px #ff4d61;
         }
     </style>
 </head>
@@ -304,19 +308,21 @@ $semesters = Semester::listActive();
         </table>
     </div>
 
-    <div class="grid-item footer"> </div>
+    <div class="grid-item footer">
+        <button onclick="createStudentAndRequest()">Submit</button>
+    </div>
 </div>
 <script>
-    function validateElement(element_name, regex)
+    /*
+     * INPUT VALIDATION
+     */
+    function validateRegex(element_name, regex)
     {
         console.log(`Validating ${element_name} against ${regex}`);
 
         let element = $(`input[name="${element_name}"]`);
 
-        if(regex.test(String(element.val())))
-            element.removeClass("error");
-        else
-            element.addClass("error");
+        return regex.test(String(element.val()));
     }
 
     function validateNotEmpty(element_name)
@@ -324,58 +330,181 @@ $semesters = Semester::listActive();
         console.log(`Validating ${element_name} is not empty`);
 
         let element = $(`input[name="${element_name}"]`);
-
         if (element.length === 0)
             element = $(`textarea[id="${element_name}"]`);
 
-        if(element.val())
+        return element.val() != "";
+    }
+
+    function validateBannerId() { return validateRegex("banner_id", /^001\d{6}$/); }
+    function validateGradMonth() { return validateRegex("grad_month", /(0[1-9]|1[0-2])\/20[2-9]\d/); }
+    function validateCourseNum() { return validateRegex("course_num", /^\d{3}$/); }
+    function validateSection() { return validateRegex("section", /^\d{1,2}$/); }
+    function validateFirstName() { return validateNotEmpty("first_name"); }
+    function validateLastName() { return validateNotEmpty("last_name"); }
+    function validateExplanation() { return validateNotEmpty("explanation"); }
+    function validateCrn() { return validateNotEmpty("crn"); }
+
+    function validate()
+    {
+        // Return true iff all are true
+        switch(false)
+        {
+            case validateBannerId():
+            case validateGradMonth():
+            case validateFirstName():
+            case validateLastName():
+            case validateExplanation():
+            case validateCrn(): // This includes course number and section
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /*
+     * Create error notice
+     */
+    function setError(valid, element_name)
+    {
+        let element = $(`input[name="${element_name}"]`);
+        if (element.length === 0)
+            element = $(`textarea[id="${element_name}"]`);
+
+        if(valid)
             element.removeClass("error");
         else
             element.addClass("error");
     }
 
-    function validateBannerId() { validateElement("banner_id", /^001\d{6}$/); }
-    function validateGradMonth() { validateElement("grad_month", /^[01]\d\/20\d{2}$/); }
-    function validateCourseNum() { validateElement("course_num", /^\d{3}$/); }
-    function validateSection() { validateElement("section", /^\d{1,2}$/); }
-    function validateFirstName() { validateNotEmpty("first_name"); }
-    function validateLastName() { validateNotEmpty("last_name"); }
-    function validateExplanation() { validateNotEmpty("explanation"); }
-
-    function validate()
+    /*
+     * Get the section CRN and Title from the server
+     */
+    function setSection()
     {
-        validateBannerId();
-        validateGradMonth();
-        validateCourseNum();
-        validateSection();
-        validateFirstName();
-        validateLastName();
-        validateExplanation();
+        if(!(validateCourseNum() && validateSection()))
+        {
+            $('input[name="crn"]').val("");
+            $('input[name="title"]').val("");
+            return;
+        }
+
+        let data = {};
+
+        data.semester = $('select[name="semester"]').val();
+        data.department = $('select[name="department"]').val();
+        data.course_num = $('input[name="course_num"]').val();
+        data.section = parseInt($('input[name="section"]').val(), 10);
+
+        let request = $.get("api/section.php", data, function (data, status, xhr)
+        {
+            if(status === "success")
+            {
+                $('input[name="crn"]').val(data.crn);
+                $('input[name="title"]').val(data.course.title);
+            }
+            else
+            {
+                $('input[name="crn"]').val("");
+                $('input[name="title"]').val("");
+            }
+        }, "json");
     }
 
-    function getSection()
+    /*
+     * INPUT DISABLE
+     */
+    function inputEnable(bool)
     {
-        // TODO: GET request for title and crn
+        bool = !bool;
+
+        $('input[name="first_name"]').attr("readonly", bool);
+        $('input[name="last_name"]').attr("readonly", bool);
+        $('input[name="banner_id"]').attr("readonly", bool);
+        $('input[name="grad_month"]').attr("readonly", bool);
+        $('input[name="course_num"]').attr("readonly", bool);
+        $('input[name="section"]').attr("readonly", bool);
+
+        $('select[name="standing"]').attr("disabled", bool);
+        $('select[name="majors[]"]').attr("disabled", bool);
+        $('select[name="minors[]"]').attr("disabled", bool);
+        $('select[name="semester"]').attr("disabled", bool);
+        $('select[name="department"]').attr("disabled", bool);
+        $('select[name="reason"]').attr("disabled", bool);
+
+        $('textarea[id="explanation"]').attr("readonly", bool);
     }
 
-    $(function (events, handler)
+    function createRequest(student_id)
+    {
+        if(!validate())
+            return false;
+
+        inputEnable(false);
+
+        let data = {};
+
+        data.student_id = student_id;
+        data.semester = $('select[name="semester"]').val();
+        data.crn = $('input[name="crn"]').val();
+        data.reason = $('select[name="reason"]').val();
+        data.explanation = $('textarea[id="explanation"]').val();
+
+        $.post("api/request.php", JSON.stringify(data), function(data, status, xhr)
+        {
+            alert("Request submitted!");
+        }, "json");
+    }
+
+    function createStudentAndRequest()
+    {
+        if(!validate())
+            return false;
+
+        inputEnable(false);
+
+        let data = {};
+
+        data.email = "<?php echo $student_email; ?>";
+        data.first_name = $('input[name="first_name"]').val();
+        data.last_name = $('input[name="last_name"]').val();
+        data.banner_id = $('input[name="banner_id"]').val();
+        data.grad_month = $('input[name="grad_month"]').val();
+        data.standing = $('select[name="standing"]').val();
+        data.majors = $('select[name="majors[]"]').val();
+        data.minors = $('select[name="minors[]"]').val();
+
+
+        $.post("api/student.php", JSON.stringify(data), function(data, status ,xhr)
+        {
+            createRequest(parseInt(data));
+        });
+    }
+
+    /*
+     * MAIN
+     */
+    $(function ()
     {
         $('.select').select2();
 
-        $('input[name="course_num"]').on("keyup", function () { getSection(); })
-        $('input[name="section"]').on("keyup", function () { getSection(); })
-
-        $(document).on("input", ".numeric", function () {
+        $(document).on("input", ".numeric", function ()
+        {
             this.value = this.value.replace(/\D/g, '');
         });
 
-        $('input[name="banner_id"]').on("focusout", function () { validateBannerId(); })
-        $('input[name="grad_month"]').on("focusout", function () { validateGradMonth(); })
-        $('input[name="course_num"]').on("focusout", function () { validateCourseNum(); })
-        $('input[name="section"]').on("focusout", function () { validateSection(); })
-        $('input[name="first_name"]').on("focusout", function () { validateFirstName(); })
-        $('input[name="last_name"]').on("focusout", function () { validateLastName(); })
-        $('textarea[id="explanation"]').on("focusout", function () { validateExplanation(); })
+        $('input[name="course_num"]').on("keyup", function () { setSection(); })
+        $('input[name="section"]').on("keyup", function () { setSection(); })
+        $('select[name="semester"]').on("change", function () { setSection(); })
+        $('select[name="department"]').on("change", function () { setSection(); })
+
+        $('input[name="banner_id"]').on("focusout", function () { setError(validateBannerId(), "banner_id"); })
+        $('input[name="grad_month"]').on("focusout", function () { setError(validateGradMonth(), "grad_month"); })
+        $('input[name="course_num"]').on("focusout", function () { setError(validateCourseNum(), "course_num"); })
+        $('input[name="section"]').on("focusout", function () { setError(validateSection(), "section"); })
+        $('input[name="first_name"]').on("focusout", function () { setError(validateFirstName(), "first_name"); })
+        $('input[name="last_name"]').on("focusout", function () { setError(validateLastName(), "last_name"); })
+        $('textarea[id="explanation"]').on("focusout", function () { setError(validateExplanation(), "explanation"); })
     });
 </script>
 </body>

@@ -1,8 +1,6 @@
 <?php
 include_once '../database/students_db.php';
 
-file_put_contents("log", date("H:i:s")."Request started\n", FILE_APPEND);
-
 if($_SERVER['REQUEST_METHOD'] === 'GET')
     getStudent();
 else if($_SERVER['REQUEST_METHOD'] === 'POST')
@@ -13,7 +11,10 @@ else
 function getStudent()
 {
     if(!isset($_GET['email']))
+    {
         http_response_code(400);
+        exit();
+    }
 
     $student = Student::get($_GET['email']);
 
@@ -38,7 +39,6 @@ function putStudent()
 
     $student = Student::build($data->email, $data->first_name, $data->last_name, $data->banner_id,
                                  $data->grad_month, $data->standing, $data->majors, $data->minors);
-
     $student->storeInDB();
 
     http_response_code(200);
