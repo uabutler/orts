@@ -2,12 +2,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Use Truman's default favicons -->
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-16x16.png" sizes="16x16">
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-96x96.png" sizes="96x96">
+
     <link rel="stylesheet" href="main.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <title>ORTS - Archives</title>
     <style>
         .content-grid-container {
@@ -67,10 +68,10 @@
         </span>
         <span style="float:right">
           <div id="main-title" style="font-size:50px;font-family:nexabold;">
-Override Tracking System
+              Override Tracking System
           </div>
           <div style="font-size:20px;font-family:nexabook;">
-Departments of Mathematics, Computer Science, and Statistics
+              Departments of Mathematics, Computer Science, and Statistics
           </div>
         </span>
     </div>
@@ -86,6 +87,7 @@ Departments of Mathematics, Computer Science, and Statistics
     <ul id="nav-list" class="truman-dark-bg">
         <li class="nav-item"><a href="admin-request-list.php">Current Semester</a></li>
         <li class="nav-item"><a class="active" href="admin-archive.php">Archive</a></li>
+        <li class="nav-item"><a href="admin-functions.php">Admin Functions</a></li>
         <li class="nav-item" style="float:right;"><a href="#">Log Out</a></li>
         <li class="nav-item" style="float:right;"><a href="admin-profile.php">Profile</a></li>
     </ul>
@@ -103,9 +105,9 @@ Departments of Mathematics, Computer Science, and Statistics
             $active = Semester::listActive();
             foreach ($active as $semester)
             {
-                echo '<tr class="semester-item" onclick="window.location=\'admin-request-list.php?semester='.$semester->getCode().'\'">';
-                echo '<td>'.$semester->getDescription().'</td>';
-                echo '<td>'.$semester->getCode().'</td>';
+                echo '<tr class="semester-item" onclick="window.location=\'admin-request-list.php?semester=' . $semester->getCode() . '\'">';
+                echo '<td>' . $semester->getDescription() . '</td>';
+                echo '<td>' . $semester->getCode() . '</td>';
                 echo '</tr>';
             }
             ?>
@@ -123,9 +125,9 @@ Departments of Mathematics, Computer Science, and Statistics
             $inactive = Semester::listInactive();
             foreach ($inactive as $semester)
             {
-                echo '<tr class="semester-item" onclick="window.location=\'admin-request-list.php?semester='.$semester->getCode().'\'">';
-                echo '<td>'.$semester->getDescription().'</td>';
-                echo '<td>'.$semester->getCode().'</td>';
+                echo '<tr class="semester-item" onclick="window.location=\'admin-request-list.php?semester=' . $semester->getCode() . '\'">';
+                echo '<td>' . $semester->getDescription() . '</td>';
+                echo '<td>' . $semester->getCode() . '</td>';
                 echo '</tr>';
             }
             ?>
