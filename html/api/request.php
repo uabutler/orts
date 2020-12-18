@@ -44,7 +44,10 @@ function putRequest()
     $request = Request::build(Student::getById($data->student_id), Section::getByCrn(Semester::getByCode($data->semester),
                             $data->crn), Faculty::getById(1), 'Received', $data->reason, $data->explanation);
 
-    $request->storeInDB();
+    if($request->storeInDB())
+        http_response_code(200);
+    else
+        http_response_code(409);
 
     http_response_code(200);
 }

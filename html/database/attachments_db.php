@@ -86,9 +86,12 @@ class Attachment implements JsonSerializable
         $smt->bindParam(":request_id", $request_id, PDO::PARAM_INT);
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
     private function updateDB()
@@ -102,7 +105,10 @@ class Attachment implements JsonSerializable
         $smt->bindParam(":request_id", $request_id, PDO::PARAM_INT);
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
+
+        return true;
     }
 
     /**
@@ -114,9 +120,9 @@ class Attachment implements JsonSerializable
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
 
     /**

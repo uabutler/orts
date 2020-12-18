@@ -39,8 +39,14 @@ function putStudent()
 
     $student = Student::build($data->email, $data->first_name, $data->last_name, $data->banner_id,
                                  $data->grad_month, $data->standing, $data->majors, $data->minors);
-    $student->storeInDB();
 
-    http_response_code(200);
-    echo $student->getId();
+    if($student->storeInDB())
+    {
+        http_response_code(200);
+        echo $student->getId();
+    }
+    else
+    {
+        http_response_code(409);
+    }
 }

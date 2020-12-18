@@ -85,7 +85,7 @@ class Notification implements JsonSerializable
      */
     public function setBody(string $body)
     {
-        $this->body = $body;
+        $this->body = htmlspecialchars($body, ENT_QUOTES);
     }
 
     private function __construct(Request $request, string $sender_email, string $receiver_email, string $body,
@@ -95,7 +95,7 @@ class Notification implements JsonSerializable
         $this->request = $request;
         $this->sender_email = $sender_email;
         $this->receiver_email = $receiver_email;
-        $this->body = $body;
+        $this->body = htmlspecialchars($body, ENT_QUOTES);
     }
 
     private function insertDB()
@@ -109,9 +109,12 @@ class Notification implements JsonSerializable
         $smt->bindParam(":sender_email", $this->sender_email, PDO::PARAM_STR);
         $smt->bindParam(":receiver_email", $this->receiver_email, PDO::PARAM_STR);
         $smt->bindParam(":body", $this->body, PDO::PARAM_LOB);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
     private function updateDB()
@@ -125,7 +128,10 @@ class Notification implements JsonSerializable
         $smt->bindParam(":sender_email", $this->sender_email, PDO::PARAM_STR);
         $smt->bindParam(":receiver_email", $this->receiver_email, PDO::PARAM_STR);
         $smt->bindParam(":body", $this->body, PDO::PARAM_LOB);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
+
+        return true;
     }
 
     /**
@@ -137,9 +143,9 @@ class Notification implements JsonSerializable
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
 
     /**

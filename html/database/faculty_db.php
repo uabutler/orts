@@ -89,8 +89,12 @@ class Faculty implements JsonSerializable
 
         $smt = $pdo->prepare("SELECT id FROM $faculty_tbl WHERE email=:email");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
-        $smt->execute();
-        $this->id = $smt->fetch(PDO::FETCH_ASSOC)['id'];
+
+        if(!$smt->execute()) return false;
+
+        $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
     private function updateDB()
@@ -103,7 +107,10 @@ class Faculty implements JsonSerializable
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
+
+        return true;
     }
 
     /**
@@ -115,9 +122,9 @@ class Faculty implements JsonSerializable
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
 
     /**

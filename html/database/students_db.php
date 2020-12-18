@@ -267,7 +267,8 @@ class Student implements JsonSerializable
         $smt->bindParam(":grad_month", $this->grad_month, PDO::PARAM_STR);
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
 
         // get the newly created ID
         $this->id = $pdo->lastInsertId();
@@ -275,6 +276,8 @@ class Student implements JsonSerializable
         // Insert information about majors and minors
         $this->add_majors(Major::buildStringList($this->majors), $pdo);
         $this->add_minors(Major::buildStringList($this->minors), $pdo);
+
+        return true;
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object
@@ -296,7 +299,7 @@ class Student implements JsonSerializable
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
-        $smt->execute();
+        if(!$smt->execute()) return false;
 
         // Next, get the majors currently stored in the database
         $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.email = :email");
@@ -328,6 +331,8 @@ class Student implements JsonSerializable
 
         foreach ($current_minors as $minor)
             if (!in_array($minor, $old_minors)) $this->remove_minor($minor, $pdo);
+
+        return true;
     }
 
     /**
@@ -339,9 +344,9 @@ class Student implements JsonSerializable
     {
         // The id is set only when the student is already in the database
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
 
     /**
@@ -360,7 +365,7 @@ class Student implements JsonSerializable
                                  string $grad_month, string $standing, array $majors, array $minors)
     {
         $major_arr = Major::buildArray($majors);
-        $minor_arr = Major::buildArray($minors);
+        $minor_arr = Minor::buildArray($minors);
 
         if(is_null($major_arr) or is_null($minor_arr)) return null;
 

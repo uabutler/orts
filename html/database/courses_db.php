@@ -566,9 +566,11 @@ class Semester implements JsonSerializable
         $smt->bindParam(":semester", $this->semester, PDO::PARAM_STR);
         $smt->bindParam(":description", $this->description, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+        if(!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
     private function updateDB()
@@ -581,15 +583,17 @@ class Semester implements JsonSerializable
         $smt->bindParam(":semester", $this->semester, PDO::PARAM_STR);
         $smt->bindParam(":description", $this->description, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+        if(!$smt->execute()) return false;
 
         // Deactivate all sections in that semester
         if (!$this->active)
         {
             $smt = $pdo->prepare("UPDATE $section_tbl SET active=false WHERE semester_id=:semester_id");
             $smt->bindParam(":semester_id", $this->id, PDO::PARAM_INT);
-            $smt->execute();
+            if(!$smt->execute()) return false;
         }
+
+        return true;
     }
 
     /**
@@ -601,9 +605,9 @@ class Semester implements JsonSerializable
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
 
     /**

@@ -88,10 +88,12 @@ class Major extends Program implements JsonSerializable
         $smt = $pdo->prepare("INSERT INTO $major_tbl (major, active) VALUES (:major, :active)");
         $smt->bindParam(":major", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
 
-        // get the newly created ID
+        if(!$smt->execute()) return false;
+
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object
@@ -106,7 +108,10 @@ class Major extends Program implements JsonSerializable
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":major", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
+
+        return true;
     }
 
     /**
@@ -118,9 +123,9 @@ class Major extends Program implements JsonSerializable
     {
         // The id is set only when the student is already in the database
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
 
     /**

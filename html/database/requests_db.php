@@ -158,7 +158,7 @@ class Request implements JsonSerializable
      */
     public function setJustification(?string $justification): void
     {
-        $this->justification = htmlspecialchars($justification);
+        $this->justification = htmlspecialchars($justification, ENT_QUOTES);
     }
 
     /**
@@ -190,7 +190,7 @@ class Request implements JsonSerializable
      */
     public function setExplanation(string $explanation)
     {
-        $this->explanation = htmlspecialchars($explanation);
+        $this->explanation = htmlspecialchars($explanation, ENT_QUOTES);
     }
 
     /**
@@ -219,10 +219,10 @@ class Request implements JsonSerializable
         $this->last_modified = $last_modified;
         $this->faculty = $faculty;
         $this->status = $status;
-        $this->justification = htmlspecialchars($justification);
+        $this->justification = htmlspecialchars($justification, ENT_QUOTES);
         $this->banner = $banner;
         $this->reason = $reason;
-        $this->explanation = htmlspecialchars($explanation);
+        $this->explanation = htmlspecialchars($explanation, ENT_QUOTES);
         $this->active = $active;
     }
 
@@ -249,9 +249,11 @@ class Request implements JsonSerializable
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        $smt->execute();
+        if(!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
     private function updateDB()
@@ -277,7 +279,10 @@ class Request implements JsonSerializable
         $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+
+        if(!$smt->execute()) return false;
+
+        return true;
     }
 
     /**
@@ -289,9 +294,9 @@ class Request implements JsonSerializable
     {
         // The id is set only when the student is already in the database
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
 
     /**

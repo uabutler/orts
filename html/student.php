@@ -61,27 +61,6 @@ $semesters = Semester::listActive();
             padding: 0;
         }
 
-        .info {
-            grid-column: 1 / span 2;
-            grid-row: 1;
-        }
-
-        .profile {
-            grid-column: 1;
-            grid-row: 2;
-        }
-
-        .request {
-            grid-column: 2;
-            grid-row: 2;
-        }
-
-        .footer {
-            grid-column: 1 / span 2;
-            grid-row: 3;
-            height: 250px;
-        }
-
         h2 {
             font-family: nexabold, sans-serif;
             color: white;
@@ -113,6 +92,21 @@ $semesters = Semester::listActive();
             outline: none;
             border-color: #ff4d61;
             box-shadow: 0 0 5px #ff4d61;
+        }
+
+        #next:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        #next {
+            background-color: rgb(81,12,118);
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 8px 16px;
+            float:right;
+            margin-top: 16px
         }
     </style>
 </head>
@@ -149,8 +143,8 @@ $semesters = Semester::listActive();
     </ul>
 </div>
 
-<div class="grid-item content content-grid-container">
-    <div class="grid-item info">
+<div class="grid-item content">
+    <div class="info">
         <h3 style="font-family: nexabold,sans-serif">PLEASE READ ALL OF THE INSTRUCTIONS BEFORE FILLING OUT THE ENTIRE
             FORM. ONLY FORMS FILLED OUT CORRECTLY WILL BE CONSIDERED.</h3>
 
@@ -182,7 +176,7 @@ $semesters = Semester::listActive();
         after the Free Add/Drop Period, a $50 fee will be assessed to the student’s account regardless of when the
         override was granted.
     </div>
-    <div class="grid-item profile">
+    <div>
         <h2 class="truman-dark-bg">Profile</h2>
         <table style="width: 100%">
             <colgroup>
@@ -244,72 +238,8 @@ $semesters = Semester::listActive();
             </tr>
         </table>
     </div>
-
-    <div class="grid-item request">
-        <h2 class="truman-dark-bg">Request</h2>
-        <table style="width: 100%">
-            <colgroup>
-                <col>
-                <col style="width: 100%;">
-            </colgroup>
-            <tr>
-                <td>Semester:</td>
-                <td>
-                    <select class="select" name="semester">
-                        <?php
-                        foreach($semesters as $semester)
-                            echo '<option value="'.$semester->getCode().'">'.$semester->getDescription().'</option>';
-                        ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Course Dept:</td>
-                <td>
-                    <select class="select" name="department">
-                        <?php
-                        foreach($departments as $department)
-                            echo '<option value="'.$department.'">'.$department.'</option>';
-                        ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Course Num:</td>
-                <td><input class="numeric" type="text" placeholder="101" name="course_num"></td>
-            </tr>
-            <tr>
-                <td>Section:</td>
-                <td><input class="numeric" type="text" placeholder="01" name="section"></td>
-            </tr>
-            <tr>
-                <td>Title:</td>
-                <td><input type="text" name="title" readonly></td>
-            </tr>
-            <tr>
-                <td>CRN:</td>
-                <td><input type="text" name="crn" readonly></td>
-            </tr>
-            <tr>
-                <td>Reason:</td>
-                <td>
-                    <select class="select" name="reason">
-                        <?php
-                        foreach($reasons as $reason)
-                            echo '<option value="'.$reason.'">'.$reason.'</option>';
-                        ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Explanation:</td>
-                <td><textarea rows="2" id="explanation"></textarea></td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="grid-item footer">
-        <button onclick="createStudentAndRequest()">Submit</button>
+    <div>
+        <a id="next">Submit &raquo;</a>
     </div>
 </div>
 <script>
@@ -338,12 +268,8 @@ $semesters = Semester::listActive();
 
     function validateBannerId() { return validateRegex("banner_id", /^001\d{6}$/); }
     function validateGradMonth() { return validateRegex("grad_month", /(0[1-9]|1[0-2])\/20[2-9]\d/); }
-    function validateCourseNum() { return validateRegex("course_num", /^\d{3}$/); }
-    function validateSection() { return validateRegex("section", /^\d{1,2}$/); }
     function validateFirstName() { return validateNotEmpty("first_name"); }
     function validateLastName() { return validateNotEmpty("last_name"); }
-    function validateExplanation() { return validateNotEmpty("explanation"); }
-    function validateCrn() { return validateNotEmpty("crn"); }
 
     function validate()
     {
@@ -354,8 +280,6 @@ $semesters = Semester::listActive();
             case validateGradMonth():
             case validateFirstName():
             case validateLastName():
-            case validateExplanation():
-            case validateCrn(): // This includes course number and section
                 return false;
             default:
                 return true;
@@ -368,47 +292,11 @@ $semesters = Semester::listActive();
     function setError(valid, element_name)
     {
         let element = $(`input[name="${element_name}"]`);
-        if (element.length === 0)
-            element = $(`textarea[id="${element_name}"]`);
 
         if(valid)
             element.removeClass("error");
         else
             element.addClass("error");
-    }
-
-    /*
-     * Get the section CRN and Title from the server
-     */
-    function setSection()
-    {
-        if(!(validateCourseNum() && validateSection()))
-        {
-            $('input[name="crn"]').val("");
-            $('input[name="title"]').val("");
-            return;
-        }
-
-        let data = {};
-
-        data.semester = $('select[name="semester"]').val();
-        data.department = $('select[name="department"]').val();
-        data.course_num = $('input[name="course_num"]').val();
-        data.section = parseInt($('input[name="section"]').val(), 10);
-
-        let request = $.get("api/section.php", data, function (data, status, xhr)
-        {
-            if(status === "success")
-            {
-                $('input[name="crn"]').val(data.crn);
-                $('input[name="title"]').val(data.course.title);
-            }
-            else
-            {
-                $('input[name="crn"]').val("");
-                $('input[name="title"]').val("");
-            }
-        }, "json");
     }
 
     /*
@@ -422,41 +310,13 @@ $semesters = Semester::listActive();
         $('input[name="last_name"]').attr("readonly", bool);
         $('input[name="banner_id"]').attr("readonly", bool);
         $('input[name="grad_month"]').attr("readonly", bool);
-        $('input[name="course_num"]').attr("readonly", bool);
-        $('input[name="section"]').attr("readonly", bool);
 
         $('select[name="standing"]').attr("disabled", bool);
         $('select[name="majors[]"]').attr("disabled", bool);
         $('select[name="minors[]"]').attr("disabled", bool);
-        $('select[name="semester"]').attr("disabled", bool);
-        $('select[name="department"]').attr("disabled", bool);
-        $('select[name="reason"]').attr("disabled", bool);
-
-        $('textarea[id="explanation"]').attr("readonly", bool);
     }
 
-    function createRequest(student_id)
-    {
-        if(!validate())
-            return false;
-
-        inputEnable(false);
-
-        let data = {};
-
-        data.student_id = student_id;
-        data.semester = $('select[name="semester"]').val();
-        data.crn = $('input[name="crn"]').val();
-        data.reason = $('select[name="reason"]').val();
-        data.explanation = $('textarea[id="explanation"]').val();
-
-        $.post("api/request.php", JSON.stringify(data), function(data, status, xhr)
-        {
-            alert("Request submitted!");
-        }, "json");
-    }
-
-    function createStudentAndRequest()
+    function createStudent()
     {
         if(!validate())
             return false;
@@ -475,9 +335,16 @@ $semesters = Semester::listActive();
         data.minors = $('select[name="minors[]"]').val();
 
 
-        $.post("api/student.php", JSON.stringify(data), function(data, status ,xhr)
+        $.post("api/student.php", JSON.stringify(data), function(data)
         {
-            createRequest(parseInt(data));
+            console.log("GOOD");
+            console.log(data);
+            window.location.replace('request.php?id=' + data);
+        })
+        .fail(function(response)
+        {
+            console.log("BAD");
+            inputEnable(true);
         });
     }
 
@@ -493,18 +360,12 @@ $semesters = Semester::listActive();
             this.value = this.value.replace(/\D/g, '');
         });
 
-        $('input[name="course_num"]').on("keyup", function () { setSection(); })
-        $('input[name="section"]').on("keyup", function () { setSection(); })
-        $('select[name="semester"]').on("change", function () { setSection(); })
-        $('select[name="department"]').on("change", function () { setSection(); })
-
         $('input[name="banner_id"]').on("focusout", function () { setError(validateBannerId(), "banner_id"); })
         $('input[name="grad_month"]').on("focusout", function () { setError(validateGradMonth(), "grad_month"); })
-        $('input[name="course_num"]').on("focusout", function () { setError(validateCourseNum(), "course_num"); })
-        $('input[name="section"]').on("focusout", function () { setError(validateSection(), "section"); })
         $('input[name="first_name"]').on("focusout", function () { setError(validateFirstName(), "first_name"); })
         $('input[name="last_name"]').on("focusout", function () { setError(validateLastName(), "last_name"); })
-        $('textarea[id="explanation"]').on("focusout", function () { setError(validateExplanation(), "explanation"); })
+
+        $('#next').on("click", createStudent);
     });
 </script>
 </body>
