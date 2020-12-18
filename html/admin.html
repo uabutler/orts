@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="assets/datatables/datatables.min.css"/>
+    <script type="text/javascript" src="assets/datatables/datatables.min.js"></script>
+    <!-- Select2 plugin -->
+    <link rel="stylesheet" type="text/css" href="assets/css/select2.min.css">
+    <script src="assets/js/select2.min.js"></script>
+    <!-- Dismissible -->
+    <link href="https://cdn.lineicons.com/2.0/LineIcons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/dismissible.css">
+    <script src="assets/js/dismissible.js"></script>
+    <!-- Modal -->
+    <script src="assets/js/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="assets/css/jquery.modal.min.css">
+    <!-- Local JS -->
+    <script src="config.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <!--Local CSS-->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Admin | Truman State MTCS Overrides</title>
+</head>
+
+<body>
+    <header>
+      <nav>
+        <div class="navTitle">Truman State MTCS Overrides</div>
+        <a href="admin.html" class="currentPage">Administrator Dashboard</a>
+        <a href="" class="right">Log Out</a>
+        <a href="adminProfile.html" class="right">Profile</a>
+        <div class="right navTitle" id="userName"></div>
+      </nav>
+    </header>
+    <main id="adminPage">
+      <div id="dismissible-container"></div>
+        <section id="requests">
+          <table id="requestsTable" class="stripe cell-border">
+            <thead>
+              <tr>
+                <th><input type="checkbox" name="selectAll" id="selectAll" disabled></th>
+                <th>Status</th>
+                <th>Last Modified</th>
+                <th>Last</th>
+                <th>First</th>
+                <th>Grad Month</th>
+                <th>Banner ID</th>
+                <th>Sem.</th>
+                <th>CRN</th>
+                <th>Dept</th>
+                <th>#</th>
+                <th>View</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+        </section>
+        <section id="requestInformation">
+
+          
+          <section id="statusContainer">
+            <h3>Current Status: <span id="status"></span></h3>
+          </section>
+          <section id="decisionBox">
+            <button id="markReceived">Mark Received</button>
+            <button id="sendToChair">Send to Chair</button>
+            <button id="approve">Approve</button>
+            <button id="provApprove">Approve Provisionally</button>
+            <!-- <button disabled>Entered in Banner</button> -->
+            <button id="deny">Deny</button>
+            <button id="archive">Archive</button>
+          </section>
+          <section id="informationBox">
+            <section id="overrideInformation">
+              <section id="classStandingContainer">
+                <h3>Class Standing</h3>
+                <p id="classStanding"></p>
+              </section>
+              <section id="overrideTypeContainer">
+                <h3>Override Type</h3>
+                <p id="overrideType"></p>
+              </section>
+              <section id="explanationContainer">
+                <h3>Explanation</h3>
+                <p id="explanation"></p>
+              </section>
+              <section id="uploadedFiles">
+                <h3>Files</h3>
+                <p class="soon">Coming Soon...</p>
+                <ul id="files">
+                </ul>
+              </section>
+              <section id="studentMessaging">
+                <h3>Student Chat</h3>
+                <section id="studentSentMessages">
+                  <p class="soon">Coming Soon...</p>
+                </section>
+                <form>
+                  <textarea rows="4" cols="49" placeholder="message sent
+                                                            to student"></textarea>
+                </form>
+                <button disabled type="button">Send</button>
+              </section>
+            </section>
+            <section id="adminChat">
+              <section id="studentEmailWrapper">
+                <h3>Student Email</h3>
+                <p id="studentEmail"></p>
+              </section>
+
+              <h3>Admin Chat</h3>
+              <section id="adminSentMessages">
+                <p class="soon">Coming Soon...</p>
+              </section>
+              <section id="newMessage">
+                <form>
+                  <textarea rows="4" cols="49" placeholder="message
+                                                             sent to admins"></textarea>
+                </form>
+                <button disabled type="button">Send</button>
+              </section>
+            </section>
+          </section>
+          
+
+          
+        </section>
+    </main>
+</body>
+
+</html>

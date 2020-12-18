@@ -1,0 +1,451 @@
+{
+    "source": "mockoon:1.11.0",
+    "data": [
+        {
+            "type": "environment",
+            "item": {
+                "uuid": "",
+                "lastMigration": 13,
+                "name": "Override Request API",
+                "endpointPrefix": "api/v1",
+                "latency": 250,
+                "port": 3000,
+                "routes": [
+                    {
+                        "uuid": "",
+                        "documentation": "Returns all requests, or one request if ID given",
+                        "method": "get",
+                        "endpoint": "requests",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "[\n  {\n    \"id\": 1,\n    \"last-modified\": \"11/07/2020 00:30:47\",\n    \"last-name\": \"Smith\",\n    \"first-name\": \"John\",\n    \"grad-month\": \"05/2021\",\n    \"banner-id\": \"001234567\",\n    \"class-standing\": \"Junior\",\n    \"crn\": \"1234\",\n    \"department\": \"CS\",\n    \"class-number\": 370,\n    \"semester\": \"202060\",\n    \"type\": \"Capacity\",\n    \"status\": \"Approved\",\n    \"email\": \"jsmith@truman.edu\",\n    \"major\": [\n      \"Computer Science\",\n      \"Statistics\"\n    ],\n    \"minor\": [\n      \"Computer Science\",\n      \"Statistics\"\n    ],\n    \"explanation\": \"This is some explanation.\"\n  },\n  {\n    \"id\": 2,\n    \"last-modified\": \"11/08/2020 05:12:02\",\n    \"last-name\": \"Doe\",\n    \"first-name\": \"Jane\",\n    \"grad-month\": \"12/2020\",\n    \"banner-id\": \"001345678\",\n    \"class-standing\": \"Freshman\",\n    \"crn\": \"1567\",\n    \"department\": \"MATH\",\n    \"class-number\": 198,\n    \"semester\": \"202060\",\n    \"type\": \"Capacity\",\n    \"status\": \"Received\",\n    \"email\": \"jdoe@truman.edu\",\n    \"major\": [\n      \"Computer Science\"\n    ],\n    \"minor\": [\n      \"Statistics\"\n    ],\n    \"explanation\": \"This is some explanation again.\"\n  },\n  {\n    \"id\": 3,\n    \"last-modified\": \"11/04/2020 05:12:02\",\n    \"last-name\": \"Done\",\n    \"first-name\": \"Jane\",\n    \"grad-month\": \"08/2020\",\n    \"banner-id\": \"001456789\",\n    \"class-standing\": \"Sophomore\",\n    \"crn\": \"1567\",\n    \"department\": \"MATH\",\n    \"class-number\": 198,\n    \"semester\": \"202060\",\n    \"type\": \"Capacity\",\n    \"status\": \"Denied\",\n    \"email\": \"jdone@truman.edu\",\n    \"major\": [\n      \"Computer Science\"\n    ],\n    \"minor\": [\n      \"Statistics\"\n    ],\n    \"explanation\": \"This is some explanation again.\"\n  },\n  {\n    \"id\": 4,\n    \"last-modified\": \"11/09/2020 05:12:02\",\n    \"last-name\": \"Tables\",\n    \"first-name\": \"Bobby\",\n    \"grad-month\": \"08/2020\",\n    \"banner-id\": \"001567890\",\n    \"class-standing\": \"Sophomore\",\n    \"crn\": \"1567\",\n    \"department\": \"MATH\",\n    \"class-number\": 198,\n    \"semester\": \"202060\",\n    \"type\": \"Capacity\",\n    \"status\": \"Provisionally Approved\",\n    \"email\": \"btables@truman.edu\",\n    \"major\": [\n      \"Computer Science\"\n    ],\n    \"minor\": [\n      \"Statistics\"\n    ],\n    \"explanation\": \"This is some explanation again.\"\n  },\n  {\n    \"id\": 5,\n    \"last-modified\": \"11/11/2020 05:12:02\",\n    \"last-name\": \"Example\",\n    \"first-name\": \"Joe\",\n    \"grad-month\": \"08/2020\",\n    \"banner-id\": \"001678901\",\n    \"class-standing\": \"Sophomore\",\n    \"crn\": \"1567\",\n    \"department\": \"MATH\",\n    \"class-number\": 198,\n    \"semester\": \"202060\",\n    \"type\": \"Capacity\",\n    \"status\": \"Requires Faculty Approval\",\n    \"email\": \"jdone@truman.edu\",\n    \"major\": [\n      \"Computer Science\"\n    ],\n    \"minor\": [\n      \"Statistics\"\n    ],\n    \"explanation\": \"This is some explanation again.\"\n  }\n]",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "Ok",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"id\": 1,\n  \"last-modified\": \"11/07/2020 22:30:47\",\n  \"last-name\": \"Smith\",\n  \"first-name\": \"John\",\n  \"grad-month\": \"05/2021\",\n  \"banner-id\": \"001234567\",\n  \"class-standing\": \"Junior\",\n  \"crn\": \"1234\",\n  \"department\": \"CS\",\n  \"class-number\": 370,\n  \"semester\": \"202060\",\n  \"type\": \"Capacity\",\n  \"status\": \"Approved\",\n  \"email\": \"jsmith@truman.edu\",\n  \"major\": [\n    \"Computer Science\",\n    \"Statistics\"\n  ],\n  \"minor\": [\n    \"Computer Science\",\n    \"Statistics\"\n  ],\n  \"explanation\": \"This is some explanation.\"\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "Specific Request (with ID)",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [
+                                    {
+                                        "target": "query",
+                                        "modifier": "id",
+                                        "value": "^\\d+$",
+                                        "isRegex": true
+                                    }
+                                ],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "Create a new override request",
+                        "method": "post",
+                        "endpoint": "requests",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "",
+                                "latency": 0,
+                                "statusCode": 201,
+                                "label": "Created",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [
+                                    {
+                                        "target": "header",
+                                        "modifier": "Content-Type",
+                                        "value": "application/json",
+                                        "isRegex": false
+                                    }
+                                ],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "Update a request",
+                        "method": "patch",
+                        "endpoint": "requests",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "delete",
+                        "endpoint": "requests",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"message\": \"Unknown Error\",\n  \"code\": 500\n}",
+                                "latency": 0,
+                                "statusCode": 500,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [
+                                    {
+                                        "target": "query",
+                                        "modifier": "id",
+                                        "value": "^\\d+$",
+                                        "isRegex": true
+                                    }
+                                ],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "requests/types",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n\"types\": [\"Time Conflict\", \"Prerequisite\", \"Major Restriction\", \"Class Standing Restriction\", \"Capacity\", \"Other\"]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "majors",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{ \n\"majors\":\n  [\n    \"Accounting\",\n    \"Agricultural Science\",\n    \"Art\",\n    \"Biochemistry and Molecular Biology\",\n    \"Biology\",\n    \"Business Administration\",\n    \"Chemistry\",\n    \"Classics\",\n    \"Communication\",\n    \"Communication Disorders\",\n    \"Computer Science\",\n    \"Creative Writing\",\n    \"Economics\",\n    \"English\",\n    \"Exercise Science\",\n    \"French\",\n    \"German\",\n    \"Health Science\",\n    \"History\",\n    \"Interdisciplinary Studies\",\n    \"Justice Systems\",\n    \"Linguistics\",\n    \"Mathematics\",\n    \"Music\",\n    \"Nursing\",\n    \"Philosophy and Religion\",\n    \"Physics\",\n    \"Political Science\",\n    \"Psychology\",\n    \"Romance Language\",\n    \"Russian\",\n    \"Sociology/Anthropology\",\n    \"Spanish\",\n    \"Statistics\",\n    \"Theatre\"\n  ]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "minors",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\"minors\":[\"Actuarial Science\",\"African\\/African-American Studies\",\"Agricultural Business\",\"Agricultural Studies\",\"Anthropology\",\"Applied Linguistics\",\"Art History\",\"Art Studio\",\"Asian Studies\",\"Astronomy\",\"Biology\",\"Business Administration\",\"Celtic Studies\",\"Chemistry\",\"Child Studies\",\"Classical Studies\",\"Cognitive Science\",\"Communication\",\"Computer Science\",\"Design\",\"Disability Studies\",\"Economics\",\"English\",\"Environmental Studies\",\"Equine Studies\",\"Film Studies\",\"Folklore\",\"Foreign Language Teacher Preparation\",\"Forensic Science\",\"French\",\"French for the Professions\",\"French in Translation\",\"German\",\"Greek\",\"History\",\"Information Systems\",\"International Studies\",\"Italian Studies\",\"Japanese\",\"Jazz Studies\",\"Justice Systems\",\"Latin\",\"Linguistics\",\"Mathematical Biology\",\"Mathematics\",\"Medieval Studies\",\"Military Science\",\"Museum Studies\",\"Music\",\"Philosophy and Religion\",\"Physics\",\"Political Communication\",\"Political Science\",\"Psychology\",\"Public Administration\",\"Russian Studies\",\"Sociology\",\"Spanish\",\"Spanish for the Professions\",\"Statistical Methods\",\"Statistics\",\"Theatre\",\"Women and Gender Studies\"]}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "departments",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\"departments\":[\"CS\", \"MATH\", \"STAT\", \"JINS\", \"TRU\"]}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "Send department, number, section, and get title and crn",
+                        "method": "get",
+                        "endpoint": "courses",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"title\": \"Software Engineering\",\n  \"crn\": \"1234\"\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "profile",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{}",
+                                "latency": 0,
+                                "statusCode": 404,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            },
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"first-name\": \"Abby\",\n  \"last-name\": \"Example\",\n  \"banner-id\": \"001234567\",\n  \"email\": \"ane1234@truman.edu\",\n  \"grad-month\": \"05/2021\",\n  \"major\": [\"Computer Science\", \"Mathematics\"],\n  \"minor\": [\"Statistics\", \"Photography\"],\n  \"class-standing\": \"Junior\"\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [
+                                    {
+                                        "target": "query",
+                                        "modifier": "email",
+                                        "value": "ane1234@truman.edu",
+                                        "isRegex": false
+                                    }
+                                ],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "Update a profile",
+                        "method": "put",
+                        "endpoint": "profile",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    },
+                    {
+                        "uuid": "",
+                        "documentation": "",
+                        "method": "get",
+                        "endpoint": "semesters",
+                        "responses": [
+                            {
+                                "uuid": "",
+                                "body": "{\n  \"semesters\": [\"Spring 2021\"]\n}",
+                                "latency": 0,
+                                "statusCode": 200,
+                                "label": "",
+                                "headers": [
+                                    {
+                                        "key": "",
+                                        "value": ""
+                                    }
+                                ],
+                                "filePath": "",
+                                "sendFileAsBody": false,
+                                "rules": [],
+                                "rulesOperator": "OR",
+                                "disableTemplating": false
+                            }
+                        ],
+                        "enabled": true,
+                        "randomResponse": false
+                    }
+                ],
+                "proxyMode": false,
+                "proxyHost": "",
+                "https": false,
+                "cors": true,
+                "headers": [
+                    {
+                        "key": "Access-Control-Allow-Origin",
+                        "value": "*"
+                    },
+                    {
+                        "key": "Access-Control-Allow-Methods",
+                        "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+                    },
+                    {
+                        "key": "Access-Control-Allow-Headers",
+                        "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+                    }
+                ],
+                "proxyReqHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ],
+                "proxyResHeaders": [
+                    {
+                        "key": "",
+                        "value": ""
+                    }
+                ]
+            }
+        }
+    ]
+}
