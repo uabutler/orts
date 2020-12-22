@@ -1,0 +1,121 @@
+.content-grid-container {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    padding: 0;
+}
+
+.orinfo {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.stuinfo {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.explain {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+}
+
+.action-title {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+}
+
+.status {
+    grid-column: 1;
+    grid-row: 4;
+}
+
+.send {
+    grid-column: 2;
+    grid-row: 4;
+}
+
+.log {
+    grid-column: 1 / span 2;
+    grid-row: 5;
+    padding-bottom: 100px;
+}
+
+.log-box {
+    overflow: auto;
+    width: 95%;
+    height: 500px;
+    border: 1px solid grey;
+}
+
+.log-item {
+    width: 60%;
+    height: auto;
+    margin: 10px;
+}
+
+.log-other {
+    float: left;
+    text-align: left;
+}
+
+.log-mine {
+    float: right;
+    text-align: left;
+}
+
+.log-info, .log-msg {
+    height: auto;
+    width: 100%;
+    padding: 10px;
+    margin: 5px;
+}
+
+.log-msg {
+    border-radius: 25px;
+    /* The fact that I have to do this proves that, if there is a God, he wants nothing to do with css */
+    font-family: monospace, monospace;
+}
+
+.log-other.log-msg, .log-other.log-info {
+    background: lightgrey;
+}
+
+.log-mine.log-msg, .log-mine.log-info {
+    background: darkgrey;
+    color: white;
+}
+
+#class-info {
+    border-collapse: collapse;
+    width: 90%;
+}
+
+#class-info td, #class-info th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#class-info th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #f2f2f2;
+}
+
+th {
+    text-align: left;
+}
+
+/* Shamelessly stolen from Stack Overflow */
+textarea {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+h2 {
+    font-family: nexabold, sans-serif;
+    color: white;
+    padding: 10px
+}

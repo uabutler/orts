@@ -1,0 +1,72 @@
+h2 {
+    text-align: center;
+    font-family: nexabold, Arial, Helvetica, sans-serif;
+}
+
+/* Originally written by Thao Phung for the table */
+.tiny-search {
+    width: 35px;
+}
+
+.small-search {
+    width: 60px;
+}
+
+.med-search {
+    width: 70px;
+}
+
+.big-search {
+    width: 100px;
+}
+
+#request-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#request-table td,
+#request-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#request-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    color: white;
+}
+
+.request-item:hover {
+    background-color: #f2f2f2;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 400px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}

@@ -1,0 +1,44 @@
+.content-grid-container {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    padding: 0;
+}
+
+.active-semesters {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.inactive-semesters {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+h2 {
+    font-family: nexabold, sans-serif;
+    color: white;
+    padding: 10px
+}
+
+#semester-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#semester-table td,
+#semester-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#semester-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    color: white;
+}
+
+.semester-item:hover {
+    background-color: #f2f2f2;
+}

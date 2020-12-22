@@ -53,7 +53,7 @@ class Notification implements JsonSerializable
      */
     public function getBody(): string
     {
-        return $this->body;
+        return htmlspecialchars($this->body, ENT_QUOTES);
     }
 
     /**
@@ -85,7 +85,7 @@ class Notification implements JsonSerializable
      */
     public function setBody(string $body)
     {
-        $this->body = htmlspecialchars($body, ENT_QUOTES);
+        $this->body = $body;
     }
 
     private function __construct(Request $request, string $sender_email, string $receiver_email, string $body,
@@ -95,7 +95,7 @@ class Notification implements JsonSerializable
         $this->request = $request;
         $this->sender_email = $sender_email;
         $this->receiver_email = $receiver_email;
-        $this->body = htmlspecialchars($body, ENT_QUOTES);
+        $this->body = $body;
     }
 
     private function insertDB()
@@ -238,6 +238,10 @@ class Notification implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $out = get_object_vars($this);
+
+        $out['body'] = $this->getBody();
+
+        return $out;
     }
 }

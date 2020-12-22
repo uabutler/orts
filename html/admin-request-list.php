@@ -20,139 +20,31 @@ else
 if (is_null($requests))
 {
     http_response_code(400);
-    header("Location: error400.html");
+    header("Location: error400.php");
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Used for status icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <!-- Use Truman's default favicons -->
-    <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-96x96.png" sizes="96x96">
-
-    <link rel="stylesheet" href="main.css">
-
     <title>ORTS - <?php echo $archive ? 'Archive' : 'Override Requests'; ?></title>
-    <style>
-        h2 {
-            text-align: center;
-            font-family: nexabold, Arial, Helvetica, sans-serif;
-        }
-
-        /* Originally written by Thao Phung for the table */
-        .tiny-search {
-            width: 35px;
-        }
-
-        .small-search {
-            width: 60px;
-        }
-
-        .med-search {
-            width: 70px;
-        }
-
-        .big-search {
-            width: 100px;
-        }
-
-        #request-table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        #request-table td,
-        #request-table th {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        #request-table th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            color: white;
-        }
-
-        .request-item:hover {
-            background-color: #f2f2f2;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f1f1f1;
-            min-width: 400px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-        }
-
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-    </style>
+    <?php require 'php/common-head.php'; ?>
+    <link rel="stylesheet" href="css/admin-request-list.css">
+    <!-- Data passed from the server using PHP for use JS -->
+    <script>
+        const JSON_DATA = '<?php echo json_encode($requests); ?>';
+    </script>
+    <script src="js/admin-request-list.js"></script>
 </head>
 
 <body class="grid-container">
-<div class="grid-item header right truman-dark-bg"></div>
-<div class="grid-item header left truman-dark-bg"></div>
-<div class="grid-item header center truman-dark-bg">
-    <div style="text-align: center;">
-        <span style="float:left;">
-          <img id="logo" src="assets/truman.png"/>
-        </span>
-        <span style="float:right">
-          <div id="main-title" style="font-size:50px;font-family:nexabold;">
-              Override Tracking System
-          </div>
-          <div style="font-size:20px;font-family:nexabook;">
-              Departments of Mathematics, Computer Science, and Statistics
-          </div>
-        </span>
-    </div>
-</div>
-
-<div class="grid-item navbar left truman-dark-bg"></div>
-<div class="grid-item navbar right truman-dark-bg"></div>
-
-<div class="grid-item sidebar left"></div>
-<div class="grid-item sidebar right"></div>
-
-<div class="grid-item navbar center">
-    <ul id="nav-list" class="truman-dark-bg">
-        <li class="nav-item"><a <?php if (!$archive) echo 'class="active"'; ?> href="admin-request-list.php">Current
-                Semester</a></li>
-        <li class="nav-item"><a <?php if ($archive) echo 'class="active"'; ?> href="admin-archive.php">Archive</a></li>
-        <li class="nav-item"><a href="admin-functions.php">Admin Functions</a></li>
-        <li class="nav-item" style="float:right;"><a href="#">Log Out</a></li>
-        <li class="nav-item" style="float:right;"><a href="admin-profile.php">Profile</a></li>
-    </ul>
-</div>
+<?php require_once 'php/header.php'; ?>
+<?php require_once 'php/navbar.php'; facultyNavbar(!$archive ? "Current Semester" : "Archive"); ?>
 
 <div class="grid-item content">
     <h2>Override Requests<?php if ($archive) echo ' - Archive for ' . $semester->getDescription(); ?></h2>
-    <!-- Table Created By: Thao Phung -->
+    <!-- Table based on one created by Thao Phung. This html just creates the top. The body is done in JS -->
     <table id="request-table">
         <colgroup>
             <col style="width:5%;">
@@ -283,145 +175,5 @@ if (is_null($requests))
             </tr>
     </table>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    let requests;
-
-    /**
-     * For a given request, return it's status with it's icon attached
-     */
-    function getStatusHtml(request) {
-        switch (request.status) {
-            case 'Received':
-                return '<i class="material-icons" style="color:orange">warning</i> Received';
-            case 'Approved':
-                if (request.banner)
-                    return '<i class="material-icons" style="color:green">done_all</i> Approved: In Banner';
-                else
-                    return '<i class="material-icons" style="color:green">done</i> Approved';
-            case 'Provisionally Approved':
-                if (request.banner)
-                    return '<i class="material-icons" style="color:yellowgreen">done_all</i> Provisionally Approved: In Banner';
-                else
-                    return '<i class="material-icons" style="color:yellowgreen">done</i> Provisionally Approved';
-            case 'Denied':
-                return '<i class="material-icons" style="color:red">cancel</i> Provisionally Approved';
-            case 'Requires Faculty Approval':
-                return '<i class="material-icons" style="color:orange">warning</i> Requires Faculty Approval';
-        }
-    }
-
-    /**
-     * Sort the table based on which option the user has selected
-     */
-    function sortTable() {
-        requests.sort(function (lhs, rhs) {
-            if ($("input[name='datesort']:checked").val() === "datedescending")
-                return lhs.last_modified < rhs.last_modified ? -1 : +(lhs.last_modified > rhs.last_modified);
-            else // dateascending
-                return lhs.last_modified > rhs.last_modified ? -1 : +(lhs.last_modified < rhs.last_modified);
-        });
-    }
-
-    /**
-     * Does a given request match the filter options the user has selected? Used when rendering the table
-     * to determine which entries should be displayed
-     * TODO: In the future, I want to try to just hide those rows instead of deleting and reprinting them.
-     */
-    function matchFilter(request) {
-        let out = true;
-
-        let filter;
-
-        // After pulling this little stunt, a judge considering handing down an restraining order preventing me from
-        // coming within 10 ft of any technology
-        switch (false)
-        {
-            // First, remove anything that doesn't match an option selected with a radio button
-            case ((filter = $("input[name='status']:checked").val()) === "all_stat") || (filter === request.status):
-            case ((filter = $("input[name='banner']:checked").val()) === "both") || ((filter === "inbanner") === request.banner):
-            case ((filter = $("input[name='dept']:checked").val()) === "all_dept") || (filter === request.section.course.department.department):
-
-            // Next, remove anything that doesn't start with the given search string.
-            case request.student.first_name.toLowerCase().startsWith($('#first').val().toLowerCase()):
-            case request.student.last_name.toLowerCase().startsWith($('#last').val().toLowerCase()):
-            case request.section.crn.startsWith($('#crn').val()):
-            case request.student.banner_id.startsWith($('#bannerid').val()):
-            case String(request.section.course.course_num).startsWith($('#course_num').val()):
-            case request.section.semester.semester.startsWith($('#semester').val()):
-                return false;
-            default:
-                return true;
-        }
-    }
-
-    /**
-     * Deletes all rows currently in the table and adds the rows according to the filters in the order indicated by
-     * the sort option
-     */
-    function renderTable() {
-        $('.request-item').remove();
-
-        requests.forEach(function writeToTable(request) {
-            if (matchFilter(request))
-                $('#request-table').append(request.rowHtml);
-        })
-    }
-
-    /*
-     *  MAIN
-     */
-    $(function () {
-        // Check all of the default filters
-        $(".default").prop('checked', true);
-
-        // Add the numeric restriction to CRN, Course num, banner, etc.
-        $(document).on("input", ".numeric", function () {
-            this.value = this.value.replace(/\D/g, '');
-        });
-
-        // Import the requests from the database into javascript
-        requests = JSON.parse('<?php echo json_encode($requests); ?>');
-
-        if (requests.length === 0) {
-            $("#request-table").after('<h3 style="text-align: center">No relevant entries</h3>');
-            return;
-        }
-
-        // construct the html code representing a row
-        requests.forEach(function createHtml(request) {
-            // The opening tag including the get request for the details page
-            const tdOpen = '<td onclick="window.location=\'admin-request-details.php?id=' + request.id + '\'">';
-
-            let out = '<tr class="request-item">';
-            out += '<td><input type="checkbox"></td>';
-            out += tdOpen + getStatusHtml(request) + '</td>';
-            out += tdOpen + request.last_modified + '</td>';
-            out += tdOpen + request.student.last_name + '</td>';
-            out += tdOpen + request.student.first_name + '</td>';
-            out += tdOpen + request.student.banner_id + '</td>';
-            out += tdOpen + request.section.course.department.department + '</td>';
-            out += tdOpen + request.section.course.course_num + '</td>';
-            out += tdOpen + request.section.crn + '</td>';
-            out += tdOpen + request.section.semester.semester + '</td>';
-            out += '</tr>';
-
-            request.rowHtml = out;
-        });
-
-        sortTable();
-        renderTable();
-
-        $('input[name="datesort"]').on("change", function () {
-            sortTable();
-        });
-        $('input[type="radio"]').on("change", function () {
-            renderTable();
-        });
-        $('input[type="text"]').on("input", function () {
-            renderTable();
-        });
-    })
-</script>
 </body>
 </html>

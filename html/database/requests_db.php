@@ -75,7 +75,7 @@ class Request implements JsonSerializable
      */
     public function getJustification(): ?string
     {
-        return $this->justification;
+        return htmlspecialchars($this->justification, ENT_QUOTES);
     }
 
     /**
@@ -101,7 +101,7 @@ class Request implements JsonSerializable
      */
     public function getExplanation(): string
     {
-        return $this->explanation;
+        return htmlspecialchars($this->explanation, ENT_QUOTES);
     }
 
     /**
@@ -158,7 +158,7 @@ class Request implements JsonSerializable
      */
     public function setJustification(?string $justification): void
     {
-        $this->justification = htmlspecialchars($justification, ENT_QUOTES);
+        $this->justification = $justification;
     }
 
     /**
@@ -190,7 +190,7 @@ class Request implements JsonSerializable
      */
     public function setExplanation(string $explanation)
     {
-        $this->explanation = htmlspecialchars($explanation, ENT_QUOTES);
+        $this->explanation = $explanation;
     }
 
     /**
@@ -219,10 +219,10 @@ class Request implements JsonSerializable
         $this->last_modified = $last_modified;
         $this->faculty = $faculty;
         $this->status = $status;
-        $this->justification = htmlspecialchars($justification, ENT_QUOTES);
+        $this->justification = $justification;
         $this->banner = $banner;
         $this->reason = $reason;
-        $this->explanation = htmlspecialchars($explanation, ENT_QUOTES);
+        $this->explanation = $explanation;
         $this->active = $active;
     }
 
@@ -511,6 +511,11 @@ class Request implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $out = get_object_vars($this);
+
+        $out['justification'] = $this->getJustification();
+        $out['explanation'] = $this->getExplanation();
+
+        return $out;
     }
 }
