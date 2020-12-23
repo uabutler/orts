@@ -503,7 +503,7 @@ class Request implements JsonSerializable
                 else
                     return '<i class="material-icons" style="color:yellowgreen">done</i> Provisionally Approved';
             case 'Denied':
-                return '<i class="material-icons" style="color:red">cancel</i> Provisionally Approved';
+                return '<i class="material-icons" style="color:red">cancel</i> Denied';
             case 'Requires Faculty Approval':
                 return '<i class="material-icons" style="color:orange">warning</i> Requires Faculty Approval';
         }

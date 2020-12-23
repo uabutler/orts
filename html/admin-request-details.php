@@ -19,6 +19,9 @@ if (is_null($request))
     <title>ORTS - Request Details</title>
     <?php require 'php/common-head.php'; ?>
     <link rel="stylesheet" href="css/admin-request-details.css">
+    <script>
+        REQUEST_ID = <?php echo $_GET['id']; ?>;
+    </script>
 </head>
 
 <body class="grid-container">
@@ -31,7 +34,7 @@ if (is_null($request))
         <table style="padding-bottom:20px;">
             <tr>
                 <th>Status:</th>
-                <td><?php echo $request->getStatusHtml(); ?></td>
+                <td id="status_info"><?php echo $request->getStatusHtml(); ?></td>
             </tr>
             <tr>
                 <th>Date Modified:</th>
@@ -59,8 +62,7 @@ if (is_null($request))
             </tr>
             <tr>
                 <td><?php echo $section->getCrn(); ?></td>
-                <td><?php echo $section->getCourse()->getDepartment()->getDept() . " " . $section->getCourse()
-                            ->getCourseNum(); ?></td>
+                <td><?php echo $section->getCourse()->getDepartment()->getDept() . " " . $section->getCourse()->getCourseNum(); ?></td>
                 <td><?php echo $section->getSectionNum(); ?></td>
                 <td><?php echo $section->getCourse()->getTitle(); ?></td>
             </tr>
@@ -128,18 +130,19 @@ if (is_null($request))
         <h3 style="margin:0;">Approve or Deny</h3>
         <form>
             <label for="status">Status:</label>
-            <select name="status" id="status">
+            <select name="status" id="status_input">
                 <option value="none"></option>
-                <option value="approved">Approved</option>
-                <option value="provisional">Provisionaly Approved</option>
-                <option value="denied">Denied</option>
+                <option value="Approved">Approved</option>
+                <option value="Provisionally Approved">Provisionally Approved</option>
+                <option value="Denied">Denied</option>
             </select>
-            <label for="vehicle1" style="padding-left:50px">In Banner:</label>
-            <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+            <label style="padding-left:50px">In Banner:</label>
+            <input type="checkbox" id="banner" name="banner">
             <br>
-            <textarea placeholder="Notes to send to student"></textarea>
+            <textarea id="justification" placeholder="Notes to send to student"><?php echo $request->getJustification
+                (); ?></textarea>
         </form>
-        <button onclick="document.location='detailed_status_change.html'">Submit</button>
+        <button id="submit">Submit</button>
     </div>
     <div class="grid-item send">
         <h3 style="margin:0;">Delegate to Faculty</h3>
@@ -218,7 +221,20 @@ if (is_null($request))
 <script>
     function changeStatus()
     {
+        let data = "id=" + REQUEST_ID + "&";
+        data += "banner=" + $('#banner').is(":checked") + "&";
+        data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
+        data += "banner=" + encodeURIComponent($('#justification').val());
 
+        $.ajax({
+            url: 'api/request.php',
+            type: 'PUT',
+            data: data,
+            success: function (data)
+            {
+                $('#status_info').html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
+            }
+        });
     }
 
     $(function ()
