@@ -45,7 +45,7 @@ $semesters = Semester::listActive();
 
 <body class="grid-container">
 <?php require_once 'php/header.php'; ?>
-<!-- TODO -->
+<!-- TODO: This person won't be have a profile at this point -->
 <?php require_once 'php/navbar.php'; studentNavbar("New Request", 0); ?>
 
 <div class="grid-item content">
@@ -65,24 +65,24 @@ $semesters = Semester::listActive();
             </tr>
             <tr>
                 <td>First Name:</td>
-                <td><input type="text" name="first_name"></td>
+                <td><input type="text" id="first_name"></td>
             </tr>
             <tr>
                 <td>Last Name:</td>
-                <td><input type="text" name="last_name"></td>
+                <td><input type="text" id="last_name"></td>
             </tr>
             <tr>
                 <td>Banner ID:</td>
-                <td><input class="numeric" type="text" name="banner_id"></td>
+                <td><input class="numeric" type="text" id="banner_id"></td>
             </tr>
             <tr>
                 <td>Grad Month:</td>
-                <td><input type="text" placeholder="MM/YYYY" name="grad_month"></td>
+                <td><input type="text" placeholder="MM/YYYY" id="grad_month"></td>
             </tr>
             <tr>
                 <td>Class:</td>
                 <td>
-                    <select class="select" name="standing">
+                    <select class="select" id="standing">
                         <?php
                         foreach($standings as $standing)
                             echo '<option value="'.$standing.'">'.$standing.'</option>';
@@ -93,7 +93,7 @@ $semesters = Semester::listActive();
             <tr>
                 <td>Major(s):</td>
                 <td>
-                    <select class="select" name="majors[]" multiple="multiple">
+                    <select class="select" id="majors" multiple="multiple">
                         <?php
                             foreach($majors as $major)
                                 echo '<option value="'.$major.'">'.$major.'</option>';
@@ -104,7 +104,7 @@ $semesters = Semester::listActive();
             <tr>
                 <td>Minor(s):</td>
                 <td>
-                    <select class="select" name="minors[]" multiple="multiple">
+                    <select class="select" id="minors" multiple="multiple">
                         <?php
                         foreach($minors as $minor)
                             echo '<option value="'.$minor.'">'.$minor.'</option>';

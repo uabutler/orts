@@ -41,14 +41,14 @@ function inputEnable(bool)
 {
     bool = !bool;
 
-    $('input[name="first_name"]').attr("readonly", bool);
-    $('input[name="last_name"]').attr("readonly", bool);
-    $('input[name="banner_id"]').attr("readonly", bool);
-    $('input[name="grad_month"]').attr("readonly", bool);
+    $('#first_name').attr("readonly", bool);
+    $('#last_name').attr("readonly", bool);
+    $('#banner_id').attr("readonly", bool);
+    $('#grad_month').attr("readonly", bool);
 
-    $('select[name="standing"]').attr("disabled", bool);
-    $('select[name="majors[]"]').attr("disabled", bool);
-    $('select[name="minors[]"]').attr("disabled", bool);
+    $('#standing').attr("disabled", bool);
+    $('#majors').attr("disabled", bool);
+    $('#minors').attr("disabled", bool);
 }
 
 function createStudent()
@@ -61,13 +61,13 @@ function createStudent()
     let data = {};
 
     data.email = STUDENT_EMAIL;
-    data.first_name = $('input[name="first_name"]').val();
-    data.last_name = $('input[name="last_name"]').val();
-    data.banner_id = $('input[name="banner_id"]').val();
-    data.grad_month = $('input[name="grad_month"]').val();
-    data.standing = $('select[name="standing"]').val();
-    data.majors = $('select[name="majors[]"]').val();
-    data.minors = $('select[name="minors[]"]').val();
+    data.first_name = $('#first_name').val();
+    data.last_name = $('#last_name').val();
+    data.banner_id = $('#banner_id').val();
+    data.grad_month = $('#grad_month').val();
+    data.standing = $('#standing').val();
+    data.majors = $('#majors').val();
+    data.minors = $('#minors').val();
 
 
     $.post("api/student.php", JSON.stringify(data), function(data)
@@ -95,10 +95,10 @@ $(function ()
         this.value = this.value.replace(/\D/g, '');
     });
 
-    $('input[name="banner_id"]').on("focusout", function () { setError(validateBannerId(), "banner_id"); })
-    $('input[name="grad_month"]').on("focusout", function () { setError(validateGradMonth(), "grad_month"); })
-    $('input[name="first_name"]').on("focusout", function () { setError(validateFirstName(), "first_name"); })
-    $('input[name="last_name"]').on("focusout", function () { setError(validateLastName(), "last_name"); })
+    $('#banner_id').on("focusout", function () { setError(validateBannerId(), "banner_id"); })
+    $('#grad_month').on("focusout", function () { setError(validateGradMonth(), "grad_month"); })
+    $('#first_name').on("focusout", function () { setError(validateFirstName(), "first_name"); })
+    $('#last_name').on("focusout", function () { setError(validateLastName(), "last_name"); })
 
     $('#next').on("click", createStudent);
 });

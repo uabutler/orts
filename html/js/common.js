@@ -33,7 +33,7 @@ function validateRegex(element_name, regex)
 {
     console.log(`Validating ${element_name} against ${regex}`);
 
-    let element = $(`input[name="${element_name}"]`);
+    let element = $(`#${element_name}`);
 
     return regex.test(String(element.val()));
 }
@@ -42,9 +42,7 @@ function validateNotEmpty(element_name)
 {
     console.log(`Validating ${element_name} is not empty`);
 
-    let element = $(`input[name="${element_name}"]`);
-    if (element.length === 0)
-        element = $(`textarea[id="${element_name}"]`);
+    let element = $(`#${element_name}`);
 
     return element.val() !== "";
 }

@@ -514,7 +514,6 @@ class Semester implements JsonSerializable
 
         $data = $smt->fetchAll(PDO::FETCH_ASSOC);
 
-        // TODO: Ensure this is the convention for all list functions
         if (!$data) return [];
 
         $out = [];
