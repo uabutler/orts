@@ -1,6 +1,6 @@
 <?php
-include_once 'common.php';
-include_once 'programs.php';
+require_once __DIR__.'common.php';
+require_once __DIR__.'programs.php';
 
 /**
  * Represents a department object from the database. Essentially acts as a wrapper for the department's prefix string

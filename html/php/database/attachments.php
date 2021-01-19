@@ -1,6 +1,6 @@
 <?php
-include_once 'common.php';
-include_once 'requests.php';
+require_once __DIR__.'common.php';
+require_once __DIR__.'requests.php';
 
 /**
  * Helpful for tracking what files on an OS are attachments for requests and what the

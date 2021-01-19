@@ -1,8 +1,8 @@
 <?php
-include_once 'common.php';
-include_once 'courses.php';
-include_once 'students.php';
-include_once 'faculty.php';
+require_once __DIR__.'common.php';
+require_once __DIR__.'courses.php';
+require_once __DIR__.'students.php';
+require_once __DIR__.'faculty.php';
 
 class Request implements JsonSerializable
 {

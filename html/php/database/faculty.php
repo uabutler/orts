@@ -1,5 +1,5 @@
 <?php
-include_once 'common.php';
+require_once __DIR__.'common.php';
 
 /**
  * A class that stores a faculty member, keeps track of name and email
