@@ -4,7 +4,7 @@ if($config = parse_ini_file('../../conf/app.ini', true))
 {
     define('DATABASE', $config['Database']);
     define('CAS_SERVER', $config['CAS']);
-    define('SERVER', $config['SERVER']);
+    define('SERVER', $config['Server']);
 }
 else
 {
