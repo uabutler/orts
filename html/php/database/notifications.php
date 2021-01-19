@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'common.php';
+require_once __DIR__.'/common.php';
 
 /**
  * Represents a notification send in the system. This class relates the notification to a request, and to the sender and

@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__.'config.php';
-require_once __DIR__.'cas/CAS.php';
-require_once __DIR__.'database/faculty.php';
-require_once __DIR__.'database/students.php';
+require_once __DIR__.'/config.php';
+require_once __DIR__.'/cas/CAS.php';
+require_once __DIR__.'/database/faculty.php';
+require_once __DIR__.'/database/students.php';
 
 class Auth
 {

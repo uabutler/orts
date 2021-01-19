@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__.'common.php';
-require_once __DIR__.'courses.php';
-require_once __DIR__.'programs.php';
+require_once __DIR__.'/common.php';
+require_once __DIR__.'/courses.php';
+require_once __DIR__.'/programs.php';
 // TODO: Data validation on constructor and setters
 
 /**
