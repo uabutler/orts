@@ -1,6 +1,6 @@
 <?php
-include_once '../html/database/common_db.php';
-include_once '../html/database/courses_db.php';
+include_once '../html/php/database/common.php';
+include_once '../html/php/database/courses.php';
 
 $pdo = connectDB();
 

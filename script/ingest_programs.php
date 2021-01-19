@@ -1,7 +1,7 @@
 <?php
-include_once '../html/database/common_db.php';
-include_once '../html/database/students_db.php';
-include_once '../html/database/programs_db.php';
+include_once '../html/php/database/common.php';
+include_once '../html/php/database/students.php';
+include_once '../html/php/database/programs.php';
 
 $pdo = connectDB();
 

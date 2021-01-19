@@ -1,5 +1,5 @@
 <?php
-include_once '../html/database/common_db.php';
+include_once '../html/php/database/common.php';
 
 /* The inital lists to populate tables */
 $majors = ['Computer Science', 'Mathematics', 'Statistics'];
