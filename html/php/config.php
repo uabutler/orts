@@ -1,6 +1,6 @@
 <?php
 
-if($config = parse_ini_file(__DIR__.'/../../conf/app.ini', true))
+if($config = parse_ini_file(__DIR__.'/../../conf/app.ini', true, INI_SCANNER_TYPED))
 {
     define('DATABASE', $config['Database']);
     define('CAS_SERVER', $config['CAS']);
