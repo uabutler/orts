@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../config.php';
+require_once __DIR__ . '/../config.php';
 
 /**
  * Here, we store the names of the tables as global variables

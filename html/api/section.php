@@ -1,5 +1,5 @@
 <?php
-include_once '../database/courses_db.php';
+require_once '../php/database/courses.php';
 
 if($_SERVER['REQUEST_METHOD'] === 'GET')
     getSection();

@@ -1,5 +1,5 @@
 <?php
-include_once '../database/students_db.php';
+require_once '../php/database/students.php';
 
 if($_SERVER['REQUEST_METHOD'] === 'GET')
     getStudent();

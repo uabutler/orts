@@ -1,8 +1,8 @@
 <?php
-include_once '../database/requests_db.php';
-include_once '../database/students_db.php';
-include_once '../database/faculty_db.php';
-include_once '../database/courses_db.php';
+require_once '../php/database/requests.php';
+require_once '../php/database/students.php';
+require_once '../php/database/faculty.php';
+require_once '../php/database/courses.php';
 
 if($_SERVER['REQUEST_METHOD'] === 'GET')
     getRequest();
