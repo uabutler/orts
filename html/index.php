@@ -1,6 +1,7 @@
 <?php
 require_once 'php/auth.php';
 
+Auth::createClient();
 if(Auth::isAuthenticated())
 {
     if(Auth::isAuthenticatedFaculty())
