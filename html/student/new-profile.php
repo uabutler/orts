@@ -6,6 +6,10 @@ require_once '../php/auth.php';
 
 Auth::createClient();
 Auth::forceAuthentication();
+
+if(Auth::isAuthenticatedStudent())
+    header("Location: request-list.php");
+
 $student_email = Auth::getUser();
 
 $majors = Major::list();
