@@ -81,7 +81,7 @@ $(function ()
     // construct the html code representing a row
     requests.forEach(function createHtml(request) {
         // The opening tag including the get request for the details page
-        const tdOpen = '<td onclick="window.location=\'admin-request-details.php?id=' + request.id + '\'">';
+        const tdOpen = '<td onclick="window.location=\'request-details.php?id=' + request.id + '\'">';
 
         let out = '<tr class="request-item">';
         out += '<td><input type="checkbox"></td>';
