@@ -38,7 +38,7 @@ function setSection()
     data.course_num = $('#course_num').val();
     data.section = parseInt($('#section').val(), 10);
 
-    let request = $.get("api/section.php", data, function (data, status, xhr)
+    let request = $.get("/api/section.php", data, function (data, status, xhr)
     {
         if(status === "success")
         {
