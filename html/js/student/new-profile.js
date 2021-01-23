@@ -61,13 +61,13 @@ function createStudent()
     {
         console.log("GOOD");
         console.log(data);
-        window.location.replace('new-request.php');
+        window.location.replace('/student/new-request.php');
     })
-        .fail(function(response)
-        {
-            console.log("BAD");
-            inputEnable(true);
-        });
+    .fail(function(response)
+    {
+        console.log("BAD");
+        inputEnable(true);
+    });
 }
 
 /*
