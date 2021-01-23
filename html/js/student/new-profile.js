@@ -57,7 +57,7 @@ function createStudent()
     data.minors = $('#minors').val();
 
 
-    $.post("api/student.php", JSON.stringify(data), function(data)
+    $.post("/api/student.php", JSON.stringify(data), function(data)
     {
         console.log("GOOD");
         console.log(data);

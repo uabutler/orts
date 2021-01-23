@@ -85,7 +85,7 @@ function createRequest()
     data.reason = $('#reason').val();
     data.explanation = $('#explanation').val();
 
-    $.post("api/request.php", JSON.stringify(data), function(data)
+    $.post("/api/request.php", JSON.stringify(data), function(data)
     {
         console.log("SUCESS!");
     }, "json")
