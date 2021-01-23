@@ -88,11 +88,12 @@ function createRequest()
     $.post("/api/request.php", JSON.stringify(data), function(data)
     {
         console.log("SUCESS!");
+        window.location.href = "/student/request-list.php";
     }, "json")
-        .fail(function(response)
-        {
-            inputEnable(true);
-        });
+    .fail(function(response)
+    {
+        inputEnable(true);
+    });
 }
 
 /*
