@@ -4,6 +4,7 @@ require_once '../php/database/requests.php';
 require_once '../php/database/programs.php';
 require_once '../php/auth.php';
 
+Auth::createClient();
 Auth::forceAuthenticationStudent();
 $student_email = Auth::getUser();
 $student = Student::get($student_email);
