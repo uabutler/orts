@@ -64,6 +64,7 @@ class Auth
 
     static function logout()
     {
-        phpCAS::logout();
+        // TODO: Update to use config URL
+        phpCAS::logoutWithRedirectService("orts.uabutler.com/home.php");
     }
 }
