@@ -74,7 +74,7 @@ function createStudent()
     {
         console.log("GOOD");
         console.log(data);
-        window.location.replace('request.php?id=' + data);
+        window.location.replace('new-request.php');
     })
         .fail(function(response)
         {

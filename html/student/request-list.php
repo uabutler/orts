@@ -1,24 +1,16 @@
 <?php
-include_once 'database/requests_db.php';
+require_once '../php/database/requests.php';
+require_once '../php/auth.php';
 
-if (isset($_GET['id']))
-{
-    $student_id = $_GET['id'];
-    $student = Student::getById(strval($student_id));
-    if (is_null($student))
-        $requests = null;
-    else
-        $requests = Request::get($student);
-}
-else
-{
-    $requests = null;
-}
+Auth::forceAuthenticationStudent();
+$student_email = Auth::getUser();
+$student = Student::get($student_email);
+$requests = Request::get($student);
 
 if (is_null($requests))
 {
     http_response_code(400);
-    header("Location: error400.php");
+    header("Location: /error400.php");
     exit;
 }
 ?>
@@ -26,17 +18,17 @@ if (is_null($requests))
 <html lang="en">
 <head>
     <title>ORTS - Override Requests</title>
-    <?php require 'php/common-head.php'; ?>
-    <link rel="stylesheet" href="css/student-request-list.css">
+    <?php require '../php/common-head.php'; ?>
+    <link rel="stylesheet" href="/css/student/request-list.css">
     <script>
         const JSON_DATA = '<?php echo json_encode($requests); ?>';
     </script>
-    <script src="js/student-request-list.js"></script>
+    <script src="/js/student/request-list.js"></script>
 </head>
 
 <body class="grid-container">
-<?php require_once 'php/header.php'; ?>
-<?php require_once 'php/navbar.php'; studentNavbar("Active Requests", $student_id); ?>
+<?php require_once '../php/header.php'; ?>
+<?php require_once '../php/navbar.php'; studentNavbar("Active Requests", $student_id); ?>
 
 <div class="grid-item content">
     <h2>Override Requests</h2>

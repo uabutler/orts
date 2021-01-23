@@ -45,7 +45,7 @@ class Auth
         self::forceAuthentication();
         if(is_null(Student::get(self::getUser())))
         {
-            header("Location: student/new-profile.php?ret=".rawurldecode($_SERVER['PHP_SELF']));
+            header("Location: /student/new-profile.php?ret=".rawurldecode($_SERVER['PHP_SELF']));
         }
     }
 
@@ -58,7 +58,7 @@ class Auth
         if(is_null(Faculty::get(self::getUser())))
         {
             http_response_code(403);
-            header("Location: error403.php");
+            header("Location: /error403.php");
         }
     }
 

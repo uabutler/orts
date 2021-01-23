@@ -4,10 +4,10 @@
 <link rel="icon" type="image/png" href="https://images.truman.edu/favicon-96x96.png" sizes="96x96">
 
 <!-- Common CSS sheet -->
-<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="/css/main.css">
 
 <!-- Common JS -->
-<script src="js/common.js"></script>
+<script src="/js/common.js"></script>
 
 <!-- Jquery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

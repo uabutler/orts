@@ -35,13 +35,13 @@ function studentNavbar($active, $student_id)
     (
         array
         (
-            "New Request" => "request.php?id=$student_id",
-            "Active Requests" => "student-request-list.php?id=$student_id"
+            "New Request" => "/student/new-request.php",
+            "Active Requests" => "/student/request-list.php"
         ),
         array
         (
-            "Profile" => "#",
-            "Log Out" => "#",
+            "Profile" => "/student/profile.php",
+            "Log Out" => "/logout.php",
         ),
         $active
     );
@@ -53,15 +53,24 @@ function facultyNavbar($active)
     (
         array
         (
-            "Current Semester" => "admin-request-list.php",
-            "Archive" => "admin-archive.php",
-            "Admin Functions" => "admin-functions.php"
+            "Current Semester" => "/admin/request-list.php",
+            "Archive" => "/admin/archive.php",
         ),
         array
         (
-            "Profile" => "admin-profile.php",
-            "Log Out" => "#",
+            "Profile" => "/admin/profile.php",
+            "Log Out" => "/logout.php",
         ),
         $active
+    );
+}
+
+function homeNavbar()
+{
+    genNavbar
+    (
+        [],
+        array("Log In" => "/login.php"),
+        ""
     );
 }

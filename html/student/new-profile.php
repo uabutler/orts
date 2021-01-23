@@ -1,27 +1,12 @@
 <?php
-include_once 'database/students_db.php';
-include_once 'database/requests_db.php';
-include_once 'database/programs_db.php';
+require_once '../php/database/students.php';
+require_once '../php/database/requests.php';
+require_once '../php/database/programs.php';
+require_once '../php/auth.php';
 
-if (isset($_GET['student']))
-{
-    if(ctype_alnum($_GET['student']))
-        $student_email = $_GET['student'];
-    else
-        $student_email = null;
-
-    $student = Student::get($student_email);
-}
-else
-{
-    $student_email = null;
-}
-
-if (is_null($student_email))
-{
-    header("Location: error400.php");
-    exit;
-}
+Auth::forceAuthenticationStudent();
+$student_email = Auth::getUser();
+$student = Student::get($student_email);
 
 $majors = Major::list();
 $minors = Minor::list();
@@ -35,22 +20,22 @@ $semesters = Semester::listActive();
 <html lang="en">
 <head>
     <title>ORTS - New Request</title>
-    <?php require 'php/common-head.php';?>
-    <link rel="stylesheet" href="css/request.css">
+    <?php require '../php/common-head.php';?>
+    <link rel="stylesheet" href="/css/student/new-request.css">
     <script>
         STUDENT_EMAIL = "<?php echo $student_email; ?>";
     </script>
-    <script src="js/student.js"></script>
+    <script src="/js/student/new-profile.js"></script>
 </head>
 
 <body class="grid-container">
-<?php require_once 'php/header.php'; ?>
+<?php require_once '../php/header.php'; ?>
 <!-- TODO: This person won't be have a profile at this point -->
-<?php require_once 'php/navbar.php'; studentNavbar("New Request", 0); ?>
+<?php require_once '../php/navbar.php'; studentNavbar("New Request", 0); ?>
 
 <div class="grid-item content">
     <div class="info">
-        <?php require 'php/new-request-info.php'; ?>
+        <?php require '../php/new-request-info.php'; ?>
     </div>
     <div>
         <h2 class="truman-dark-bg">Profile</h2>
