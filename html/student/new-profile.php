@@ -5,9 +5,8 @@ require_once '../php/database/programs.php';
 require_once '../php/auth.php';
 
 Auth::createClient();
-Auth::forceAuthenticationStudent();
+Auth::forceAuthentication();
 $student_email = Auth::getUser();
-$student = Student::get($student_email);
 
 $majors = Major::list();
 $minors = Minor::list();
