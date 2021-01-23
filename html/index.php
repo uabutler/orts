@@ -7,6 +7,7 @@ if(Auth::isAuthenticated())
     if(Auth::isAuthenticatedFaculty())
     {
         Auth::forceAuthenticationFaculty();
+        header("Location: /admin/request-list.php");
     }
     else
     {
