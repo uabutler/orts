@@ -24,12 +24,12 @@ class Auth
 
     static function isAuthenticatedStudent(): bool
     {
-        return self::isAuthenticated() && !is_null(Faculty::get(self::getUser()));
+        return self::isAuthenticated() && !is_null(Student::get(self::getUser()));
     }
 
     static function isAuthenticatedFaculty(): bool
     {
-        return self::isAuthenticated() && !is_null(Student::get(self::getUser()));
+        return self::isAuthenticated() && !is_null(Faculty::get(self::getUser()));
     }
 
     static function forceAuthentication(): bool
