@@ -20,19 +20,6 @@ function validate()
 }
 
 /*
- * Create error notice
- */
-function setError(valid, element_name)
-{
-    let element = $(`#${element_name}`);
-
-    if(valid)
-        element.removeClass("error");
-    else
-        element.addClass("error");
-}
-
-/*
  * Get the section CRN and Title from the server
  */
 function setSection()

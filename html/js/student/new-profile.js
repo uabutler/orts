@@ -22,19 +22,6 @@ function validate()
 }
 
 /*
- * Create error notice
- */
-function setError(valid, element_name)
-{
-    let element = $(`input[name="${element_name}"]`);
-
-    if(valid)
-        element.removeClass("error");
-    else
-        element.addClass("error");
-}
-
-/*
  * INPUT DISABLE
  */
 function inputEnable(bool)

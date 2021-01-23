@@ -47,3 +47,16 @@ function validateNotEmpty(element_name)
     return element.val() !== "";
 }
 
+/*
+ * Create error notice
+ */
+function setError(valid, element_name)
+{
+    let element = $(`#${element_name}`);
+
+    if(valid)
+        element.removeClass("error");
+    else
+        element.addClass("error");
+}
+
