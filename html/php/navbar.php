@@ -29,7 +29,7 @@ function genNavbar(array $left_map, array $right_map, string $active)
     echo '</div>';
 }
 
-function studentNavbar($active, $student_id)
+function studentNavbar($active)
 {
     genNavbar
     (

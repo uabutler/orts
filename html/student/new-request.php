@@ -29,7 +29,7 @@ $semesters = Semester::listActive();
 
 <body class="grid-container">
 <?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; studentNavbar("New Request", $student_id); ?>
+<?php require_once '../php/navbar.php'; studentNavbar("New Request"); ?>
 
 <div class="grid-item content">
     <div class="info">

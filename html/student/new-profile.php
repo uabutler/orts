@@ -32,7 +32,7 @@ $semesters = Semester::listActive();
 <body class="grid-container">
 <?php require_once '../php/header.php'; ?>
 <!-- TODO: This person won't be have a profile at this point -->
-<?php require_once '../php/navbar.php'; studentNavbar("New Request", 0); ?>
+<?php require_once '../php/navbar.php'; studentNavbar("New Request"); ?>
 
 <div class="grid-item content">
     <div class="info">

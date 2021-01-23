@@ -29,7 +29,7 @@ if (is_null($requests))
 
 <body class="grid-container">
 <?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; studentNavbar("Active Requests", $student_id); ?>
+<?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
 <div class="grid-item content">
     <h2>Override Requests</h2>
