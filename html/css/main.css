@@ -10,6 +10,7 @@
 
 body {
   font-family: nexabook;
+  overflow-y: scroll;
 }
 
 .grid-container {
