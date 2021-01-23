@@ -227,7 +227,7 @@ if (is_null($request))
         data += "banner=" + encodeURIComponent($('#justification').val());
 
         $.ajax({
-            url: 'api/request.php',
+            url: '/api/request.php',
             type: 'PUT',
             data: data,
             success: function (data)
