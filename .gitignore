@@ -6,3 +6,4 @@ html/config.js
 .Rhistory
 *~
 *.bak
+.idea
