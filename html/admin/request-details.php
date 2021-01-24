@@ -222,8 +222,8 @@ if (is_null($request))
     function changeStatus()
     {
         let data = "id=" + REQUEST_ID + "&";
-        data += "banner=" + $('#banner').is(":checked") + "&";
         data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
+        data += "banner=" + $('#banner').is(":checked") + "&";
         data += "justification=" + encodeURIComponent($('#justification').val());
 
         $.ajax({

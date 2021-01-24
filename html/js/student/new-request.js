@@ -87,11 +87,14 @@ function createRequest()
 
     $.post("/api/request.php", JSON.stringify(data), function(data)
     {
-        console.log("SUCCESS!");
         window.location.href = "/student/request-list.php";
-    }, "json")
+    })
     .fail(function(response)
     {
+        console.log("Could not add request");
+        console.log(data);
+        console.log(response)
+        // TODO: Display error to user
         inputEnable(true);
     });
 }
