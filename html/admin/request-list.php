@@ -100,10 +100,10 @@ if (is_null($requests))
                                    class="default">
                             <label for="both">Both</label><br>
                             <input type="radio" id="inbanner" name="banner" value="inbanner" style="margin:10px;">
-                            <label for="inbanner"><i class="material-icons" style="color:green">done</i> Not In
+                            <label for="inbanner"><i class="material-icons" style="color:green">done_all</i> In
                                 Banner</label><br>
                             <input type="radio" id="notinbanner" name="banner" value="notinbanner" style="margin:10px;">
-                            <label for="notinbanner"><i class="material-icons" style="color:green">done_all</i> In
+                            <label for="notinbanner"><i class="material-icons" style="color:green">done</i> Not In
                                 Banner</label><br>
                         </div>
                     </div>
