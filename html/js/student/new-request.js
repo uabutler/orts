@@ -2,7 +2,7 @@
  * INPUT VALIDATION
  */
 function validateCourseNum() { return validateRegex("course_num", /^\d{3}$/); }
-function validateSection() { return validateRegex("section", /^\d{1,2}$/); }
+function validateSection() { return validateRegex("section", /^\d{1,2}$/) && $("#section").val() > 0; }
 function validateExplanation() { return validateNotEmpty("explanation"); }
 function validateCrn() { return validateNotEmpty("crn"); }
 
