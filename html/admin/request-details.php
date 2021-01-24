@@ -224,7 +224,7 @@ if (is_null($request))
         let data = "id=" + REQUEST_ID + "&";
         data += "banner=" + $('#banner').is(":checked") + "&";
         data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
-        data += "banner=" + encodeURIComponent($('#justification').val());
+        data += "justification=" + encodeURIComponent($('#justification').val());
 
         $.ajax({
             url: '/api/request.php',
