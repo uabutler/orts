@@ -75,7 +75,7 @@ class Request implements JsonSerializable
      */
     public function getJustification(): ?string
     {
-        return htmlspecialchars($this->justification, ENT_QUOTES);
+        return addslashes(htmlspecialchars($this->justification, ENT_QUOTES));
     }
 
     /**
@@ -101,7 +101,7 @@ class Request implements JsonSerializable
      */
     public function getExplanation(): string
     {
-        return htmlspecialchars($this->explanation, ENT_QUOTES);
+        return addslashes(htmlspecialchars($this->explanation, ENT_QUOTES));
     }
 
     /**

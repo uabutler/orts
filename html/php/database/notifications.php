@@ -53,7 +53,7 @@ class Notification implements JsonSerializable
      */
     public function getBody(): string
     {
-        return htmlspecialchars($this->body, ENT_QUOTES);
+        return addslashes(htmlspecialchars($this->body, ENT_QUOTES));
     }
 
     /**
