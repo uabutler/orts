@@ -235,7 +235,9 @@ if (is_null($request))
             data: data,
             success: function (data)
             {
-                $('#status_info').html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
+                const element = $('#status_info');
+                if(element.val() !== "none")
+                    element.html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
             }
         });
     }
