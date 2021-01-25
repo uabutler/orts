@@ -224,7 +224,7 @@ if (is_null($request))
         let data = "id=" + REQUEST_ID + "&";
 
         let tmp;
-        data += "status=" + encodeURIComponent((tmp = ($('#status_input').val() === "none")) ? "<?php echo $request->getStatus(); ?>" : tmp) + "&";
+        data += "status=" + encodeURIComponent(((tmp = $('#status_input').val()) === "none") ? "<?php echo $request->getStatus(); ?>" : tmp) + "&";
 
         data += "banner=" + $('#banner').is(":checked") + "&";
         data += "justification=" + encodeURIComponent($('#justification').val());
