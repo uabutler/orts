@@ -222,10 +222,7 @@ if (is_null($request))
     function changeStatus()
     {
         let data = "id=" + REQUEST_ID + "&";
-
-        let tmp;
-        data += "status=" + encodeURIComponent(((tmp = $('#status_input').val()) === "none") ? "<?php echo $request->getStatus(); ?>" : tmp) + "&";
-
+        data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
         data += "banner=" + $('#banner').is(":checked") + "&";
         data += "justification=" + encodeURIComponent($('#justification').val());
 
@@ -235,15 +232,14 @@ if (is_null($request))
             data: data,
             success: function (data)
             {
-                const element = $('#status_info');
-                if(element.val() !== "none")
-                    element.html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
+                $('#status_info').html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
             }
         });
     }
 
     $(function ()
     {
+        $('#status_input option[value="<?php echo $request->getStatus(); ?>"]').prop("selected", true);
         $('#submit').on("click", changeStatus);
     })
 </script>
