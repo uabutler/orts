@@ -21,7 +21,9 @@ if (is_null($request))
     <link rel="stylesheet" href="/css/admin/request-details.css">
     <script>
         REQUEST_ID = <?php echo $_GET['id']; ?>;
+        REQUEST_STATUS = "<?php echo $request->getStatus(); ?>";
     </script>
+    <script src="/js/admin/request-details.js"></script>
 </head>
 
 <body class="grid-container">
@@ -218,30 +220,5 @@ if (is_null($request))
         </div>
     </div>
 </div>
-<script>
-    function changeStatus()
-    {
-        let data = "id=" + REQUEST_ID + "&";
-        data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
-        data += "banner=" + $('#banner').is(":checked") + "&";
-        data += "justification=" + encodeURIComponent($('#justification').val());
-
-        $.ajax({
-            url: '/api/request.php',
-            type: 'PUT',
-            data: data,
-            success: function (data)
-            {
-                $('#status_info').html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
-            }
-        });
-    }
-
-    $(function ()
-    {
-        $('#status_input option[value="<?php echo $request->getStatus(); ?>"]').prop("selected", true);
-        $('#submit').on("click", changeStatus);
-    })
-</script>
 </body>
 </html>
