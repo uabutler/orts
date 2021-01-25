@@ -513,8 +513,8 @@ class Request implements JsonSerializable
     {
         $out = get_object_vars($this);
 
-        $out['justification'] = $this->getJustification();
-        $out['explanation'] = $this->getExplanation();
+        unset($out['justification']);
+        unset($out['explanation']);
 
         return $out;
     }

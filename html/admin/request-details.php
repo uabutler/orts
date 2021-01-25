@@ -131,7 +131,7 @@ if (is_null($request))
         <form>
             <label for="status">Status:</label>
             <select name="status" id="status_input">
-                <option value="none"></option>
+                <option value="none" hidden></option>
                 <option value="Approved">Approved</option>
                 <option value="Provisionally Approved">Provisionally Approved</option>
                 <option value="Denied">Denied</option>
