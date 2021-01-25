@@ -45,7 +45,7 @@ class Auth
         self::forceAuthentication();
         if(is_null(Student::get(self::getUser())))
         {
-            header("Location: /student/new-profile.php?ret=".rawurldecode($_SERVER['PHP_SELF']));
+            header("Location: /student/new-profile.php");
         }
     }
 
