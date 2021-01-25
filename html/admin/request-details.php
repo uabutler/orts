@@ -137,7 +137,7 @@ if (is_null($request))
                 <option value="Denied">Denied</option>
             </select>
             <label style="padding-left:50px">In Banner:</label>
-            <input type="checkbox" id="banner" name="banner">
+            <input type="checkbox" id="banner" name="banner" <?php if($request->isInBanner()) echo "checked"; ?> >
             <br>
             <textarea id="justification" placeholder="Notes to send to student"><?php echo $request->getJustification
                 (); ?></textarea>
@@ -222,7 +222,10 @@ if (is_null($request))
     function changeStatus()
     {
         let data = "id=" + REQUEST_ID + "&";
-        data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
+
+        let tmp;
+        data += "status=" + encodeURIComponent((tmp = ($('#status_input').val() === "none")) ? "<?php echo $request->getStatus(); ?>" : tmp) + "&";
+
         data += "banner=" + $('#banner').is(":checked") + "&";
         data += "justification=" + encodeURIComponent($('#justification').val());
 
