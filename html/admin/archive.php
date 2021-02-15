@@ -24,7 +24,7 @@ $inactive = Semester::listInactive();
                 <th>Code</th>
             </tr>
             <?php foreach ($active as $semester): ?>
-            <tr class="semester-item" onclick="window.location='/admin/request-list.php?semester=<?= $semester->getCode() ?>">
+            <tr class="semester-item" onclick="window.location='/admin/request-list.php?semester=<?= $semester->getCode() ?>'">
                 <td><?= $semester->getDescription() ?></td>
                 <td><?= $semester->getCode() ?></td>
             </tr>
@@ -40,7 +40,7 @@ $inactive = Semester::listInactive();
                 <th>Code</th>
             </tr>
             <?php foreach ($inactive as $semester): ?>
-                <tr class="semester-item" onclick="window.location='/admin/request-list.php?semester=<?= $semester->getCode() ?>">
+                <tr class="semester-item" onclick="window.location='/admin/request-list.php?semester=<?= $semester->getCode() ?>'">
                     <td><?= $semester->getDescription() ?></td>
                     <td><?= $semester->getCode() ?></td>
                 </tr>
