@@ -18,11 +18,7 @@ else
 }
 
 if (is_null($requests))
-{
-    http_response_code(400);
-    header("Location: error400.php");
-    exit;
-}
+    include '../error/error400.php';
 ?>
 
 <!DOCTYPE html>

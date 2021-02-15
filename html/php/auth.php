@@ -44,9 +44,7 @@ class Auth
     {
         self::forceAuthentication();
         if(is_null(Student::get(self::getUser())))
-        {
             header("Location: /student/new-profile.php");
-        }
     }
 
     /**
@@ -56,10 +54,7 @@ class Auth
     {
         self::forceAuthentication();
         if(is_null(Faculty::get(self::getUser())))
-        {
-            http_response_code(403);
-            header("Location: /error403.php");
-        }
+            include '../error/error403.php';
     }
 
     static function logout()

@@ -8,6 +8,5 @@ if($config = parse_ini_file(__DIR__ . '/../../conf/app.ini', true, INI_SCANNER_T
 }
 else
 {
-    http_response_code(500);
-    header("Location: error500.php");
+    include '../error/error500.php';
 }
