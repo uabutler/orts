@@ -27,7 +27,7 @@ $semesters = Semester::listActive();
     <?php require '../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
     <script>
-        STUDENT_EMAIL = "<?php echo $student_email; ?>";
+        STUDENT_EMAIL = "<?= $student_email ?>";
     </script>
     <script src="/js/student/new-profile.js"></script>
 </head>
@@ -50,7 +50,7 @@ $semesters = Semester::listActive();
             </colgroup>
             <tr>
                 <td>Email:</td>
-                <td><input type="text" readonly value="<?php echo $student_email; ?>@truman.edu"></td>
+                <td><input type="text" readonly value="<?= $student_email ?>@truman.edu"></td>
             </tr>
             <tr>
                 <td>First Name:</td>
@@ -72,10 +72,9 @@ $semesters = Semester::listActive();
                 <td>Class:</td>
                 <td>
                     <select class="select" id="standing">
-                        <?php
-                        foreach($standings as $standing)
-                            echo '<option value="'.$standing.'">'.$standing.'</option>';
-                        ?>
+                        <?php foreach($standings as $standing): ?>
+                            <option value="<?= $standing ?>"><?= $standing ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </td>
             </tr>
@@ -83,10 +82,9 @@ $semesters = Semester::listActive();
                 <td>Major(s):</td>
                 <td>
                     <select class="select" id="majors" multiple="multiple">
-                        <?php
-                            foreach($majors as $major)
-                                echo '<option value="'.$major.'">'.$major.'</option>';
-                        ?>
+                        <?php foreach($majors as $major): ?>
+                            <option value="<?= $major ?>"><?= $major ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </td>
             </tr>
@@ -94,10 +92,9 @@ $semesters = Semester::listActive();
                 <td>Minor(s):</td>
                 <td>
                     <select class="select" id="minors" multiple="multiple">
-                        <?php
-                        foreach($minors as $minor)
-                            echo '<option value="'.$minor.'">'.$minor.'</option>';
-                        ?>
+                        <?php foreach($minors as $minor): ?>
+                            <option value="<?= $minor ?>"><?= $minor ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </td>
             </tr>

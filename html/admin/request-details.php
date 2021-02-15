@@ -20,8 +20,8 @@ if (is_null($request))
     <?php require '../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/request-details.css">
     <script>
-        REQUEST_ID = <?php echo $_GET['id']; ?>;
-        REQUEST_STATUS = "<?php echo $request->getStatus(); ?>";
+        REQUEST_ID = <?= $_GET['id'] ?>;
+        REQUEST_STATUS = "<?= $request->getStatus() ?>";
     </script>
     <script src="/js/admin/request-details.js"></script>
 </head>
@@ -36,11 +36,11 @@ if (is_null($request))
         <table style="padding-bottom:20px;">
             <tr>
                 <th>Status:</th>
-                <td id="status_info"><?php echo $request->getStatusHtml(); ?></td>
+                <td id="status_info"><?= $request->getStatusHtml() ?></td>
             </tr>
             <tr>
                 <th>Date Modified:</th>
-                <td><?php echo $request->getLastModified(); ?></td>
+                <td><?= $request->getLastModified() ?></td>
             </tr>
             <tr>
                 <th>Date Received:</th>
@@ -48,14 +48,11 @@ if (is_null($request))
             </tr>
             <tr>
                 <th style="padding-right:1em">Designated Faculty:</th>
-                <td><?php echo $request->getFaculty()->getLastName() . ", " . $request->getFaculty()
-                            ->getFirstName(); ?></td>
+                <td><?= $request->getFaculty()->getLastName() ?>, <?= $request->getFaculty()->getFirstName() ?></td>
             </tr>
         </table>
         <table id="class-info">
-            <?php
-            $section = $request->getSection();
-            ?>
+            <?php $section = $request->getSection(); ?>
             <tr>
                 <th>CRN</th>
                 <th>Course</th>
@@ -63,10 +60,10 @@ if (is_null($request))
                 <th>Title</th>
             </tr>
             <tr>
-                <td><?php echo $section->getCrn(); ?></td>
-                <td><?php echo $section->getCourse()->getDepartment()->getDept() . " " . $section->getCourse()->getCourseNum(); ?></td>
-                <td><?php echo $section->getSectionNum(); ?></td>
-                <td><?php echo $section->getCourse()->getTitle(); ?></td>
+                <td><?= $section->getCrn() ?></td>
+                <td><?= $section->getCourse()->getDepartment()->getDept() ?> <?= $section->getCourse()->getCourseNum() ?></td>
+                <td><?= $section->getSectionNum() ?></td>
+                <td><?= $section->getCourse()->getTitle() ?></td>
             </tr>
         </table>
     </div>
@@ -74,40 +71,38 @@ if (is_null($request))
     <div class="grid-item stuinfo">
         <h2 class="truman-dark-bg">Student Info</h2>
         <table style="padding-bottom:20px;">
-            <?php
-            $student = $request->getStudent();
-            ?>
+            <?php $student = $request->getStudent(); ?>
             <tr>
                 <th>First Name:</th>
-                <td><?php echo $student->getFirstName(); ?></td>
+                <td><?= $student->getFirstName() ?></td>
             </tr>
             <tr>
                 <th>Last Name:</th>
-                <td><?php echo $student->getLastName(); ?></td>
+                <td><?= $student->getLastName() ?></td>
             </tr>
             <tr>
                 <th>Majors:</th>
-                <td><?php echo implode(', ', Major::buildStringList($student->getMajors())); ?></td>
+                <td><?= implode(', ', Major::buildStringList($student->getMajors())) ?></td>
             </tr>
             <tr>
                 <th>Minors:</th>
-                <td><?php echo implode(', ', Minor::buildStringList($student->getMinors())); ?></td>
+                <td><?= implode(', ', Minor::buildStringList($student->getMinors())) ?></td>
             </tr>
             <tr>
                 <th>Email:</th>
-                <td><?php echo $student->getEmail(); ?></td>
+                <td><?= $student->getEmail() ?></td>
             </tr>
             <tr>
                 <th>Student ID:</th>
-                <td><?php echo $student->getBannerId(); ?></td>
+                <td><?= $student->getBannerId() ?></td>
             </tr>
             <tr>
                 <th>Academic Level:</th>
-                <td><?php echo $student->getStanding(); ?></td>
+                <td><?= $student->getStanding() ?></td>
             </tr>
             <tr>
                 <th style="padding-right:1em">Expected Graduation:</th>
-                <td><?php echo $student->getGradMonth(); ?></td>
+                <td><?= $student->getGradMonth() ?></td>
             </tr>
         </table>
     </div>
@@ -117,11 +112,11 @@ if (is_null($request))
         <table style="padding-bottom:20px;">
             <tr>
                 <th style="padding-right:1em">Reason:</th>
-                <td><?php echo $request->getReason(); ?></td>
+                <td><?= $request->getReason() ?></td>
             </tr>
         </table>
         Student Request Explanation:
-        <textarea readonly><?php echo $request->getExplanation(); ?></textarea>
+        <textarea readonly><?= $request->getExplanation() ?></textarea>
     </div>
 
     <div class="grid-item action-title">
@@ -141,8 +136,7 @@ if (is_null($request))
             <label style="padding-left:50px">In Banner:</label>
             <input type="checkbox" id="banner" name="banner" <?php if($request->isInBanner()) echo "checked"; ?> >
             <br>
-            <textarea id="justification" placeholder="Notes to send to student"><?php echo $request->getJustification
-                (); ?></textarea>
+            <textarea id="justification" placeholder="Note for student"><?= $request->getJustification(); ?></textarea>
         </form>
         <button id="submit">Submit</button>
     </div>
@@ -157,6 +151,7 @@ if (is_null($request))
         <button id="submit">Submit</button>
     </div>
 
+    <!--
     <div class="grid-item log">
         <h2 class="truman-dark-bg">Log</h2>
         <center>
@@ -219,6 +214,7 @@ if (is_null($request))
             <button>Send</button>
         </div>
     </div>
+    -->
 </div>
 </body>
 </html>

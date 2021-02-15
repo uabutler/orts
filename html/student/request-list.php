@@ -22,7 +22,7 @@ if (is_null($requests))
     <?php require '../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/student/request-list.css">
     <script>
-        const JSON_DATA = '<?php echo json_encode($requests); ?>';
+        const JSON_DATA = '<?= json_encode($requests) ?>';
     </script>
     <script src="/js/student/request-list.js"></script>
 </head>

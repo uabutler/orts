@@ -9,7 +9,7 @@
 }
 
 body {
-  font-family: nexabook;
+  font-family: nexabook, sans-serif;
   overflow-y: scroll;
 }
 
@@ -49,7 +49,7 @@ body {
 }
 
 .navbar {
-  font-family: nexabook;
+  font-family: nexabook, sans-serif;
   grid-row: 2;
 }
 

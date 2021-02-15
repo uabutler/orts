@@ -22,7 +22,7 @@ $semesters = Semester::listActive();
     <?php require '../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
     <script>
-        STUDENT_ID = <?php echo $student_id; ?>;
+        STUDENT_ID = <?= $student_id ?>;
     </script>
     <script src="/js/student/new-request.js"></script>
 </head>
@@ -46,10 +46,9 @@ $semesters = Semester::listActive();
                 <td>Semester:</td>
                 <td>
                     <select class="select" id="semester">
-                        <?php
-                        foreach($semesters as $semester)
-                            echo '<option value="'.$semester->getCode().'">'.$semester->getDescription().'</option>';
-                        ?>
+                        <?php foreach ($semesters as $semester): ?>
+                            <option value="<?= $semester->getCode() ?>"><?= $semester->getDescription() ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </td>
             </tr>
@@ -57,10 +56,9 @@ $semesters = Semester::listActive();
                 <td>Course Dept:</td>
                 <td>
                     <select class="select" id="department">
-                        <?php
-                        foreach($departments as $department)
-                            echo '<option value="'.$department.'">'.$department.'</option>';
-                        ?>
+                        <?php foreach ($departments as $department): ?>
+                            <option value="<?= $department ?>"><?= $department ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </td>
             </tr>
@@ -84,10 +82,9 @@ $semesters = Semester::listActive();
                 <td>Reason:</td>
                 <td>
                     <select class="select" id="reason">
-                        <?php
-                        foreach($reasons as $reason)
-                            echo '<option value="'.$reason.'">'.$reason.'</option>';
-                        ?>
+                        <?php foreach ($reasons as $reason): ?>
+                            <option value="<?= $reason ?>"><?= $reason ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </td>
             </tr>

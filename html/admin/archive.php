@@ -1,4 +1,8 @@
-<?php include_once '../php/database/courses.php'; ?>
+<?php
+include_once '../php/database/courses.php';
+$active = Semester::listActive();
+$inactive = Semester::listInactive();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,16 +23,12 @@
                 <th>Semester</th>
                 <th>Code</th>
             </tr>
-            <?php
-            $active = Semester::listActive();
-            foreach ($active as $semester)
-            {
-                echo '<tr class="semester-item" onclick="window.location=\'/admin/request-list.php?semester=' . $semester->getCode() . '\'">';
-                echo '<td>' . $semester->getDescription() . '</td>';
-                echo '<td>' . $semester->getCode() . '</td>';
-                echo '</tr>';
-            }
-            ?>
+            <?php foreach ($active as $semester): ?>
+            <tr class="semester-item" onclick="window.location='/admin/request-list.php?semester=<?= $semester->getCode() ?>">
+                <td><?= $semester->getDescription() ?></td>
+                <td><?= $semester->getCode() ?></td>
+            </tr>
+            <?php endforeach; ?>
         </table>
     </div>
 
@@ -39,16 +39,12 @@
                 <th>Semester</th>
                 <th>Code</th>
             </tr>
-            <?php
-            $inactive = Semester::listInactive();
-            foreach ($inactive as $semester)
-            {
-                echo '<tr class="semester-item" onclick="window.location=\'/admin/request-list.php?semester=' . $semester->getCode() . '\'">';
-                echo '<td>' . $semester->getDescription() . '</td>';
-                echo '<td>' . $semester->getCode() . '</td>';
-                echo '</tr>';
-            }
-            ?>
+            <?php foreach ($inactive as $semester): ?>
+                <tr class="semester-item" onclick="window.location='/admin/request-list.php?semester=<?= $semester->getCode() ?>">
+                    <td><?= $semester->getDescription() ?></td>
+                    <td><?= $semester->getCode() ?></td>
+                </tr>
+            <?php endforeach; ?>
         </table>
     </div>
 </div>
