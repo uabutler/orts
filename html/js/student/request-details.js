@@ -33,5 +33,5 @@ function courseHandler()
 
 $(function()
 {
-    $("#additional-edit").on("click", courseHandler())
+    $("#additional-edit").on("click", courseHandler);
 })
