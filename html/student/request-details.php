@@ -55,7 +55,7 @@ if (is_null($request))
                 <th style="padding-right:1em">Semester:</th>
                 <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
                 <td rowspan="3">
-                    <a class="edit" id="course-edit"><i class="material-icons" style="color:white">create</i></a>
+                    <button class="edit" id="course-edit"><i class="material-icons" style="color:white">create</i></button>
                 </td>
             </tr>
             <tr>
@@ -84,7 +84,7 @@ if (is_null($request))
                 <th>Reason:</th>
                 <td><?= $request->getReason() ?></td>
                 <td rowspan="2">
-                    <a class="edit" id="additional-edit"><i class="material-icons" style="color:white">create</i></a>
+                    <button class="edit" id="additional-edit"><i class="material-icons" style="color:white">create</i></button>
                 </td>
             </tr>
             <tr>
