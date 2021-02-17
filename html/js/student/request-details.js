@@ -10,7 +10,7 @@ function reasonSelect()
 
 function courseHandler()
 {
-    let element = $("#course-edit-icon");
+    let element = $("#additional-edit-icon");
     if(element.html() === "create")
     {
         element.html("done_outline");
@@ -31,5 +31,5 @@ function courseHandler()
 
 $(function()
 {
-    $("#course-edit").on("click", courseHandler())
+    $("#additional-edit").on("click", courseHandler())
 })
