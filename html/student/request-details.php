@@ -31,7 +31,7 @@ if (is_null($request))
     <table>
         <tr>
             <th>Status:</th>
-            <td id="status_info"><?= $request->getStatusHtml() ?></td>
+            <td><?= $request->getStatusHtml() ?></td>
         </tr>
         <tr>
             <th>Date Modified:</th>
@@ -47,6 +47,27 @@ if (is_null($request))
         </tr>
     </table>
     <h2 class="truman-dark-bg">Course Information</h2>
+    <table>
+        <tr>
+            <th style="padding-right:1em">Semester:</th>
+            <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
+        </tr>
+        <tr>
+            <th>Course:</th>
+            <td>
+                <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
+                <?= $request->getSection()->getCourse()->getCourseNum() ?>
+                <?= $request->getSection()->getSectionNum() ?>:
+                <?= $request->getSection()->getCourse()->getTitle() ?>:
+            </td>
+        </tr>
+        <tr>
+            <th>CRN:</th>
+            <td> <?= $request->getSection()->getCrn() ?>: </td>
+        </tr>
+    </table>
+    <h2 class="truman-dark-bg">Explanation</h2>
+    <textarea readonly><?= $request->getExplanation() ?></textarea>
 </div>
 </body>
 </html>

@@ -1,5 +1,17 @@
+th {
+    text-align: left;
+}
+
 h2 {
     font-family: nexabold, sans-serif;
     color: white;
     padding: 10px
+}
+
+/* Shamelessly stolen from Stack Overflow */
+textarea {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
