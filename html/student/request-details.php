@@ -60,13 +60,17 @@ if (is_null($request))
                 <td>
                     <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
                     <?= $request->getSection()->getCourse()->getCourseNum() ?>
-                    <?= $request->getSection()->getSectionNum() ?>:
+                    <?php
+                        if($request->getSection()->getSectionNum() < 10)
+                            echo'0';
+                        echo $request->getSection()->getSectionNum();
+                    ?>:
                     <?= $request->getSection()->getCourse()->getTitle() ?>
                 </td>
             </tr>
             <tr>
                 <th>CRN:</th>
-                <td> <?= $request->getSection()->getCrn() ?>: </td>
+                <td><?= $request->getSection()->getCrn() ?></td>
             </tr>
         </table>
     </div>
