@@ -102,13 +102,7 @@ $(function ()
     sortTable();
     renderTable();
 
-    $('input[name="datesort"]').on("change", function () {
-        sortTable();
-    });
-    $('input[type="radio"]').on("change", function () {
-        renderTable();
-    });
-    $('input[type="text"]').on("input", function () {
-        renderTable();
-    });
+    $('input[name="datesort"]').on("change", sortTable);
+    $('input[type="radio"]').on("change", renderTable);
+    $('input[type="text"]').on("input", renderTable);
 })

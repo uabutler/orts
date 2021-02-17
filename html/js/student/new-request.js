@@ -111,10 +111,10 @@ $(function ()
         this.value = this.value.replace(/\D/g, '');
     });
 
-    $('#course_num').on("keyup", function () { setSection(); })
-    $('#section').on("keyup", function () { setSection(); })
-    $('#semester').on("change", function () { setSection(); })
-    $('#department').on("change", function () { setSection(); })
+    $('#course_num').on("keyup", setSection);
+    $('#section').on("keyup", setSection);
+    $('#semester').on("change", setSection);
+    $('#department').on("change", setSection);
 
     $('#course_num').on("focusout", function () { setError(validateCourseNum(), "course_num"); })
     $('#section').on("focusout", function () { setError(validateSection(), "section"); })
