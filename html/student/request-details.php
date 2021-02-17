@@ -83,14 +83,14 @@ if (is_null($request))
             <tr>
                 <th>Reason:</th>
                 <td><?= $request->getReason() ?></td>
+                <td rowspan="2">
+                    <a class="edit" id="additional-edit"><i class="material-icons" style="color:white">create</i></a>
+                </td>
             </tr>
             <tr>
                 <th>Explanation:</th>
                 <td><textarea readonly><?= $request->getExplanation() ?></textarea></td>
             </tr>
-            <td rowspan="2">
-                <a class="edit" id="additional-edit"><i class="material-icons" style="color:white">create</i></a>
-            </td>
         </table>
     </div>
 </div>
