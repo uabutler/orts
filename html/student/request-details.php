@@ -27,56 +27,62 @@ if (is_null($request))
 <?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
 <div class="grid-item content content-grid-container">
-    <h2 class="truman-dark-bg">Override Status</h2>
-    <table>
-        <tr>
-            <th>Status:</th>
-            <td><?= $request->getStatusHtml() ?></td>
-        </tr>
-        <tr>
-            <th>Date Modified:</th>
-            <td><?= $request->getLastModified() ?></td>
-        </tr>
-        <tr>
-            <th>Date Received:</th>
-            <td>1970-01-01T00:00:00</td>
-        </tr>
-        <tr>
-            <th style="padding-right:1em">Designated Faculty:</th>
-            <td><?= $request->getFaculty()->getLastName() ?>, <?= $request->getFaculty()->getFirstName() ?></td>
-        </tr>
-    </table>
-    <h2 class="truman-dark-bg">Course Information</h2>
-    <table>
-        <tr>
-            <th style="padding-right:1em">Semester:</th>
-            <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
-        </tr>
-        <tr>
-            <th>Course:</th>
-            <td>
-                <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
-                <?= $request->getSection()->getCourse()->getCourseNum() ?>
-                <?= $request->getSection()->getSectionNum() ?>:
-                <?= $request->getSection()->getCourse()->getTitle() ?>
-            </td>
-        </tr>
-        <tr>
-            <th>CRN:</th>
-            <td> <?= $request->getSection()->getCrn() ?>: </td>
-        </tr>
-    </table>
-    <h2 class="truman-dark-bg">Additional Information</h2>
-    <table>
-        <tr>
-            <th>Reason:</th>
-            <td><?= $request->getReason() ?></td>
-        </tr>
-        <tr>
-            <th>Explanation:</th>
-            <td><textarea readonly><?= $request->getExplanation() ?></textarea></td>
-        </tr>
-    </table>
+    <div class="orstatus">
+        <h2 class="truman-dark-bg">Override Status</h2>
+        <table>
+            <tr>
+                <th>Status:</th>
+                <td><?= $request->getStatusHtml() ?></td>
+            </tr>
+            <tr>
+                <th>Date Modified:</th>
+                <td><?= $request->getLastModified() ?></td>
+            </tr>
+            <tr>
+                <th>Date Received:</th>
+                <td>1970-01-01T00:00:00</td>
+            </tr>
+            <tr>
+                <th style="padding-right:1em">Designated Faculty:</th>
+                <td><?= $request->getFaculty()->getLastName() ?>, <?= $request->getFaculty()->getFirstName() ?></td>
+            </tr>
+        </table>
+    </div>
+    <div class="courseinfo">
+        <h2 class="truman-dark-bg">Course Information</h2>
+        <table>
+            <tr>
+                <th style="padding-right:1em">Semester:</th>
+                <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
+            </tr>
+            <tr>
+                <th>Course:</th>
+                <td>
+                    <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
+                    <?= $request->getSection()->getCourse()->getCourseNum() ?>
+                    <?= $request->getSection()->getSectionNum() ?>:
+                    <?= $request->getSection()->getCourse()->getTitle() ?>
+                </td>
+            </tr>
+            <tr>
+                <th>CRN:</th>
+                <td> <?= $request->getSection()->getCrn() ?>: </td>
+            </tr>
+        </table>
+    </div>
+    <div class="additional">
+        <h2 class="truman-dark-bg">Additional Information</h2>
+        <table>
+            <tr>
+                <th>Reason:</th>
+                <td><?= $request->getReason() ?></td>
+            </tr>
+            <tr>
+                <th>Explanation:</th>
+                <td><textarea readonly><?= $request->getExplanation() ?></textarea></td>
+            </tr>
+        </table>
+    </div>
 </div>
 </body>
 </html>
