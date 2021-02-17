@@ -58,7 +58,7 @@ if (is_null($request))
                 <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
                 <?= $request->getSection()->getCourse()->getCourseNum() ?>
                 <?= $request->getSection()->getSectionNum() ?>:
-                <?= $request->getSection()->getCourse()->getTitle() ?>:
+                <?= $request->getSection()->getCourse()->getTitle() ?>
             </td>
         </tr>
         <tr>
@@ -66,8 +66,17 @@ if (is_null($request))
             <td> <?= $request->getSection()->getCrn() ?>: </td>
         </tr>
     </table>
-    <h2 class="truman-dark-bg">Explanation</h2>
-    <textarea readonly><?= $request->getExplanation() ?></textarea>
+    <h2 class="truman-dark-bg">Additional Information</h2>
+    <table>
+        <tr>
+            <th>Reason:</th>
+            <td><?= $request->getReason() ?></td>
+        </tr>
+        <tr>
+            <th>Explanation:</th>
+            <td><textarea readonly><?= $request->getExplanation() ?></textarea></td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
