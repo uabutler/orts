@@ -15,7 +15,28 @@ function reasonSelect()
     return out;
 }
 
-function courseHandler()
+function changeAdditional(reason, explanation)
+{
+    let data = "id=" + REQUEST_ID + "&";
+    data += "reason=" + encodeURIComponent(reason) + "&";
+    data += "explanation=" + encodeURIComponent(explanation);
+
+    $('#additional-edit').prop("disabled", true);
+    $('#course-edit').prop("disabled", true);
+
+    $.ajax({
+        url: '/api/request.php',
+        type: 'PUT',
+        data: data,
+        success: function (data)
+        {
+            $('#course-edit').prop("disabled", false);
+            $('#additional-edit').prop("disabled", false);
+        }
+    });
+}
+
+function additionalHandler()
 {
     let element = $("#additional-edit-icon");
     if(element.html() === "create")
@@ -33,10 +54,12 @@ function courseHandler()
         element.html("create");
         $('#reason-cell').html(reason);
         $('#explanation').attr("readonly", true);
+
+        changeAdditional(reason, explanation);
     }
 }
 
 $(function()
 {
-    $("#additional-edit").on("click", courseHandler);
+    $("#additional-edit").on("click", additionalHandler);
 })
