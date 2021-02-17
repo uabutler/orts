@@ -30,6 +30,20 @@ h2 {
     padding: 10px
 }
 
+.edit:hover {
+    color: black;
+}
+
+.edit {
+    background-color: #ddd;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+    float:right;
+    margin-top: 16px
+}
+
 /* Shamelessly stolen from Stack Overflow */
 textarea {
     width: 100%;

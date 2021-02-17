@@ -54,6 +54,9 @@ if (is_null($request))
             <tr>
                 <th style="padding-right:1em">Semester:</th>
                 <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
+                <td rowspan="3">
+                    <a class="edit" id="course-edit"><i class="material-icons" style="color:white">create</i></a>
+                </td>
             </tr>
             <tr>
                 <th>Course:</th>
@@ -85,6 +88,9 @@ if (is_null($request))
                 <th>Explanation:</th>
                 <td><textarea readonly><?= $request->getExplanation() ?></textarea></td>
             </tr>
+            <td rowspan="2">
+                <a class="edit" id="additional-edit"><i class="material-icons" style="color:white">create</i></a>
+            </td>
         </table>
     </div>
 </div>
