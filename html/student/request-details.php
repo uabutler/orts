@@ -17,7 +17,12 @@ if (is_null($request))
     <link rel="stylesheet" href="/css/student/request-details.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
-        REQUEST_STATUS = "<?= $request->getStatus() ?>";
+        REQUESTS =
+            [
+                <?php foreach (Request::listReasons() as $reason): ?>
+                    '<?= $reason ?>',
+                <?php endforeach; ?>
+            ]
     </script>
     <script src="/js/student/request-details.js"></script>
 </head>
@@ -55,7 +60,7 @@ if (is_null($request))
                 <th style="padding-right:1em">Semester:</th>
                 <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
                 <td rowspan="3">
-                    <button class="edit" id="course-edit"><i class="material-icons" style="color:white">create</i></button>
+                    <button class="edit" id="course-edit"><i class="material-icons" id="course-edit-icon">create</i></button>
                 </td>
             </tr>
             <tr>
@@ -82,14 +87,14 @@ if (is_null($request))
         <table>
             <tr>
                 <th>Reason:</th>
-                <td><?= $request->getReason() ?></td>
+                <td id="reason-cell"><?= $request->getReason() ?></td>
                 <td rowspan="2">
-                    <button class="edit" id="additional-edit"><i class="material-icons" style="color:white">create</i></button>
+                    <button class="edit" id="additional-edit"><i class="material-icons" id="additional-edit-icon">create</i></button>
                 </td>
             </tr>
             <tr>
                 <th>Explanation:</th>
-                <td><textarea readonly><?= $request->getExplanation() ?></textarea></td>
+                <td><textarea id="explanation" readonly><?= $request->getExplanation() ?></textarea></td>
             </tr>
         </table>
     </div>
