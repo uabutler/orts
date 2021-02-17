@@ -2,7 +2,7 @@ function reasonSelect()
 {
     let out = '<select class="select" id="reason">';
 
-    let first = $('#reason').val();
+    let first = $('#reason-cell').html();
     out += `<option value="${first}">${first}</option>`;
     for(let i = 0; i < REASONS.length; i++)
     {
