@@ -17,7 +17,7 @@ if (is_null($request))
     <link rel="stylesheet" href="/css/student/request-details.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
-        REQUESTS =
+        REASONS =
             [
                 <?php foreach (Request::listReasons() as $reason): ?>
                     '<?= $reason ?>',

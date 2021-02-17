@@ -2,10 +2,12 @@ function reasonSelect()
 {
     let out = '<select class="select" id="reason">';
 
-    for(let i = 0; i < REQUESTS.length; i++)
-        out += `<option value="${REQUESTS[i]}"><?= $reason ?></option>`;
+    for(let i = 0; i < REASONS.length; i++)
+        out += `<option value="${REASONS[i]}"><?= $reason ?></option>`;
 
     out += '</select>';
+
+    return out;
 }
 
 function courseHandler()
