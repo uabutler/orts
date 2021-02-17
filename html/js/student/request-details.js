@@ -2,8 +2,13 @@ function reasonSelect()
 {
     let out = '<select class="select" id="reason">';
 
+    let first = $('#reason').val();
+    out += `<option value="${first}">${first}</option>`;
     for(let i = 0; i < REASONS.length; i++)
-        out += `<option value="${REASONS[i]}">${REASONS[i]}</option>`;
+    {
+        if(REASONS[i] !== first)
+            out += `<option value="${REASONS[i]}">${REASONS[i]}</option>`;
+    }
 
     out += '</select>';
 
@@ -26,7 +31,7 @@ function courseHandler()
         let explanation = $('#explanation').val();
 
         element.html("create");
-        $('#reason-cell').html(getStatusHtml(reason));
+        $('#reason-cell').html(reason);
         $('#explanation').attr("readonly", true);
     }
 }

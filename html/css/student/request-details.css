@@ -48,11 +48,7 @@ textarea {
     box-sizing: border-box;
 }
 
-table {
-    width: 100%;
-}
-
-td {
+table, select, td {
     width: 100%;
 }
 
