@@ -395,7 +395,7 @@ class Student implements JsonSerializable
 
         // Build the student and return the object
         return new Student($data['email'], $data['first_name'], $data['last_name'], $data['banner_id'],
-            $data['grad_month'], $data['standing'], Major::buildArray($majors), Major::buildArray($minors),
+            $data['grad_month'], $data['standing'], Major::buildArray($majors), Minor::buildArray($minors),
             $data['last_active_sem'] ? Semester::getById($data['last_active_sem']) : null, $data['id']);
     }
 
