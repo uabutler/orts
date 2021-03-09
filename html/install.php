@@ -4,6 +4,9 @@ require_once __DIR__ . '/php/database/tables.php';
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
+if(file_exists('../conf/app.ini'))
+    header("Location: /index.php");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
     $installing = true;
@@ -41,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     else
         array_push($missing, 'cas_host');
 
-    if(isset($_POST['cas_port']))
-        $config .= 'port = "' . $_POST['cas_port'] . "\"\n";
+    if(isset($_POST['cas_port']) && ctype_digit($_POST['cas_port']))
+        $config .= 'port = ' . $_POST['cas_port'] . "\n";
     else
         array_push($missing, 'cas_port');
 
@@ -307,7 +310,6 @@ function populateFaculty($pdo)
     $email = $_POST['email'];
     $first = $_POST['first_name'];
     $last = $_POST['last_name'];
-    echo "&emsp;$email, $first, $last<br>";
     $smt = $pdo->exec("INSERT INTO $faculty_tbl (email, first_name, last_name) VALUES ('$email', '$first', '$last')");
 }
 
@@ -412,7 +414,7 @@ function populateDepartments($pdo)
             </tr>
             <tr>
                 <td>Port:</td>
-                <td><input required class="numeric" type="text" name="cas_port" value="8443"></td>
+                <td><input required type="number" name="cas_port" value="8443"></td>
             </tr>
             <tr>
                 <td>Context:</td>
