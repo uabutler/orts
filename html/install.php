@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     else
         array_push($missing, 'db_pw');
 
-    $config .= "\n[CAS}\n";
+    $config .= "\n[CAS]\n";
     if(isset($_POST['cas_version']))
         $config .= 'version = "' . $_POST['cas_version'] . "\"\n";
     else
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     else
         array_push($missing, 'cas_cert_path');
 
-    $config .= "\n[SERVER}\n";
+    $config .= "\n[SERVER]\n";
     if(isset($_POST['name']))
         $config .= 'name = "' . $_POST['name'] . "\"\n";
     else
@@ -111,7 +111,7 @@ function dropTables($pdo)
 function createStudentTbl($pdo)
 {
     global $student_tbl, $semester_tbl;
-    echo "  $student_tbl<br>";
+    echo "&emsp;$student_tbl<br>";
     $pdo->exec("CREATE TABLE $student_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     email varchar(64) NOT NULL UNIQUE,
@@ -128,7 +128,7 @@ function createStudentTbl($pdo)
 function createMajorTbl($pdo)
 {
     global $major_tbl;
-    echo "  $major_tbl<br>";
+    echo "&emsp;$major_tbl<br>";
     $pdo->exec("CREATE TABLE $major_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     major varchar(255) NOT NULL UNIQUE,
@@ -138,7 +138,7 @@ function createMajorTbl($pdo)
 function createMinorTbl($pdo)
 {
     global $minor_tbl;
-    echo "  $minor_tbl<br>";
+    echo "&emsp;$minor_tbl<br>";
     $pdo->exec("CREATE TABLE $minor_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     minor varchar(255) NOT NULL UNIQUE,
@@ -149,7 +149,7 @@ function createMinorTbl($pdo)
 function createStudentMajorTbl($pdo)
 {
     global $student_major_tbl, $student_tbl, $major_tbl;
-    echo "  $student_major_tbl<br>";
+    echo "&emsp;$student_major_tbl<br>";
     $pdo->exec("CREATE TABLE $student_major_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     student_id int NOT NULL,
@@ -162,7 +162,7 @@ function createStudentMajorTbl($pdo)
 function createStudentMinorTbl($pdo)
 {
     global $student_minor_tbl, $student_tbl, $minor_tbl;
-    echo "  $student_minor_tbl<br>";
+    echo "&emsp;$student_minor_tbl<br>";
     $pdo->exec("CREATE TABLE $student_minor_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     student_id int NOT NULL,
@@ -176,7 +176,7 @@ function createStudentMinorTbl($pdo)
 function createFacultyTbl($pdo)
 {
     global $faculty_tbl;
-    echo "  $faculty_tbl<br>";
+    echo "&emsp;$faculty_tbl<br>";
     $pdo->exec("CREATE TABLE $faculty_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     email varchar(64) NOT NULL UNIQUE,
@@ -188,7 +188,7 @@ function createFacultyTbl($pdo)
 function createDepartmentTbl($pdo)
 {
     global $department_tbl;
-    echo "  $department_tbl<br>";
+    echo "&emsp;$department_tbl<br>";
     $pdo->exec("CREATE TABLE $department_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     department varchar(4) NOT NULL UNIQUE,
@@ -198,7 +198,7 @@ function createDepartmentTbl($pdo)
 function createCourseTbl($pdo)
 {
     global $course_tbl, $department_tbl;
-    echo "  $course_tbl<br>";
+    echo "&emsp;$course_tbl<br>";
     $pdo->exec("CREATE TABLE $course_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     department_id int NOT NULL,
@@ -212,7 +212,7 @@ function createCourseTbl($pdo)
 function createSemesterTbl($pdo)
 {
     global $semester_tbl;
-    echo "  $semester_tbl<br>";
+    echo "&emsp;$semester_tbl<br>";
     $pdo->exec("CREATE TABLE $semester_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     semester varchar(6) NOT NULL UNIQUE,
@@ -223,7 +223,7 @@ function createSemesterTbl($pdo)
 function createSectionTbl($pdo)
 {
     global $section_tbl, $course_tbl, $semester_tbl;
-    echo "  $section_tbl<br>";
+    echo "&emsp;$section_tbl<br>";
     $pdo->exec("CREATE TABLE $section_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     course_id int NOT NULL,
@@ -241,7 +241,7 @@ function createSectionTbl($pdo)
 function createRequestTbl($pdo)
 {
     global $request_tbl, $student_tbl, $section_tbl, $faculty_tbl;
-    echo "  $request_tbl<br>";
+    echo "&emsp;$request_tbl<br>";
     $pdo->exec("CREATE TABLE $request_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     student_id int NOT NULL,
@@ -263,7 +263,7 @@ function createRequestTbl($pdo)
 function createAttachmentTbl($pdo)
 {
     global $attachment_tbl, $request_tbl;
-    echo "  $attachment_tbl<br>";
+    echo "&emsp;$attachment_tbl<br>";
     $pdo->exec("CREATE TABLE $attachment_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     request_id int NOT NULL,
@@ -276,7 +276,7 @@ function createAttachmentTbl($pdo)
 function createNotificationTbl($pdo)
 {
     global $notification_tbl;
-    echo "  $notification_tbl<br>";
+    echo "&emsp;$notification_tbl<br>";
     $pdo->exec("CREATE TABLE $notification_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     sender_email varchar(64) NOT NULL,
@@ -289,25 +289,25 @@ function createNotificationTbl($pdo)
 function createStudentIdx($pdo)
 {
     global $student_tbl;
-    echo "  $student_tbl<br>";
+    echo "&emsp;$student_tbl<br>";
     $pdo->exec("CREATE INDEX email_inx ON $student_tbl (email)");
 }
 
 function createFacultyIdx($pdo)
 {
     global $faculty_tbl;
-    echo "  $faculty_tbl<br>";
+    echo "&emsp;$faculty_tbl<br>";
     $pdo->exec("CREATE INDEX email_inx ON $faculty_tbl (email)");
 }
 
 function populateFaculty($pdo)
 {
     global $faculty_tbl;
-    echo "  $faculty_tbl<br>";
+    echo "&emsp;$faculty_tbl<br>";
     $email = $_POST['email'];
     $first = $_POST['first_name'];
     $last = $_POST['last_name'];
-    echo "  $email, $first, $last<br>";
+    echo "&emsp;$email, $first, $last<br>";
     $smt = $pdo->exec("INSERT INTO $faculty_tbl (email, first_name, last_name) VALUES ('$email', '$first', '$last')");
 }
 
@@ -315,7 +315,7 @@ function populateDepartments($pdo)
 {
     global $departments, $department_tbl;
     $departments = implode(", ", preg_filter('/^/', "('", preg_filter('/$/', "')", explode(",", $_POST['departments']))));
-    echo "  $department_tbl<br>";
+    echo "&emsp;$department_tbl<br>";
     $smt = $pdo->exec("INSERT INTO $department_tbl (department) VALUES $departments");
 }
 ?>
