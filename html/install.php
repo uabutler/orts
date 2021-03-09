@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     else
         array_push($missing, 'cas_cert_path');
 
-    $config .= "\n[SERVER]\n";
+    $config .= "\n[Server]\n";
     if(isset($_POST['name']))
         $config .= 'name = "' . $_POST['name'] . "\"\n";
     else
@@ -422,7 +422,7 @@ function populateDepartments($pdo)
             </tr>
             <tr>
                 <td>Certificate:</td>
-                <td><input required type="text" name="cas_cert_path" value="/var/www/orts/html/cert/truman.pem"></td>
+                <td><input required type="text" name="cas_cert_path" value="/var/www/orts/html/assets/cert/truman.pem"></td>
             </tr>
         </table>
         <h2 class="truman-dark-bg">Defaults</h2>
