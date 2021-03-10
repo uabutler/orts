@@ -23,7 +23,7 @@ $semesters = Semester::listActive();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>ORTS - New Request</title>
+    <title>ORTS - New Student</title>
     <?php require '../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
     <script>

@@ -1,0 +1,69 @@
+.content-grid-container {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    padding: 0;
+}
+
+table {
+    width: 100%;
+}
+
+input {
+    width: calc(100% - 20px);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table td, table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    color: black;
+    background-color: lightgrey;
+}
+
+table button {
+    background-color: grey;
+    width: 100%;
+    white-space: nowrap;
+}
+
+#overlay {
+    display: none;
+    position: fixed; /* Sit on top of the page content */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 1; /* Specify a stack order in case you're using a different order for other elements */
+}
+
+#popup {
+    width: 75%;
+    height: calc(100% - 100px);
+    background-color: white;
+    margin: 50px auto auto;
+    padding: 10px;
+}
+
+#entries {
+    width: calc(100% - 20px);
+    height: 75%;
+    resize: none;
+}
+
+.ol-btn {
+    margin: 10px;
+}

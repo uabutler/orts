@@ -4,8 +4,10 @@ require_once __DIR__ . '/php/database/tables.php';
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
+/*
 if(file_exists('../conf/app.ini'))
     header("Location: /index.php");
+*/
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
@@ -310,7 +312,7 @@ function populateFaculty($pdo)
     $email = $_POST['email'];
     $first = $_POST['first_name'];
     $last = $_POST['last_name'];
-    $smt = $pdo->exec("INSERT INTO $faculty_tbl (email, first_name, last_name) VALUES ('$email', '$first', '$last')");
+    $pdo->exec("INSERT INTO $faculty_tbl (email, first_name, last_name) VALUES ('$email', '$first', '$last')");
 }
 
 function populateDepartments($pdo)
@@ -318,7 +320,16 @@ function populateDepartments($pdo)
     global $departments, $department_tbl;
     $departments = implode(", ", preg_filter('/^/', "('", preg_filter('/$/', "')", explode(",", $_POST['departments']))));
     echo "&emsp;$department_tbl<br>";
-    $smt = $pdo->exec("INSERT INTO $department_tbl (department) VALUES $departments");
+    $pdo->exec("INSERT INTO $department_tbl (department) VALUES $departments");
+}
+
+function populateSemester($pdo)
+{
+    global $semester_tbl;
+    echo "  $semester_tbl\n";
+    $code = $_POST['semester_code'];
+    $desc = $_POST['semester_name'];
+    $pdo->exec("INSERT INTO $semester_tbl (semester, description) VALUES ('$code', '$desc')");
 }
 ?>
 <!DOCTYPE html>
@@ -499,7 +510,8 @@ function populateDepartments($pdo)
 
     <?php
     populateDepartments($pdo);
-    populateFaculty($pdo, $_POST['email'], $_POST['first_name'], $_POST['last_name']);
+    populateFaculty($pdo);
+    populateSemester($pdo);
     ?>
 
     done<br><br>

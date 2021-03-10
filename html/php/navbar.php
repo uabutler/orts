@@ -55,6 +55,7 @@ function facultyNavbar($active)
         (
             "Current Semester" => "/admin/request-list.php",
             "Archive" => "/admin/archive.php",
+            "Administration" => "/admin/administration.php",
         ),
         array
         (

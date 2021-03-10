@@ -76,6 +76,25 @@ class Faculty implements JsonSerializable
         $this->id = $id;
     }
 
+    public static function list(): array
+    {
+        global $faculty_tbl;
+        $pdo = connectDB();
+
+        $smt = $pdo->query("SELECT * FROM $faculty_tbl");
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$data) return [];
+
+        $out = [];
+
+        foreach ($data as $row)
+            array_push($out, new Faculty($row['email'], $row['first_name'], $row['last_name'], $row['id']));
+
+        return $out;
+    }
+
     private function insertDB()
     {
         global $faculty_tbl;
