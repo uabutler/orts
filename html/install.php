@@ -443,7 +443,10 @@ function populateSemester($pdo)
             </colgroup>
             <tr>
                 <td>Admin Email:</td>
-                <td><input required type="text" name="email"></td>
+                <td class="input-group suffix">
+                    <input required class="email-input" type="text" name="email">
+                    <span class="input-group-addon ">@truman.edu</span>
+                </td>
             </tr>
             <tr>
                 <td>Admin First Name:</td>

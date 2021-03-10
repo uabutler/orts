@@ -16,6 +16,11 @@ $(function ()
    $('#cancel').on("click", function () { $("#overlay").css("display", "none"); });
 
    $('#add-programs').on("click", addPrograms);
+
+   $('.major-del').on("click", function ()
+   {
+      console.log($(this).val());
+   })
 });
 
 function addPrograms()

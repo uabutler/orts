@@ -41,8 +41,8 @@ $minors = Minor::list();
             </tr>
             <?php foreach ($active_semesters as $semester): ?>
             <tr>
-                <td><?= $semester->getCode() ?></td>
-                <td><?= $semester->getDescription() ?></td>
+                <td class="clickable-row"><?= $semester->getCode() ?></td>
+                <td class="clickable-row"><?= $semester->getDescription() ?></td>
                 <td><button id="semester">Archive</button></td>
             </tr>
             <?php endforeach; ?>
@@ -93,7 +93,7 @@ $minors = Minor::list();
             <?php foreach ($majors as $major): ?>
             <tr>
                 <td><?= $major ?></td>
-                <td><button id="semester">Delete</button></td>
+                <td><button class="major-del" value="<?= $major ?>">Delete</button></td>
             </tr>
             <?php endforeach; ?>
         </table>

@@ -118,3 +118,6 @@ button {
   font-size: 15px;
 }
 
+.clickable-row {
+  cursor: pointer;
+}
