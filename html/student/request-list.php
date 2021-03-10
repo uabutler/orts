@@ -28,7 +28,7 @@ if (is_null($requests))
 <?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
 <div class="grid-item content">
-    <h2>Override Requests</h2>
+    <h1 id="page-title">Override Requests</h1>
     <!-- Table Created By: Thao Phung -->
     <table id="request-table">
         <colgroup>

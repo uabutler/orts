@@ -39,7 +39,7 @@ if (is_null($requests))
 <?php require_once '../php/navbar.php'; facultyNavbar(!$archive ? "Current Semester" : "Archive"); ?>
 
 <div class="grid-item content">
-    <h2>Override Requests<?php if ($archive) echo ' - Archive for ' . $semester->getDescription(); ?></h2>
+    <h1 id="page-title">Override Requests<?php if ($archive) echo ' - Archive for ' . $semester->getDescription(); ?></h1>
     <!-- Table based on one created by Thao Phung. This html just creates the top. The body is done in JS -->
     <table id="request-table">
         <colgroup>
@@ -57,7 +57,7 @@ if (is_null($requests))
             <tr>
                 <td class="border-none">
                     <div class="dropdown">
-                        <button class="dropbtn" style="padding-right:0px;padding-left: 0px;">Bulk</button>
+                        <button class="dropbtn">Bulk</button>
                         <div class="dropdown-content">
                             <a href="#">Approve</a>
                             <a href="#">Deny</a>
@@ -128,7 +128,7 @@ if (is_null($requests))
                 </td>
                 <td class="border-none">
                     <div class="dropdown">
-                        <button class="dropbtn" style="padding-right:0px;padding-left: 0px;">Filter</button>
+                        <button class="dropbtn">Filter</button>
                         <div class="dropdown-content">
                             <input type="radio" id="all_dept" name="dept" value="all_dept" style="margin:10px;"
                                    class="default">
