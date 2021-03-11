@@ -24,6 +24,7 @@ $semesters = Semester::listActive();
     <script>
         STUDENT_ID = <?= $student_id ?>;
     </script>
+    <script src="/js/student/course-form.js"></script>
     <script src="/js/student/new-request.js"></script>
 </head>
 

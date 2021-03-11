@@ -17,8 +17,8 @@ body {
   display: grid;
   grid-gap: 0;
   grid-template-columns: 200px 1fr 200px;
-  padding: 0;
   margin: 0;
+  padding: 0 0 50px;
 }
 
 .grid-item {
@@ -60,6 +60,7 @@ body {
 .content {
   grid-column: 2;
   grid-row: 3;
+  padding-bottom: 50px;
 }
 
 #logo {

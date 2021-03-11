@@ -45,6 +45,45 @@ function changeAdditional()
     });
 }
 
+function changeCourse()
+{
+    let semester = $('#semester');
+    let crn = $('#crn');
+
+    let data = "id=" + REQUEST_ID + "&";
+    data += "semester=" + encodeURIComponent(semester.val()) + "&";
+    data += "crn=" + encodeURIComponent(crn.val());
+
+    inputEnable(false, false);
+
+    $.ajax({
+        url: '/api/request.php',
+        type: 'PUT',
+        data: data,
+        success: function (data)
+        {
+            $('#semester-display').html(semester.html());
+
+            let section = $('#section').val();
+            if (section.length)
+                section = '0' + section;
+            let course = $('#department').val() + " ";
+            course += $('#course_num').val() + " ";
+            course += section + ": ";
+            course += $('#title').val();
+
+            $('#course-display').html(course);
+
+            $('#crn-display').html($('#crn').val());
+
+            $('div.course-edit').css("display", "none");
+            $('div.course-display').css("display", "initial");
+
+            inputEnable(true, false);
+        }
+    });
+}
+
 function createHandlers(edit, display, cancel)
 {
     $('button.' + edit).on("click", function ()
@@ -63,10 +102,24 @@ function createHandlers(edit, display, cancel)
 
 $(function()
 {
+    $(document).on("input", ".numeric", function ()
+    {
+        this.value = this.value.replace(/\D/g, '');
+    });
+
     createHandlers("course-edit", "course-display", "course-cancel");
     createHandlers("additional-edit", "additional-display", "additional-cancel");
+
+    $('#course_num').on("keyup", setSection);
+    $('#section').on("keyup", setSection);
+    $('#semester').on("change", setSection);
+    $('#department').on("change", setSection);
+
+    $('#course_num').on("focusout", function () { setError(validateCourseNum(), "course_num"); })
+    $('#section').on("focusout", function () { setError(validateSection(), "section"); })
 
     $('#reason-cell').html(reasonSelect());
 
     $('.additional-submit').on("click", changeAdditional)
+    $('.course-submit').on("click", changeCourse);
 })

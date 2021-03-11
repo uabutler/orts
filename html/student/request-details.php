@@ -8,6 +8,9 @@ else
 
 if (is_null($request))
     include '../error/error400.php';
+
+$departments = Department::list();
+$semesters = Semester::listActive();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +28,7 @@ if (is_null($request))
             ];
         CURRENT_REASON = "<?= $request->getReason(); ?>";
     </script>
+    <script src="/js/student/course-form.js"></script>
     <script src="/js/student/request-details.js"></script>
 </head>
 
@@ -60,19 +64,19 @@ if (is_null($request))
             <table>
                 <tr>
                     <th style="padding-right:1em">Semester:</th>
-                    <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
+                    <td id="semester-display"><?= $request->getSection()->getSemester()->getDescription() ?></td>
                     <td rowspan="3">
                         <button class="edit course-edit"><i class="material-icons">create</i></button>
                     </td>
                 </tr>
                 <tr>
                     <th>Course:</th>
-                    <td>
+                    <td id="course-display">
                         <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
                         <?= $request->getSection()->getCourse()->getCourseNum() ?>
                         <?php
                         if($request->getSection()->getSectionNum() < 10)
-                            echo'0';
+                            echo '0';
                         echo $request->getSection()->getSectionNum();
                         ?>:
                         <?= $request->getSection()->getCourse()->getTitle() ?>
@@ -80,11 +84,59 @@ if (is_null($request))
                 </tr>
                 <tr>
                     <th>CRN:</th>
-                    <td><?= $request->getSection()->getCrn() ?></td>
+                    <td id="crn-display"><?= $request->getSection()->getCrn() ?></td>
                 </tr>
             </table>
         </div>
         <div class="edit course-edit">
+            <table style="width: 100%">
+                <colgroup>
+                    <col>
+                    <col style="width: 100%;">
+                </colgroup>
+                <tr>
+                    <th>Semester:</th>
+                    <td>
+                        <select class="select" id="semester">
+                            <option value="<?= $request->getSection()->getSemester()->getCode() ?>"><?= $request->getSection()->getSemester()->getDescription() ?></option>
+                            <?php foreach ($semesters as $semester): ?>
+                                <?php if ($semester->getCode() !== $request->getSection()->getSemester()->getCode()): ?>
+                                    <option value="<?= $semester->getCode() ?>"><?= $semester->getDescription() ?></option>
+                                <?php endif;?>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Course Dept:</th>
+                    <td>
+                        <select class="select" id="department">
+                            <option value="<?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>"><?= $request->getSection()->getCourse()->getDepartment()->getDept() ?></option>
+                            <?php foreach ($departments as $department): ?>
+                                <?php if ($department !== $request->getSection()->getCourse()->getDepartment()->getDept()): ?>
+                                    <option value="<?= $department ?>"><?= $department ?></option>
+                                <?php endif;?>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Course Num:</th>
+                    <td><input class="numeric" type="text" placeholder="101" id="course_num" value="<?= $request->getSection()->getCourse()->getCourseNum() ?>"></td>
+                </tr>
+                <tr>
+                    <th>Section:</th>
+                    <td><input class="numeric" type="text" placeholder="01" id="section" value="<?= $request->getSection()->getSectionNum() ?>"></td>
+                </tr>
+                <tr>
+                    <th>Title:</th>
+                    <td><input type="text" id="title" readonly value="<?= $request->getSection()->getCourse()->getTitle() ?>"></td>
+                </tr>
+                <tr>
+                    <th>CRN:</th>
+                    <td><input type="text" id="crn" readonly value="<?= $request->getSection()->getCrn() ?>"></td>
+                </tr>
+            </table>
             <button class="submit course-submit">Submit</button>
             <button class="cancel course-cancel">Cancel</button>
         </div>

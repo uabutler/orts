@@ -46,14 +46,20 @@ button.edit:hover {
 }
 
 /* Shamelessly stolen from Stack Overflow */
-textarea {
+textarea, select, input {
     width: 100%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
-table, select, td {
+.error {
+    outline: none;
+    border-color: #ff4d61;
+    box-shadow: 0 0 5px #ff4d61;
+}
+
+table, td {
     width: 100%;
 }
 
