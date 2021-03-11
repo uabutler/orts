@@ -17,6 +17,9 @@ function reasonSelect()
 
 function changeAdditional()
 {
+    if(!validateExplanation())
+        return false;
+
     let reason = $('#reason');
     let explanation = $('#explanation');
 
@@ -47,6 +50,9 @@ function changeAdditional()
 
 function changeCourse()
 {
+    if (!validateCrn())
+        return false;
+
     let semester = $('#semester');
     let crn = $('#crn');
 
