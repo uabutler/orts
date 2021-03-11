@@ -31,13 +31,18 @@ h2 {
 }
 
 .edit {
-    background-color: #ddd;
-    color: white;
+    background: none;
+    color: grey;
     text-decoration: none;
     display: inline-block;
     padding: 4px 8px;
     float:right;
     margin-top: 16px
+}
+
+.edit:hover {
+    background: none;
+    color: black;
 }
 
 /* Shamelessly stolen from Stack Overflow */

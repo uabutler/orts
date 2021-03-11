@@ -29,12 +29,13 @@ function addPrograms()
    {
       $("#overlay").css("display", "none");
       // TODO: Display new majors in table
+      $('#entries').val("");
    })
-    .fail(function(response)
-    {
-       console.log("Could not add request");
-       console.log(MODE + $('#entries').val());
-       console.log(response)
-       // TODO: Display error to user
-    });
+   .fail(function(response)
+   {
+      console.log("Could not add request");
+      console.log(MODE + $('#entries').val());
+      console.log(response)
+      // TODO: Display error to user
+   });
 }

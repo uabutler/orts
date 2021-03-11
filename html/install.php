@@ -4,10 +4,8 @@ require_once __DIR__ . '/php/database/tables.php';
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-/*
 if(file_exists('../conf/app.ini'))
     header("Location: /index.php");
-*/
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
