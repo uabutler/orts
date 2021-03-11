@@ -123,7 +123,7 @@ $(function()
 
     $('#course_num').on("focusout", function () { setError(validateCourseNum(), "course_num"); })
     $('#section').on("focusout", function () { setError(validateSection(), "section"); })
-    $('#explanation').on("focusout", function () { setError(validateExplanation(), "section"); })
+    $('#explanation').on("focusout", function () { setError(validateExplanation(), "explanation"); })
 
     $('#reason-cell').html(reasonSelect());
 
