@@ -2,7 +2,7 @@ function reasonSelect()
 {
     let out = '<select class="select" id="reason">';
 
-    let first = $('#reason-cell').html();
+    let first = CURRENT_REASON;
     out += `<option value="${first}">${first}</option>`;
     for(let i = 0; i < REASONS.length; i++)
     {
@@ -15,14 +15,17 @@ function reasonSelect()
     return out;
 }
 
-function changeAdditional(reason, explanation)
+function changeAdditional()
 {
-    let data = "id=" + REQUEST_ID + "&";
-    data += "reason=" + encodeURIComponent(reason) + "&";
-    data += "explanation=" + encodeURIComponent(explanation);
+    let reason = $('#reason');
+    let explanation = $('#explanation');
 
-    $('#additional-edit').prop("disabled", true);
-    $('#course-edit').prop("disabled", true);
+    let data = "id=" + REQUEST_ID + "&";
+    data += "reason=" + encodeURIComponent(reason.val()) + "&";
+    data += "explanation=" + encodeURIComponent(explanation.val());
+
+    reason.prop("disabled", true);
+    explanation.prop("readonly", true);
 
     $.ajax({
         url: '/api/request.php',
@@ -30,36 +33,40 @@ function changeAdditional(reason, explanation)
         data: data,
         success: function (data)
         {
-            $('#course-edit').prop("disabled", false);
-            $('#additional-edit').prop("disabled", false);
+            $('#reason-display').html(reason.val());
+            $('#explanation-display').html(explanation.val());
+
+            $('div.additional-edit').css("display", "none");
+            $('div.additional-display').css("display", "initial");
+
+            reason.prop("disabled", false);
+            explanation.prop("readonly", false);
         }
     });
 }
 
-function additionalHandler()
+function createHandlers(edit, display, cancel)
 {
-    let element = $("#additional-edit-icon");
-    if(element.html() === "create")
+    $('button.' + edit).on("click", function ()
     {
-        element.html("done_outline");
-        $('#reason-cell').html(reasonSelect());
+        $('div.' + display).css("display", "none");
+        $('div.' + edit).css("display", "initial");
         $('.select').select2();
-        $('#explanation').attr("readonly", false);
-    }
-    else
+    });
+
+    $('button.' + cancel).on("click", function ()
     {
-        let reason = $('#reason').val();
-        let explanation = $('#explanation').val();
-
-        element.html("create");
-        $('#reason-cell').html(reason);
-        $('#explanation').attr("readonly", true);
-
-        changeAdditional(reason, explanation);
-    }
+        $('div.' + edit).css("display", "none");
+        $('div.' + display).css("display", "initial");
+    });
 }
 
 $(function()
 {
-    $("#additional-edit").on("click", additionalHandler);
+    createHandlers("course-edit", "course-display", "course-cancel");
+    createHandlers("additional-edit", "additional-display", "additional-cancel");
+
+    $('#reason-cell').html(reasonSelect());
+
+    $('.additional-submit').on("click", changeAdditional)
 })

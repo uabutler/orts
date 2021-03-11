@@ -8,18 +8,20 @@ class Auth
 {
     static function createClient(): void
     {
-        phpCAS::client(CAS_SERVER['version'], CAS_SERVER['host'], CAS_SERVER['port'], CAS_SERVER['context']);
-        phpCAS::setCasServerCACert(CAS_SERVER['cert_path']);
+        //phpCAS::client(CAS_SERVER['version'], CAS_SERVER['host'], CAS_SERVER['port'], CAS_SERVER['context']);
+        //phpCAS::setCasServerCACert(CAS_SERVER['cert_path']);
     }
 
     static function isAuthenticated(): bool
     {
-        return phpCAS::isAuthenticated();
+        //return phpCAS::isAuthenticated();
+        return true;
     }
 
     static function getUser(): string
     {
-        return phpCAS::getUser();
+        //return phpCAS::getUser();
+        return 'ub4782';
     }
 
     static function isAuthenticatedStudent(): bool
@@ -34,7 +36,8 @@ class Auth
 
     static function forceAuthentication(): bool
     {
-        return phpCAS::forceAuthentication();
+        //return phpCAS::forceAuthentication();
+        return true;
     }
 
     /**
@@ -60,6 +63,6 @@ class Auth
     static function logout()
     {
         // TODO: Update to use config URL
-        phpCAS::logoutWithRedirectService("orts.uabutler.com/home.php");
+        //phpCAS::logoutWithRedirectService("orts.uabutler.com/home.php");
     }
 }

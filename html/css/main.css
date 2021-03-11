@@ -60,7 +60,6 @@ body {
 .content {
   grid-column: 2;
   grid-row: 3;
-  padding-bottom: 50px;
 }
 
 #logo {

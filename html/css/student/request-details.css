@@ -2,20 +2,20 @@
     display: grid;
     grid-gap: 10px;
     grid-template-columns: 1fr 1fr;
-    padding: 0;
+    padding: 0 0 50px;
 }
 
-.orstatus {
+#status {
     grid-column: 1;
     grid-row: 1;
 }
 
-.courseinfo {
+#course {
     grid-column: 2;
     grid-row: 1;
 }
 
-.additional {
+#additional {
     grid-column: 1 / span 2;
     grid-row: 2;
 }
@@ -30,17 +30,17 @@ h2 {
     padding: 10px
 }
 
-.edit {
+button.edit {
     background: none;
     color: grey;
     text-decoration: none;
     display: inline-block;
     padding: 4px 8px;
     float:right;
-    margin-top: 16px
+    cursor: pointer;
 }
 
-.edit:hover {
+button.edit:hover {
     background: none;
     color: black;
 }
@@ -59,4 +59,12 @@ table, select, td {
 
 th {
     white-space: nowrap;
+}
+
+div.edit {
+    display: none;
+}
+
+button.cancel {
+    margin-right: 4px;
 }

@@ -22,7 +22,8 @@ if (is_null($request))
                 <?php foreach (Request::listReasons() as $reason): ?>
                     '<?= $reason ?>',
                 <?php endforeach; ?>
-            ]
+            ];
+        CURRENT_REASON = "<?= $request->getReason(); ?>";
     </script>
     <script src="/js/student/request-details.js"></script>
 </head>
@@ -32,7 +33,7 @@ if (is_null($request))
 <?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
 <div class="grid-item content content-grid-container">
-    <div class="orstatus">
+    <div id="status">
         <h2 class="truman-dark-bg">Override Status</h2>
         <table>
             <tr>
@@ -53,50 +54,72 @@ if (is_null($request))
             </tr>
         </table>
     </div>
-    <div class="courseinfo">
+    <div id="course">
         <h2 class="truman-dark-bg">Course Information</h2>
-        <table>
-            <tr>
-                <th style="padding-right:1em">Semester:</th>
-                <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
-                <td rowspan="3">
-                    <button class="edit" id="course-edit"><i class="material-icons" id="course-edit-icon">create</i></button>
-                </td>
-            </tr>
-            <tr>
-                <th>Course:</th>
-                <td>
-                    <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
-                    <?= $request->getSection()->getCourse()->getCourseNum() ?>
-                    <?php
+        <div class="course-display">
+            <table>
+                <tr>
+                    <th style="padding-right:1em">Semester:</th>
+                    <td id="semester"><?= $request->getSection()->getSemester()->getDescription() ?></td>
+                    <td rowspan="3">
+                        <button class="edit course-edit"><i class="material-icons">create</i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Course:</th>
+                    <td>
+                        <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
+                        <?= $request->getSection()->getCourse()->getCourseNum() ?>
+                        <?php
                         if($request->getSection()->getSectionNum() < 10)
                             echo'0';
                         echo $request->getSection()->getSectionNum();
-                    ?>:
-                    <?= $request->getSection()->getCourse()->getTitle() ?>
-                </td>
-            </tr>
-            <tr>
-                <th>CRN:</th>
-                <td><?= $request->getSection()->getCrn() ?></td>
-            </tr>
-        </table>
+                        ?>:
+                        <?= $request->getSection()->getCourse()->getTitle() ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th>CRN:</th>
+                    <td><?= $request->getSection()->getCrn() ?></td>
+                </tr>
+            </table>
+        </div>
+        <div class="edit course-edit">
+            <button class="submit course-submit">Submit</button>
+            <button class="cancel course-cancel">Cancel</button>
+        </div>
     </div>
-    <div class="additional">
+    <div id="additional">
         <h2 class="truman-dark-bg">Additional Information</h2>
-        <table>
-            <tr>
-                <th>Reason:</th>
-                <td id="reason-cell"><?= $request->getReason() ?></td>
-                <td rowspan="2">
-                    <button class="edit" id="additional-edit"><i class="material-icons" id="additional-edit-icon">create</i></button>
-                </td>
-            </tr>
-            <tr>
-                <th>Explanation:</th>
-                <td><textarea id="explanation" readonly><?= $request->getExplanation() ?></textarea></td>
-            </tr>
-        </table>
+        <div class="additional-display">
+            <table>
+                <tr>
+                    <th>Reason:</th>
+                    <td id="reason-display"><?= $request->getReason() ?></td>
+                    <td rowspan="2">
+                        <button class="edit additional-edit"><i class="material-icons">create</i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Explanation:</th>
+                    <td><textarea readonly id="explanation-display"><?= $request->getExplanation() ?></textarea></td>
+                </tr>
+            </table>
+        </div>
+        <div class="edit additional-edit">
+            <table>
+                <tr>
+                    <th>Reason:</th>
+                    <td id="reason-cell"></td>
+                </tr>
+                <tr>
+                    <th>Explanation:</th>
+                    <td><textarea id="explanation"><?= $request->getExplanation() ?></textarea></td>
+                </tr>
+            </table>
+            <button class="submit additional-submit">Submit</button>
+            <button class="cancel additional-cancel">Cancel</button>
+        </div>
     </div>
 </div>
 </body>

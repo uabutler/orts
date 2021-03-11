@@ -16,11 +16,10 @@ office for accuracy.<br>
 When filling out the form, fill out the semester you're registering for, the course department code, course
 number, and section number. Then, verify that the title and CRN are for the correct course before submitting.<br>
 <br>
-<span style="font-family: nexabold, sans-serif"><b>If the override is granted,</b></span> an announcement
+<span style="font-family: nexabold, sans-serif"><b>If the override is granted,</b></span> you will be notified by an email and an announcement
 will appear under your Student Tab → Registration → Registration Status in TruView.<br>
 <br>
-<span style="font-family: nexabold, sans-serif"><b>If the override is denied,</b></span> you will be notified
-by an email from the department office administrative assistant.<br>
+<span style="font-family: nexabold, sans-serif"><b>If the override is denied,</b></span> you will be notified by an email.<br>
 <br>
 Most override requests are granted or denied within 2 days.<br>
 <br>

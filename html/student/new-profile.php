@@ -101,7 +101,7 @@ $semesters = Semester::listActive();
         </table>
     </div>
     <div>
-        <a id="next">Submit &raquo;</a>
+        <button id="next">Submit &raquo;</button>
     </div>
 </div>
 </body>
