@@ -24,12 +24,11 @@ function validate()
  */
 function setSection()
 {
+    $('#crn').val("");
+    $('#title').val("");
+
     if(!(validateCourseNum() && validateSection()))
-    {
-        $('#crn').val("");
-        $('#title').val("");
         return;
-    }
 
     let data = {};
 
