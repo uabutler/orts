@@ -35,7 +35,7 @@ $semesters = Semester::listActive();
 <body class="grid-container">
 <?php require_once '../php/header.php'; ?>
 <!-- TODO: This person won't be have a profile at this point -->
-<?php require_once '../php/navbar.php'; studentNavbar("Profile"); ?>
+<?php require_once '../php/navbar.php'; studentNavbar("New Request"); ?>
 
 <div class="grid-item content">
     <div class="info">
@@ -66,13 +66,7 @@ $semesters = Semester::listActive();
             </tr>
             <tr>
                 <td>Grad Month:</td>
-                <td>
-                    <select class="select" id="grad_month" style="width:50%;">
-                        <option value="05/">May</option>
-                        <option value="12/">December</option>
-                    </select>
-                    <input class="numeric" type="text" id="year" placeholder="Year" style="width:49.5%;">
-                </td>
+                <td><input type="text" placeholder="MM/YYYY" id="grad_month"></td>
             </tr>
             <tr>
                 <td>Class:</td>

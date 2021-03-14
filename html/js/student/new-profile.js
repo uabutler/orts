@@ -2,7 +2,7 @@
  * INPUT VALIDATION
  */
 function validateBannerId() { return validateRegex("banner_id", /^001\d{6}$/); }
-function validateGradMonth() { return validateRegex("grad_month", /(0[1-9]|1[0-2])\/20[2-9]\d/); }
+function validateGradMonth() { return validateRegex("year", /^20[2-9]\d$/); }
 function validateFirstName() { return validateNotEmpty("first_name"); }
 function validateLastName() { return validateNotEmpty("last_name"); }
 
@@ -31,9 +31,10 @@ function inputEnable(bool)
     $('#first_name').attr("readonly", bool);
     $('#last_name').attr("readonly", bool);
     $('#banner_id').attr("readonly", bool);
-    $('#grad_month').attr("readonly", bool);
+    $('#year').attr("readonly", bool);
 
     $('#standing').attr("disabled", bool);
+    $('#grad_month').attr("disabled", bool);
     $('#majors').attr("disabled", bool);
     $('#minors').attr("disabled", bool);
 }
@@ -51,7 +52,7 @@ function createStudent()
     data.first_name = $('#first_name').val();
     data.last_name = $('#last_name').val();
     data.banner_id = $('#banner_id').val();
-    data.grad_month = $('#grad_month').val();
+    data.grad_month = $('#grad_month').val() + $('#year').val();
     data.standing = $('#standing').val();
     data.majors = $('#majors').val();
     data.minors = $('#minors').val();
@@ -75,7 +76,7 @@ function createStudent()
  */
 $(function ()
 {
-    $('.select').select2();
+    $('.select').select2({minimumResultsForSearch: Infinity});
 
     $(document).on("input", ".numeric", function ()
     {
@@ -83,7 +84,7 @@ $(function ()
     });
 
     $('#banner_id').on("focusout", function () { setError(validateBannerId(), "banner_id"); })
-    $('#grad_month').on("focusout", function () { setError(validateGradMonth(), "grad_month"); })
+    $('#year').on("focusout", function () { setError(validateGradMonth(), "year"); })
     $('#first_name').on("focusout", function () { setError(validateFirstName(), "first_name"); })
     $('#last_name').on("focusout", function () { setError(validateLastName(), "last_name"); })
 
