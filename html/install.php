@@ -4,6 +4,7 @@ require_once __DIR__ . '/php/database/tables.php';
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
+
 if(file_exists('../conf/app.ini'))
     header("Location: /index.php");
 
@@ -336,31 +337,38 @@ function populateSemester($pdo)
     <title>ORTS - Main Page</title>
     <link rel="stylesheet" href="/css/root/install.css">
     <?php require 'php/common-head.php' ?>
+    <script src="/js/root/install.js"></script>
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once 'php/header.php'; ?>
 
-<div class="grid-item content">
+<section>
     <?php if (!$installing): ?>
-    <div class="warning">
-        <b>WARNING:</b> Please ensure the database has been created before beginning
-        the installation.
-
-        This can be done using the following commands<br><br>
+    <div class="ui warning message">
+        <div class="header">
+            Please ensure the database has been created before beginning
+            the installation.
+        </div>
+        <p>
+            This can be done using the following commands
+        </p>
         <code>
             mysql> CREATE DATABASE orts DEFAULT CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci';<br>
             mysql> GRANT ALL PRIVILEGES ON orts.* TO 'orts'@'localhost' IDENTIFIED BY 'password';<br>
             mysql> FLUSH PRIVILEGES;<br>
             mysql> EXIT
         </code>
-        <br><br>
-        All fields are <em>REQUIRED</em>.
+        <p>
+            All fields are <em>REQUIRED</em>.
+        </p>
     </div>
     <?php if(count($missing) != 0): ?>
-    <div class="warning">
-        <b>WARNING:</b> The following PHP modules are required, but could not be loaded.
-        Please ensure they are installed properly before continuing.
+    <div class="ui warning message">
+        <div class="header">
+            The following PHP modules are required, but could not be loaded.
+            Please ensure they are installed properly before continuing.
+        </div>
         <ul>
             <?php foreach($missing as $module): ?>
             <li><?= $module ?></li>
@@ -371,105 +379,93 @@ function populateSemester($pdo)
     <noscript style="color:red;">
         <b>WARNING:</b> This site will <em>not</em> function without javascript. Please whitelist it before continuing.
     </noscript>
+    <form class="ui form" method="POST" action="/install.php">
     <h2 class="truman-dark-bg">Server Information</h2>
-    <form method="POST" action="/install.php">
-        <table>
-            <colgroup>
-                <col style="width: 15em;">
-            </colgroup>
-            <tr>
-                <td>Server Name:</td>
-                <td><input required type="text" name="name" value="https://orts.truman.edu"></td>
-            </tr>
-            <tr>
-                <td>Attachment Location:</td>
-                <td><input required type="text" name="attachment_loc" value="/var/orts/attachments"></td>
-            </tr>
-        </table>
-        <h2 class="truman-dark-bg">MySQL Database</h2>
-        <table>
-            <colgroup>
-                <col style="width: 15em;">
-            </colgroup>
-            <tr>
-                <td>Database Name:</td>
-                <td><input required type="text" name="db_name" value="orts"></td>
-            </tr>
-            <tr>
-                <td>Host:</td>
-                <td><input required type="text" name="db_host" value="localhost"></td>
-            </tr>
-            <tr>
-                <td>User Name:</td>
-                <td><input required type="text" name="db_user" value="orts"></td>
-            </tr>
-            <tr>
-                <td>Password:</td>
-                <td><input required type="password" name="db_pw"></td>
-            </tr>
-        </table>
-        <h2 class="truman-dark-bg">CAS</h2>
-        <table>
-            <colgroup>
-                <col style="width: 15em;">
-            </colgroup>
-            <tr>
-                <td>Version:</td>
-                <td><input required type="text" name="cas_version" value="1.0"></td>
-            </tr>
-            <tr>
-                <td>Host:</td>
-                <td><input required type="text" name="cas_host" value="cas.truman.edu"></td>
-            </tr>
-            <tr>
-                <td>Port:</td>
-                <td><input required type="number" name="cas_port" value="8443"></td>
-            </tr>
-            <tr>
-                <td>Context:</td>
-                <td><input required type="text" name="cas_context" value="/cas"></td>
-            </tr>
-            <tr>
-                <td>Certificate:</td>
-                <td><input required type="text" name="cas_cert_path" value="/var/www/orts/html/assets/cert/truman.pem"></td>
-            </tr>
-        </table>
-        <h2 class="truman-dark-bg">Defaults</h2>
-        <table>
-            <colgroup>
-                <col style="width: 15em;">
-            </colgroup>
-            <tr>
-                <td>Admin Email:</td>
-                <td class="input-group suffix">
-                    <input required class="email-input" type="text" name="email">
-                    <span class="input-group-addon ">@truman.edu</span>
-                </td>
-            </tr>
-            <tr>
-                <td>Admin First Name:</td>
-                <td><input required type="text" name="first_name"></td>
-            </tr>
-            <tr>
-                <td>Admin Last Name:</td>
-                <td><input required type="text" name="last_name"></td>
-            </tr>
-            <tr>
-                <td>Semester Name:</td>
-                <td><input required type="text" name="semester_name" value="Spring 2021"></td>
-            </tr>
-            <tr>
-                <td>Semester Code:</td>
-                <td><input required type="text" name="semester_code" value="202110"></td>
-            </tr>
-            <tr>
-                <td>Departments:</td>
-                <td><input required type="text" name="departments" value="CS,MATH,STAT,JINS,TRU"></td>
-            </tr>
-        </table>
-        <div>
-            <button type="submit" id="next">Install &raquo;</button>
+        <div class="field required">
+            <label>Server Name</label>
+            <input required type="text" name="name" value="https://orts.truman.edu">
         </div>
+        <div class="field required">
+            <label>Attachment Location</label>
+            <input required type="text" name="attachment_loc" value="/var/orts/attachments">
+        </div>
+        <h2 class="truman-dark-bg">MySQL Database</h2>
+        <div class="field required">
+            <label>Database Name</label>
+            <input required type="text" name="db_name" value="orts">
+        </div>
+        <div class="field required">
+            <label>Host</label>
+            <input required type="text" name="db_host" value="localhost">
+        </div>
+        <div class="two fields">
+            <div class="field required">
+                <label>Username</label>
+                <input required type="text" name="db_user" value="orts">
+            </div>
+            <div class="field required">
+                <label>Password</label>
+                <input required type="password" name="db_pw">
+            </div>
+        </div>
+        <h2 class="truman-dark-bg">CAS</h2>
+        <div class="fields">
+            <div class="twelve wide field required">
+                <label>Host</label>
+                <input required type="text" name="cas_host" value="cas.truman.edu">
+            </div>
+            <div class="four wide field required">
+                <label>Port</label>
+                <input required type="number" name="cas_port" value="8443">
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field required">
+                <label>Version</label>
+                <input required type="text" name="cas_version" value="1.0">
+            </div>
+            <div class="field required">
+                <label>Context</label>
+                <input required type="text" name="cas_context" value="/cas">
+            </div>
+        </div>
+        <div class="field required">
+            <label>Certificate</label>
+            <input required type="text" name="cas_cert_path" value="/var/www/orts/html/assets/cert/truman.pem">
+        </div>
+        <h2 class="truman-dark-bg">Defaults</h2>
+        <div class="field required">
+            <label>Admin</label>
+            <div class="three fields">
+                <div class="field required">
+                    <input required type="text" name="first_name" placeholder="First Name">
+                </div>
+                <div class="field required">
+                    <input required type="text" name="last_name" placeholder="Last Name">
+                </div>
+                <div class="field required">
+                    <div class="ui right labeled input">
+                        <input required class="email-input" type="text" name="email" placeholder="Truman email">
+                        <div class="ui label">@truman.edu</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field required">
+                <label>Semester Name</label>
+                <input required type="text" name="semester_name" value="Spring 2021">
+            </div>
+            <div class="field required">
+                <label>Code</label>
+                <input required type="text" name="semester_code" value="202110">
+            </div>
+        </div>
+        <div class="field required">
+            <label>Departments</label>
+            <input required type="text" name="departments" value="CS,MATH,STAT,JINS,TRU">
+        </div>
+        <div class="ui right floated button" id="next">Install</div>
     </form>
     <?php else: ?>
     Connecting to DB<br>
@@ -519,7 +515,8 @@ function populateSemester($pdo)
 
     Basic installation complete.
     Next, we recommend adding majors and minors on the admin page.
+
     <?php endif; ?>
-</div>
+</section>
 </body>
 </html>

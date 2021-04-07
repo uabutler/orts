@@ -21,18 +21,22 @@ $minors = Minor::list();
     <link rel="stylesheet" href="/css/admin/administation.css">
     <script src="/js/admin/administration.js"></script>
 </head>
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
 <?php require_once '../php/navbar.php'; facultyNavbar("Administration"); ?>
 
-<div class="grid-item content content-grid-container">
+<section class="content-grid-container">
     <div>
         <h2>Semesters</h2>
         <table>
             <tr>
-                <td><input type="text" name="semester_code" id="semester_code" placeholder="Code"></td>
-                <td><input type="text" name="semester_name" id="semester_name" placeholder="Name"></td>
-                <td><button id="semester">Add</button></td>
+                <td class="ui form field">
+                    <input type="text" name="semester_code" id="semester_code" placeholder="Code">
+                </td>
+                <td class="ui form field">
+                    <input type="text" name="semester_name" id="semester_name" placeholder="Name">
+                </td>
+                <td><div class="ui button" id="semester">Add</div></td>
             </tr>
             <tr>
                 <th>Code</th>
@@ -41,16 +45,16 @@ $minors = Minor::list();
             </tr>
             <?php foreach ($active_semesters as $semester): ?>
             <tr>
-                <td class="clickable-row"><?= $semester->getCode() ?></td>
-                <td class="clickable-row"><?= $semester->getDescription() ?></td>
-                <td><button id="semester">Archive</button></td>
+                <td class="clickable-row" onclick="window.location='administration.php?semester=<?= $semester->getCode() ?>'"><?= $semester->getCode() ?></td>
+                <td class="clickable-row" onclick="window.location='administration.php?semester=<?= $semester->getCode() ?>'"><?= $semester->getDescription() ?></td>
+                <td><div class="ui button" id="semester">Archive</div></td>
             </tr>
             <?php endforeach; ?>
             <?php foreach ($inactive_semesters as $semester): ?>
             <tr>
                 <td><?= $semester->getCode() ?></td>
                 <td><?= $semester->getDescription() ?></td>
-                <td><button id="semester">Delete</button></td>
+                <td><div class="ui button" id="semester">Delete</div></td>
             </tr>
             <?php endforeach; ?>
         </table>
@@ -59,10 +63,16 @@ $minors = Minor::list();
         <h2>Faculty</h2>
         <table>
             <tr>
-                <td><input type="text" name="faculty_user" id="faculty_user" placeholder="Username"></td>
-                <td><input type="text" name="faculty_first" id="faculty_first" placeholder="First Name"></td>
-                <td><input type="text" name="faculty_last" id="faculty_last" placeholder="Last Name"></td>
-                <td><button id="faculty">Add</button></td>
+                <td class="ui form field">
+                    <input type="text" name="faculty_user" id="faculty_user" placeholder="Username">
+                </td>
+                <td class="ui form field">
+                    <input type="text" name="faculty_first" id="faculty_first" placeholder="First Name">
+                </td>
+                <td class="ui form field">
+                    <input type="text" name="faculty_last" id="faculty_last" placeholder="Last Name">
+                </td>
+                <td><div class="ui button" id="faculty">Add</div></td>
             </tr>
             <tr>
                 <th>Username</th>
@@ -75,7 +85,7 @@ $minors = Minor::list();
                 <td><?= $fac->getEmail() ?></td>
                 <td><?= $fac->getFirstName() ?></td>
                 <td><?= $fac->getLastName() ?></td>
-                <td><button id="semester">Delete</button></td>
+                <td><div class="ui button" id="semester">Delete</div></td>
             </tr>
             <?php endforeach; ?>
         </table>
@@ -88,12 +98,12 @@ $minors = Minor::list();
             </colgroup>
             <tr>
                 <th>Major Name</th>
-                <th><button id="major-add">Bulk Add</button></th>
+                <th><div class="ui button" id="major-add">Bulk Add</div></th>
             </tr>
             <?php foreach ($majors as $major): ?>
             <tr>
                 <td><?= $major ?></td>
-                <td><button class="major-del" value="<?= $major ?>">Delete</button></td>
+                <td><div class="ui button major-del" data-value="<?= $major ?>">Delete</div></td>
             </tr>
             <?php endforeach; ?>
         </table>
@@ -106,12 +116,12 @@ $minors = Minor::list();
             </colgroup>
             <tr>
                 <th>Minor Name</th>
-                <th><button id="minor-add">Bulk Add</button></th>
+                <th><div class="ui button" id="minor-add">Bulk Add</div></th>
             </tr>
             <?php foreach ($minors as $minor): ?>
             <tr>
                 <td><?= $minor ?></td>
-                <td><button id="semester">Delete</button></td>
+                <td><div class="ui button minor-del" data-value="<?= $minor ?>">Delete</div></td>
             </tr>
             <?php endforeach; ?>
         </table>
@@ -122,12 +132,17 @@ $minors = Minor::list();
     <div id="overlay">
         <div id="popup">
             <h3>Bulk Add</h3>
-            <p>Put each entry on its own line.</p>
-            <textarea id="entries" rows="10"></textarea>
-            <button class="ol-btn" id="add-programs">Submit</button>
-            <button class="ol-btn" id="cancel">Cancel</button>
+            <div class="ui form">
+                <div class="field">
+                   <label>Put each entry on its own line.</label>
+                    <textarea id="entries" rows="30"></textarea>
+                </div>
+                <div id="add-programs" class="ui right floated button" tabindex="0">Submit</div>
+                <div id="cancel" class="ui right floated button">Cancel</div>
+            </div>
+            <div class="clearfix"></div>
         </div>
     </div>
-</div>
+</section>
 </body>
 </html>

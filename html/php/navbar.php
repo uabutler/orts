@@ -7,26 +7,26 @@
  */
 function genNavbar(array $left_map, array $right_map, string $active)
 {
-
-    echo '<div class="grid-item navbar center">';
-    echo '<ul id="nav-list" class="truman-dark-bg">';
+    echo '<nav>';
+    echo '<ul>';
 
     foreach ($left_map as $name => $url)
     {
-        echo "<li class='nav-item'><a";
+        echo "<li><a";
         echo $active == $name ? " class='active' " : " ";
         echo "href='$url'>$name</a></li>";
     }
 
     foreach (array_reverse($right_map) as $name => $url)
     {
-        echo "<li class='nav-item' style='float:right;'><a";
+        echo "<li class='right'><a";
         echo $active == $name ? " class='active' " : " ";
         echo "href='$url'>$name</a></li>";
     }
 
     echo '</ul>';
-    echo '</div>';
+    echo '<div class="clearfix"></div>';
+    echo '</nav>';
 }
 
 function studentNavbar($active)

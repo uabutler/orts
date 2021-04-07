@@ -1,20 +1,3 @@
-function reasonSelect()
-{
-    let out = '<select class="select" id="reason">';
-
-    let first = CURRENT_REASON;
-    out += `<option value="${first}">${first}</option>`;
-    for(let i = 0; i < REASONS.length; i++)
-    {
-        if(REASONS[i] !== first)
-            out += `<option value="${REASONS[i]}">${REASONS[i]}</option>`;
-    }
-
-    out += '</select>';
-
-    return out;
-}
-
 function changeAdditional()
 {
     if(!validateExplanation())
@@ -27,8 +10,7 @@ function changeAdditional()
     data += "reason=" + encodeURIComponent(reason.val()) + "&";
     data += "explanation=" + encodeURIComponent(explanation.val());
 
-    reason.prop("disabled", true);
-    explanation.prop("readonly", true);
+    $('#additional-form').addClass('loading');
 
     $.ajax({
         url: '/api/request.php',
@@ -36,14 +18,15 @@ function changeAdditional()
         data: data,
         success: function (data)
         {
-            $('#reason-display').html(reason.val());
+            $('#reason-display').parent().children(".text").html(reason.val());
             $('#explanation-display').html(explanation.val());
 
-            $('div.additional-edit').css("display", "none");
-            $('div.additional-display').css("display", "initial");
-
-            reason.prop("disabled", false);
-            explanation.prop("readonly", false);
+            $('#additional-edit').css("display", "none");
+            $('#additional-display').css("display", "initial");
+        },
+        complete: function ()
+        {
+            $('#additional-form').removeClass('loading');
         }
     });
 }
@@ -60,7 +43,7 @@ function changeCourse()
     data += "semester=" + encodeURIComponent(semester.val()) + "&";
     data += "crn=" + encodeURIComponent(crn.val());
 
-    inputEnable(false, false);
+    $('#course-form').addClass('loading');
 
     $.ajax({
         url: '/api/request.php',
@@ -76,33 +59,34 @@ function changeCourse()
             let course = $('#department').val() + " ";
             course += $('#course_num').val() + " ";
             course += section + ": ";
-            course += $('#title').val();
+            course += $('#course_title').val();
 
-            $('#course-display').html(course);
+            $('#section-display').html(course);
 
             $('#crn-display').html($('#crn').val());
 
-            $('div.course-edit').css("display", "none");
-            $('div.course-display').css("display", "initial");
-
-            inputEnable(true, false);
+            $('#course-edit').css("display", "none");
+            $('#course-display').css("display", "initial");
+        },
+        complete: function()
+        {
+            $('#course-form').removeClass('loading');
         }
     });
 }
 
-function createHandlers(edit, display, cancel)
+function createHandlers(edit_button, cancel_button, edit, display)
 {
-    $('button.' + edit).on("click", function ()
+    $(`#${edit_button}`).on("click", function ()
     {
-        $('div.' + display).css("display", "none");
-        $('div.' + edit).css("display", "initial");
-        $('.select').select2();
+        $(`#${display}`).css("display", "none");
+        $(`#${edit}`).css("display", "initial");
     });
 
-    $('button.' + cancel).on("click", function ()
+    $(`#${cancel_button}`).on("click", function ()
     {
-        $('div.' + edit).css("display", "none");
-        $('div.' + display).css("display", "initial");
+        $(`#${edit}`).css("display", "none");
+        $(`#${display}`).css("display", "initial");
     });
 }
 
@@ -113,8 +97,8 @@ $(function()
         this.value = this.value.replace(/\D/g, '');
     });
 
-    createHandlers("course-edit", "course-display", "course-cancel");
-    createHandlers("additional-edit", "additional-display", "additional-cancel");
+    createHandlers("course-edit-button", "course-cancel-button", "course-edit", "course-display");
+    createHandlers("additional-edit-button", "additional-cancel-button", "additional-edit", "additional-display");
 
     $('#course_num').on("keyup", setSection);
     $('#section').on("keyup", setSection);
@@ -125,8 +109,6 @@ $(function()
     $('#section').on("focusout", function () { setError(validateSection(), "section"); })
     $('#explanation').on("focusout", function () { setError(validateExplanation(), "explanation"); })
 
-    $('#reason-cell').html(reasonSelect());
-
-    $('.additional-submit').on("click", changeAdditional)
-    $('.course-submit').on("click", changeCourse);
+    $('#additional-submit-button').on("click", changeAdditional)
+    $('#course-submit-button').on("click", changeCourse);
 })

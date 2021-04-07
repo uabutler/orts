@@ -1,22 +1,29 @@
 /*
  * INPUT VALIDATION
  */
-function validateCourseNum() { return validateRegex("course_num", /^\d{3}$/); }
-function validateSection() { return validateRegex("section", /^\d{1,2}$/) && $("#section").val() > 0; }
-function validateExplanation() { return validateNotEmpty("explanation"); }
+
+let COURSE_REGEX = /^\d{3}$/;
+let SECTION_REGEX = /^\d{1,2}$/;
+
+function validateCourseNum() { return setError(validateRegex("course_num", COURSE_REGEX), "course_num"); }
+function validateSection() { return setError(validateRegex("section", SECTION_REGEX) && $("#section").val() > 0, "section"); }
+function validateExplanation() { return setError(validateNotEmpty("explanation"), "explanation"); }
+function validateDepartment() { return setError(validateNotEmpty("department"), "department"); }
+function validateReason() { return setError(validateNotEmpty("reason"), "reason"); }
+
+// We only use this to see if we can submit, we don't want to set it as erroneous
 function validateCrn() { return validateNotEmpty("crn"); }
 
 function validate()
 {
-    // Return true iff all are true
-    switch(false)
-    {
-        case validateExplanation():
-        case validateCrn(): // This includes course number and section
-            return false;
-        default:
-            return true;
-    }
+    let ret = validateCourseNum();
+    ret = validateSection() && ret;
+    ret = validateExplanation() && ret;
+    ret = validateDepartment() && ret;
+    ret = validateReason() && ret;
+    ret = validateCrn() && ret;
+
+    return ret;
 }
 
 /*
@@ -24,11 +31,20 @@ function validate()
  */
 function setSection()
 {
-    $('#crn').val("");
-    $('#title').val("");
+    let crn = $('#crn');
+    let title = $('#course_title');
 
-    if(!(validateCourseNum() && validateSection()))
+    crn.val("");
+    title.val("");
+
+    if(!(validateNotEmpty("department") &&
+        validateRegex("course_num", COURSE_REGEX) &&
+        validateRegex("section", SECTION_REGEX) &&
+        $('#section').val() > 0))
         return;
+
+    crn.parent().addClass("loading");
+    title.parent().addClass("loading");
 
     let data = {};
 
@@ -39,36 +55,22 @@ function setSection()
 
     let request = $.get("/api/section.php", data, function (data, status, xhr)
     {
+        crn.parent().removeClass("loading");
+        title.parent().removeClass("loading");
+
         if(status === "success")
         {
-            $('#crn').val(data.crn);
-            $('#title').val(data.course.title);
+            crn.val(data.crn);
+            title.val(data.course.title);
         }
         else
         {
-            $('#crn').val("");
-            $('#title').val("");
+            crn.val("");
+            title.val("");
         }
-    }, "json");
-}
-
-/*
- * INPUT DISABLE
- */
-function inputEnable(bool, explain = true)
-{
-    bool = !bool;
-
-    $('#course_num').attr("readonly", bool);
-    $('#section').attr("readonly", bool);
-
-    $('#semester').attr("disabled", bool);
-    $('#department').attr("disabled", bool);
-
-    if (explain)
+    }, "json").fail(function ()
     {
-        $('#reason').attr("disabled", bool);
-        $('#explanation').attr("readonly", bool);
-    }
+        crn.parent().removeClass("loading");
+        title.parent().removeClass("loading");
+    });
 }
-

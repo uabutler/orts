@@ -52,11 +52,28 @@ function validateNotEmpty(element_name)
  */
 function setError(valid, element_name)
 {
-    let element = $(`#${element_name}`);
+    let element = $(`#${element_name}`).parent();
 
     if(valid)
         element.removeClass("error");
     else
         element.addClass("error");
+
+    return valid;
 }
 
+$(function ()
+{
+    $('select.ui.dropdown').dropdown();
+
+    $('.message .close').on('click', function()
+    {
+        $(this).closest('.message').transition('fade');
+    });
+
+    $('.numeric').on("input", function ()
+    {
+        this.value = this.value.replace(/\D/g, '');
+    });
+
+});

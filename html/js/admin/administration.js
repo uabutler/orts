@@ -5,15 +5,22 @@ $(function ()
    $('#major-add').on("click", function ()
    {
       $("#overlay").css("display", "initial");
+      $("body").css("overflow-y", "hidden");
       MODE = "major\n";
    });
 
-   $('#minor-add').on("click", function () {
+   $('#minor-add').on("click", function ()
+   {
       $("#overlay").css("display", "initial");
+      $("body").css("overflow-y", "hidden");
       MODE = "minor\n";
    });
 
-   $('#cancel').on("click", function () { $("#overlay").css("display", "none"); });
+   $('#cancel').on("click", function ()
+   {
+      $("#overlay").css("display", "none");
+      $("body").css("overflow-y", "scroll");
+   });
 
    $('#add-programs').on("click", addPrograms);
 
@@ -28,6 +35,7 @@ function addPrograms()
    $.post("/api/administration/programs.php", MODE + $('#entries').val(), function(data)
    {
       $("#overlay").css("display", "none");
+      $("body").css("overflow-y", "scroll");
       // TODO: Display new majors in table
       $('#entries').val("");
    })

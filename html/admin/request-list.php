@@ -34,11 +34,11 @@ if (is_null($requests))
     <script src="/js/admin/request-list.js"></script>
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
 <?php require_once '../php/navbar.php'; facultyNavbar(!$archive ? "Current Semester" : "Archive"); ?>
 
-<div class="grid-item content">
+<section>
     <h1 id="page-title">Override Requests<?php if ($archive) echo ' - Archive for ' . $semester->getDescription(); ?></h1>
     <!-- Table based on one created by Thao Phung. This html just creates the top. The body is done in JS -->
     <table id="request-table">
@@ -170,6 +170,6 @@ if (is_null($requests))
                 <th>Semester</th>
             </tr>
     </table>
-</div>
+</section>
 </body>
 </html>

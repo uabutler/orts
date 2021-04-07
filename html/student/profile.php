@@ -5,10 +5,7 @@ require_once '../php/database/programs.php';
 require_once '../php/auth.php';
 
 Auth::createClient();
-Auth::forceAuthentication();
-
-if(Auth::isAuthenticatedStudent())
-    header("Location: request-list.php");
+Auth::forceAuthenticationStudent();
 
 $student_email = Auth::getUser();
 
@@ -23,7 +20,7 @@ $semesters = Semester::listActive();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>ORTS - New Student</title>
+    <title>ORTS - Profile</title>
     <?php require '../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
     <script>
@@ -32,77 +29,76 @@ $semesters = Semester::listActive();
     <script src="/js/student/new-profile.js"></script>
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
-<!-- TODO: This person won't be have a profile at this point -->
-<?php require_once '../php/navbar.php'; studentNavbar("New Request"); ?>
+<?php require_once '../php/navbar.php'; studentNavbar("Profile"); ?>
 
-<div class="grid-item content">
-    <div class="info">
-        <?php require '../php/new-request-info.php'; ?>
-    </div>
-    <div>
-        <h2 class="truman-dark-bg">Profile</h2>
-        <table style="width: 100%">
-            <colgroup>
-                <col>
-                <col style="width: 100%;">
-            </colgroup>
-            <tr>
-                <td>Email:</td>
-                <td><input type="text" readonly value="<?= $student_email ?>@truman.edu"></td>
-            </tr>
-            <tr>
-                <td>First Name:</td>
-                <td><input type="text" id="first_name"></td>
-            </tr>
-            <tr>
-                <td>Last Name:</td>
-                <td><input type="text" id="last_name"></td>
-            </tr>
-            <tr>
-                <td>Banner ID:</td>
-                <td><input class="numeric" type="text" id="banner_id"></td>
-            </tr>
-            <tr>
-                <td>Grad Month:</td>
-                <td><input type="text" placeholder="MM/YYYY" id="grad_month"></td>
-            </tr>
-            <tr>
-                <td>Class:</td>
-                <td>
-                    <select class="select" id="standing">
-                        <?php foreach($standings as $standing): ?>
-                            <option value="<?= $standing ?>"><?= $standing ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Major(s):</td>
-                <td>
-                    <select class="select" id="majors" multiple="multiple">
-                        <?php foreach($majors as $major): ?>
-                            <option value="<?= $major ?>"><?= $major ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Minor(s):</td>
-                <td>
-                    <select class="select" id="minors" multiple="multiple">
-                        <?php foreach($minors as $minor): ?>
-                            <option value="<?= $minor ?>"><?= $minor ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div>
-        <button id="next">Submit &raquo;</button>
-    </div>
-</div>
+<section>
+    <h1>Profile</h1>
+    <form class="ui form">
+        <div class="field">
+            <label>Name</label>
+            <div class="two fields">
+                <div class="field">
+                    <input type="text" name="first_name" placeholder="First Name">
+                </div>
+                <div class="field">
+                    <input type="text" name="last_name" placeholder="Last Name">
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label>Standing</label>
+            <select class="ui dropdown" name="grad_month">
+                <option value="">Standing</option>
+                <?php foreach($standings as $standing): ?>
+                    <option value="<?= $standing ?>"><?= $standing ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="two fields">
+            <div class="field">
+                <label>Majors</label>
+                <select multiple="" class="ui fluid search dropdown">
+                    <option value="">Select Majors</option>
+                    <?php foreach($majors as $major): ?>
+                        <option value="<?= $major ?>"><?= $major ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="field">
+                <label>Minors</label>
+                <select multiple="" class="ui search dropdown">
+                    <option value="">Select Minors</option>
+                    <?php foreach($minors as $minor): ?>
+                        <option value="<?= $minor ?>"><?= $minor ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field">
+                <label>Banner ID</label>
+                <input class="numeric" type="text" name="banner_id" placeholder="Banner ID">
+            </div>
+            <div class="field">
+                <label>Graduation Month</label>
+                <div class="two fields">
+                    <div class="field">
+                        <select class="ui fluid search dropdown" name="grad_month">
+                            <option value="">Month</option>
+                            <option value="05/">May</option>
+                            <option value="12/">December</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <input type="text" name="year" placeholder="Year">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui right floated button">Submit</div>
+    </form>
+</section>
 </body>
 </html>

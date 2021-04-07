@@ -20,23 +20,16 @@ $semesters = Semester::listActive();
     <link rel="stylesheet" href="/css/student/request-details.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
-        REASONS =
-            [
-                <?php foreach (Request::listReasons() as $reason): ?>
-                    '<?= $reason ?>',
-                <?php endforeach; ?>
-            ];
-        CURRENT_REASON = "<?= $request->getReason(); ?>";
     </script>
     <script src="/js/student/course-form.js"></script>
     <script src="/js/student/request-details.js"></script>
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
 <?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
-<div class="grid-item content content-grid-container">
+<section class="content-grid-container">
     <div id="status">
         <h2 class="truman-dark-bg">Override Status</h2>
         <table>
@@ -60,18 +53,18 @@ $semesters = Semester::listActive();
     </div>
     <div id="course">
         <h2 class="truman-dark-bg">Course Information</h2>
-        <div class="course-display">
+        <div id="course-display">
             <table>
                 <tr>
                     <th style="padding-right:1em">Semester:</th>
                     <td id="semester-display"><?= $request->getSection()->getSemester()->getDescription() ?></td>
                     <td rowspan="3">
-                        <button class="edit course-edit"><i class="material-icons">create</i></button>
+                        <button id="course-edit-button" class="edit"><i class="material-icons">create</i></button>
                     </td>
                 </tr>
                 <tr>
                     <th>Course:</th>
-                    <td id="course-display">
+                    <td id="section-display">
                         <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
                         <?= $request->getSection()->getCourse()->getCourseNum() ?>
                         <?php
@@ -88,29 +81,23 @@ $semesters = Semester::listActive();
                 </tr>
             </table>
         </div>
-        <div class="edit course-edit">
-            <table style="width: 100%">
-                <colgroup>
-                    <col>
-                    <col style="width: 100%;">
-                </colgroup>
-                <tr>
-                    <th>Semester:</th>
-                    <td>
-                        <select class="select" id="semester">
-                            <option value="<?= $request->getSection()->getSemester()->getCode() ?>"><?= $request->getSection()->getSemester()->getDescription() ?></option>
-                            <?php foreach ($semesters as $semester): ?>
-                                <?php if ($semester->getCode() !== $request->getSection()->getSemester()->getCode()): ?>
-                                    <option value="<?= $semester->getCode() ?>"><?= $semester->getDescription() ?></option>
-                                <?php endif;?>
-                            <?php endforeach; ?>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Course Dept:</th>
-                    <td>
-                        <select class="select" id="department">
+        <div id="course-edit" class="edit">
+            <form id="course-form" class="ui form">
+                <div class="field">
+                    <label>Semester</label>
+                    <select class="ui dropdown" id="semester">
+                        <option value="<?= $request->getSection()->getSemester()->getCode() ?>"><?= $request->getSection()->getSemester()->getDescription() ?></option>
+                        <?php foreach ($semesters as $semester): ?>
+                            <?php if ($semester->getCode() !== $request->getSection()->getSemester()->getCode()): ?>
+                                <option value="<?= $semester->getCode() ?>"><?= $semester->getDescription() ?></option>
+                            <?php endif;?>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="fields">
+                    <div class="five wide field">
+                        <label>Department</label>
+                        <select class="ui dropdown" id="department">
                             <option value="<?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>"><?= $request->getSection()->getCourse()->getDepartment()->getDept() ?></option>
                             <?php foreach ($departments as $department): ?>
                                 <?php if ($department !== $request->getSection()->getCourse()->getDepartment()->getDept()): ?>
@@ -118,61 +105,86 @@ $semesters = Semester::listActive();
                                 <?php endif;?>
                             <?php endforeach; ?>
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Course Num:</th>
-                    <td><input class="numeric" type="text" placeholder="101" id="course_num" value="<?= $request->getSection()->getCourse()->getCourseNum() ?>"></td>
-                </tr>
-                <tr>
-                    <th>Section:</th>
-                    <td><input class="numeric" type="text" placeholder="01" id="section" value="<?= $request->getSection()->getSectionNum() ?>"></td>
-                </tr>
-                <tr>
-                    <th>Title:</th>
-                    <td><input type="text" id="title" readonly value="<?= $request->getSection()->getCourse()->getTitle() ?>"></td>
-                </tr>
-                <tr>
-                    <th>CRN:</th>
-                    <td><input type="text" id="crn" readonly value="<?= $request->getSection()->getCrn() ?>"></td>
-                </tr>
-            </table>
-            <button class="submit course-submit">Submit</button>
-            <button class="cancel course-cancel">Cancel</button>
+                    </div>
+                    <div class="six wide field">
+                        <label>Course Number</label>
+                        <input class="numeric" type="text" id="course_num" value="<?= $request->getSection()->getCourse()->getCourseNum() ?>">
+                    </div>
+                    <div class="five wide field">
+                        <label>Section</label>
+                        <input class="numeric" type="text" placeholder="01" id="section" value="<?= $request->getSection()->getSectionNum() ?>">
+                    </div>
+                </div>
+                <div class="fields">
+                    <div class="eleven wide field">
+                        <label>Title</label>
+                        <div class="ui icon input disabled">
+                            <input type="text" id="course_title" readonly tabindex="-1" value="<?= $request->getSection()->getCourse()->getTitle() ?>">
+                            <i class="icon"></i>
+                        </div>
+                    </div>
+                    <div class="five wide field">
+                        <label>CRN</label>
+                        <div class="ui icon input disabled">
+                            <input type="text" id="crn" readonly tabindex="-1" value="<?= $request->getSection()->getCrn() ?>">
+                            <i class="icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div id="course-submit-button" class="ui right floated button" tabindex="0">Submit</div>
+                <div id="course-cancel-button" class="ui right floated button course-cancel">Cancel</div>
+            </form>
         </div>
     </div>
     <div id="additional">
         <h2 class="truman-dark-bg">Additional Information</h2>
-        <div class="additional-display">
+        <div id="additional-display">
             <table>
                 <tr>
-                    <th>Reason:</th>
-                    <td id="reason-display"><?= $request->getReason() ?></td>
-                    <td rowspan="2">
-                        <button class="edit additional-edit"><i class="material-icons">create</i></button>
+                    <td>
+                        <form class="ui form">
+                            <div class="field">
+                                <label>Reason</label>
+                                <select id="reason-display" class="ui dropdown disabled">
+                                    <option value="<?= $request->getReason() ?>"><?= $request->getReason() ?></option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Explanation</label>
+                                <div class="ui input disabled">
+                                    <textarea rows="2" id="explanation-display" readonly><?= $request->getExplanation() ?></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <button id="additional-edit-button" class="edit"><i class="material-icons">create</i></button>
                     </td>
                 </tr>
-                <tr>
-                    <th>Explanation:</th>
-                    <td><textarea readonly id="explanation-display"><?= $request->getExplanation() ?></textarea></td>
-                </tr>
             </table>
         </div>
-        <div class="edit additional-edit">
-            <table>
-                <tr>
-                    <th>Reason:</th>
-                    <td id="reason-cell"></td>
-                </tr>
-                <tr>
-                    <th>Explanation:</th>
-                    <td><textarea id="explanation"><?= $request->getExplanation() ?></textarea></td>
-                </tr>
-            </table>
-            <button class="submit additional-submit">Submit</button>
-            <button class="cancel additional-cancel">Cancel</button>
+        <div id="additional-edit" class="edit">
+            <form id="additional-form" class="ui form">
+                <div class="field">
+                    <label>Reason</label>
+                    <select id="reason" class="ui dropdown">
+                        <option value="<?= $request->getReason() ?>"><?= $request->getReason() ?></option>
+                        <?php foreach (Request::listReasons() as $reason): ?>
+                            <?php if ($reason !== $request->getReason()): ?>
+                                <option value="<?= $reason ?>"><?= $reason ?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Explanation</label>
+                    <textarea rows="2" id="explanation"><?= $request->getExplanation() ?></textarea>
+                </div>
+                <div id="additional-submit-button" class="ui right floated button" tabindex="0">Submit</div>
+                <div id="additional-cancel-button" class="ui right floated button course-cancel">Cancel</div>
+            </form>
         </div>
     </div>
-</div>
+</section>
 </body>
 </html>

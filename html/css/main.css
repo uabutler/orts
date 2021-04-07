@@ -1,127 +1,138 @@
-@font-face {
+/* Author: Ulysses Butler */
+@font-face
+{
   font-family: nexabold;
-  src: url('../assets/fonts/nexa-bold.otf');
+  src: url('/assets/fonts/nexa-bold.otf');
 }
 
-@font-face {
+@font-face
+{
   font-family: nexabook;
-  src: url('../assets/fonts/nexa-book.ttf');
+  src: url('/assets/fonts/nexa-book.ttf');
 }
 
-body {
+body, h1, h2, h3, h4, h5
+{
   font-family: nexabook, sans-serif;
+}
+
+body
+{
   overflow-y: scroll;
 }
 
-.grid-container {
-  display: grid;
-  grid-gap: 0;
-  grid-template-columns: 200px 1fr 200px;
+header
+{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+header, footer, nav
+{
+  color: white;
+  background-color: rgb(81,12,118);
+  padding-right: 200px;
+  padding-left: 200px;
+}
+
+nav ul
+{
   margin: 0;
-  padding: 0 0 50px;
+  padding-left: 0;
 }
 
-.grid-item {
-  background-color: white;
+nav ul
+{
+  list-style-type: none;
 }
 
-.left {
-  grid-column: 1;
+nav ul li
+{
+  float: left;
+  font-family: nexabook, sans-serif;
 }
 
-.center {
-  grid-column: 2;
+nav ul li.right
+{
+  float: right;
 }
 
-.right {
-  grid-column: 3;
+
+nav a
+{
+  font-size: 16px;
+  color: white;
+  display: block;
+  text-decoration: none;
+  padding: 14px 16px;
+  margin: 0;
+}
+
+nav a:hover, #active
+{
+  color: white;
+  background-color: #40095d;
+}
+
+#logo
+{
+  float: left;
+  height: 75px;
+}
+
+#title
+{
+  float: right;
+}
+
+#title h1
+{
+  font-family: nexabold, sans-serif;
+  font-weight: normal;
+  font-size: 50px;
+  margin: 0;
+  padding: 0;
+  line-height: 50px;
+}
+
+#title p
+{
+  font-size: 20px;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+section
+{
+  margin-right: 200px;
+  margin-left: 200px;
+  margin-top: 16px;
+  padding-bottom: 100px;
+}
+
+.clearfix
+{
+  clear: both;
 }
 
 .truman-dark-bg {
   background-color: rgb(81,12,118);
 }
 
-.header {
-  color: white;
-  grid-row: 1;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-.navbar {
-  font-family: nexabook, sans-serif;
-  grid-row: 2;
-}
-
-.sidebar {
-  grid-row: 3;
-}
-
-.content {
-  grid-column: 2;
-  grid-row: 3;
-  padding-bottom: 50px;
-}
-
-#logo {
-  height: 75px;
-  vertical-align: middle;
-}
-
-#main-title {
-  font-size: 50px;
-  font-family: nexabook, Arial, Helvetica, sans-serif;
-}
-
-#nav-list {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.nav-item {
-  float: left;
-}
-
-.nav-item a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-.nav-item a:hover, .active {
-  background-color: #40095d;
-}
-
-h2 {
+h2
+{
   font-family: nexabold, sans-serif;
   color: white;
   padding: 10px;
   background-color: rgb(81,12,118);
 }
 
-button:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-button {
-  background-color: rgb(81,12,118);
-  color: white;
-  text-decoration: none;
-  padding: 8px 16px;
-  float:right;
-  border: none;
-  font-size: 15px;
-}
-
-.clickable-row {
+.clickable-row
+{
   cursor: pointer;
 }
 
-.material-icons {
+.material-icons
+{
   vertical-align: middle;
 }

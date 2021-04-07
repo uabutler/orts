@@ -3,7 +3,7 @@ function createRequest()
     if(!validate())
         return false;
 
-    inputEnable(false);
+    $('form').addClass("loading");
 
     let data = {};
 
@@ -19,11 +19,10 @@ function createRequest()
     })
     .fail(function(response)
     {
+        $('form').removeClass("loading");
         console.log("Could not add request");
         console.log(data);
-        console.log(response)
-        // TODO: Display error to user
-        inputEnable(true);
+        console.log(response);
     });
 }
 
@@ -32,8 +31,6 @@ function createRequest()
  */
 $(function ()
 {
-    $('.select').select2();
-
     $(document).on("input", ".numeric", function ()
     {
         this.value = this.value.replace(/\D/g, '');
@@ -44,9 +41,11 @@ $(function ()
     $('#semester').on("change", setSection);
     $('#department').on("change", setSection);
 
-    $('#course_num').on("focusout", function () { setError(validateCourseNum(), "course_num"); })
-    $('#section').on("focusout", function () { setError(validateSection(), "section"); })
-    $('#explanation').on("focusout", function () { setError(validateExplanation(), "explanation"); })
+    $('#course_num').on("focusout", validateCourseNum);
+    $('#section').on("focusout", validateSection);
+    $('#explanation').on("focusout", validateExplanation);
+    $('#department').on("change", validateDepartment);
+    $('#reason').on("change", validateReason);
 
     $('#next').on("click", createRequest);
 });

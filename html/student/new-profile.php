@@ -32,83 +32,80 @@ $semesters = Semester::listActive();
     <script src="/js/student/new-profile.js"></script>
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
 <!-- TODO: This person won't be have a profile at this point -->
 <?php require_once '../php/navbar.php'; studentNavbar("Profile"); ?>
 
-<div class="grid-item content">
-    <div class="info">
-        <?php require '../php/new-request-info.php'; ?>
-    </div>
-    <div>
+<section>
+    <form class="ui form">
+        <div class="info">
+            <?php require '../php/new-request-info.php'; ?>
+        </div>
         <h2 class="truman-dark-bg">Profile</h2>
-        <table style="width: 100%">
-            <colgroup>
-                <col>
-                <col style="width: 100%;">
-            </colgroup>
-            <tr>
-                <td>Email:</td>
-                <td><input type="text" readonly value="<?= $student_email ?>@truman.edu"></td>
-            </tr>
-            <tr>
-                <td>First Name:</td>
-                <td><input type="text" id="first_name"></td>
-            </tr>
-            <tr>
-                <td>Last Name:</td>
-                <td><input type="text" id="last_name"></td>
-            </tr>
-            <tr>
-                <td>Banner ID:</td>
-                <td><input class="numeric" type="text" id="banner_id"></td>
-            </tr>
-            <tr>
-                <td>Grad Month:</td>
-                <td>
-                    <select class="select" id="grad_month" style="width:50%;">
-                        <option value="05/">May</option>
-                        <option value="12/">December</option>
-                    </select>
-                    <input class="numeric" type="text" id="year" placeholder="Year" style="width:49.5%;">
-                </td>
-            </tr>
-            <tr>
-                <td>Class:</td>
-                <td>
-                    <select class="select" id="standing">
-                        <?php foreach($standings as $standing): ?>
-                            <option value="<?= $standing ?>"><?= $standing ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Major(s):</td>
-                <td>
-                    <select class="select" id="majors" multiple="multiple">
-                        <?php foreach($majors as $major): ?>
-                            <option value="<?= $major ?>"><?= $major ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Minor(s):</td>
-                <td>
-                    <select class="select" id="minors" multiple="multiple">
-                        <?php foreach($minors as $minor): ?>
-                            <option value="<?= $minor ?>"><?= $minor ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div>
-        <button id="next">Submit &raquo;</button>
-    </div>
-</div>
+        <div class="field">
+            <label>Name</label>
+            <div class="two fields">
+                <div class="field">
+                    <input type="text" id="first_name" placeholder="First Name">
+                </div>
+                <div class="field">
+                    <input type="text" id="last_name" placeholder="Last Name">
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label>Standing</label>
+            <select class="ui dropdown" id="standing">
+                <option value="">Select Standing</option>
+                <?php foreach($standings as $standing): ?>
+                    <option value="<?= $standing ?>"><?= $standing ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="two fields">
+            <div class="field">
+                <label>Majors</label>
+                <select id="majors" multiple="" class="ui fluid search dropdown">
+                    <option value="">Select Majors</option>
+                    <?php foreach($majors as $major): ?>
+                        <option value="<?= $major ?>"><?= $major ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="field">
+                <label>Minors</label>
+                <select id="minors" multiple="" class="ui search dropdown">
+                    <option value="">Select Minors</option>
+                    <?php foreach($minors as $minor): ?>
+                        <option value="<?= $minor ?>"><?= $minor ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field">
+                <label>Banner ID</label>
+                <input class="numeric" type="text" id="banner_id" placeholder="Banner ID">
+            </div>
+            <div class="field">
+                <label>Graduation Month</label>
+                <div class="two fields">
+                    <div class="field">
+                        <select class="ui dropdown" id="grad_month">
+                            <option value="">Month</option>
+                            <option value="05/">May</option>
+                            <option value="12/">December</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <input class="numeric" type="text" id="year" placeholder="Year">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="next" class="ui right floated button">Submit</div>
+    </form>
+</section>
 </body>
 </html>

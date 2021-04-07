@@ -23,11 +23,11 @@ if (is_null($requests))
     <script src="/js/student/request-list.js"></script>
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
 <?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
-<div class="grid-item content">
+<section>
     <h1 id="page-title">Override Requests</h1>
     <!-- Table Created By: Thao Phung -->
     <table id="request-table">
@@ -44,6 +44,6 @@ if (is_null($requests))
             <th>Status</th>
         </tr>
     </table>
-</div>
+</section>
 </body>
 </html>

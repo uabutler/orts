@@ -22,11 +22,18 @@ if (is_null($request))
     <script src="/js/admin/request-details.js"></script>
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
 <?php require_once '../php/navbar.php'; facultyNavbar($request->isActive() ? "Current Semester" : "Archive"); ?>
 
-<div class="grid-item content content-grid-container">
+<section class="content-grid-container">
+    <div class="ui message hidden">
+        <i class="close icon"></i>
+        <div class="header">
+            TEST
+        </div>
+        <p>TEST</p>
+    </div>
     <div class="grid-item orinfo">
         <h2 class="truman-dark-bg">Override Request Info</h2>
         <table style="padding-bottom:20px;">
@@ -86,7 +93,7 @@ if (is_null($request))
             </tr>
             <tr>
                 <th>Email:</th>
-                <td><?= $student->getEmail() ?></td>
+                <td><?= $student->getEmail() ?>@truman.edu</td>
             </tr>
             <tr>
                 <th>Student ID:</th>
@@ -112,7 +119,11 @@ if (is_null($request))
             </tr>
         </table>
         Student Request Explanation:
-        <textarea readonly><?= $request->getExplanation() ?></textarea>
+        <div class="ui form">
+            <div class="field disabled">
+                <textarea readonly><?= $request->getExplanation() ?></textarea>
+            </div>
+        </div>
     </div>
 
     <div class="grid-item action-title">
@@ -121,30 +132,39 @@ if (is_null($request))
 
     <div class="grid-item status">
         <h3 style="margin:0;">Approve or Deny</h3>
-        <form>
-            <label for="status">Status:</label>
-            <select name="status" id="status_input">
-                <option value="none" hidden></option>
-                <option value="Approved">Approved</option>
-                <option value="Provisionally Approved">Provisionally Approved</option>
-                <option value="Denied">Denied</option>
-            </select>
-            <label style="padding-left:50px">In Banner:</label>
-            <input type="checkbox" id="banner" name="banner" <?php if($request->isInBanner()) echo "checked"; ?> >
-            <br>
-            <textarea id="justification" placeholder="Note for student"><?= $request->getJustification(); ?></textarea>
+        <form class="ui form">
+            <div class="field">
+                <select id="status_input" class="ui dropdown">
+                    <option value="">Change Status</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Provisionally Approved">Provisionally Approved</option>
+                    <option value="Denied">Denied</option>
+                </select>
+            </div>
+            <div class="field">
+                <textarea id="justification" placeholder="Note for student"><?= $request->getJustification() ?></textarea>
+            </div>
+            <div class="ui <?php if($request->isInBanner()) echo "checked"; ?> checkbox">
+                <input id="banner" type="checkbox" <?php if($request->isInBanner()) echo "checked"; ?>>
+                <label>In Banner</label>
+            </div>
+            <div id="submit" class="ui right floated button">Submit</div>
         </form>
-        <button id="submit">Submit</button>
     </div>
     <div class="grid-item send">
         <h3 style="margin:0;">Delegate to Faculty</h3>
-        <form>
-            <label for="email">Faculty email:</label>
-            <input type="email">
-            <br>
-            <textarea placeholder="Notes to send to faculty"></textarea>
+        <form class="ui form">
+            <div class="field">
+                <div class="ui right labeled input">
+                    <input required class="email-input" type="text" name="email" placeholder="Truman email">
+                    <div class="ui label">@truman.edu</div>
+                </div>
+            </div>
+            <div class="field">
+                <textarea id="justification" placeholder="Note for faculty"></textarea>
+            </div>
+            <div id="submit-faculty" class="ui right floated button">Submit</div>
         </form>
-        <button id="submit">Submit</button>
     </div>
 
     <!--
@@ -211,6 +231,6 @@ if (is_null($request))
         </div>
     </div>
     -->
-</div>
+</section>
 </body>
 </html>

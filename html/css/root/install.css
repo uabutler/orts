@@ -19,13 +19,6 @@ td {
     box-shadow: 0 0 5px #ff4d61;
 }
 
-.warning {
-    background-color: whitesmoke;
-    width: calc(100% - 150px);
-    margin: 50px;
-    padding: 25px;
-}
-
 .container {
     max-width: 100%;
 }

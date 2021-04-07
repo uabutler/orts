@@ -15,13 +15,13 @@
 <?php require_once 'php/header.php'; ?>
 <?php require_once 'php/navbar.php'; homeNavbar(); ?>
 
-<div class="grid-item content">
+<section>
     <noscript style="color:red;">
         <b>WARNING:</b> This site will <em>not</em> function without javascript. Please whitelist it before continuing.
     </noscript>
     <div style="text-align: center;">
         <h1>Welcome!</h1>
     </div>
-</div>
+</section>
 </body>
 </html>

@@ -1,24 +1,23 @@
 /*
  * INPUT VALIDATION
  */
-function validateBannerId() { return validateRegex("banner_id", /^001\d{6}$/); }
-function validateGradMonth() { return validateRegex("year", /^20[2-9]\d$/); }
-function validateFirstName() { return validateNotEmpty("first_name"); }
-function validateLastName() { return validateNotEmpty("last_name"); }
+function validateBannerId() { return setError(validateRegex("banner_id", /^001\d{6}$/), "banner_id"); }
+function validateGradYear() { return setError(validateRegex("year", /^20[2-9]\d$/), "year"); }
+function validateFirstName() { return setError(validateNotEmpty("first_name"), "first_name"); }
+function validateLastName() { return setError(validateNotEmpty("last_name"), "last_name"); }
+function validateGradMonth() { return setError(validateNotEmpty("grad_month"), "grad_month"); }
+function validateStanding() { return setError(validateNotEmpty("standing"), "standing"); }
 
 function validate()
 {
-    // Return true iff all are true
-    switch(false)
-    {
-        case validateBannerId():
-        case validateGradMonth():
-        case validateFirstName():
-        case validateLastName():
-            return false;
-        default:
-            return true;
-    }
+    let ret = validateBannerId();
+    ret = validateGradMonth() && ret;
+    ret = validateGradYear() && ret;
+    ret = validateFirstName() && ret;
+    ret = validateLastName() && ret;
+    ret = validateStanding() && ret;
+
+    return ret;
 }
 
 /*
@@ -44,7 +43,7 @@ function createStudent()
     if(!validate())
         return false;
 
-    inputEnable(false);
+    $('form').addClass("loading");
 
     let data = {};
 
@@ -67,7 +66,7 @@ function createStudent()
     .fail(function(response)
     {
         console.log("BAD");
-        inputEnable(true);
+        $('form').removeClass("loading");
     });
 }
 
@@ -78,15 +77,13 @@ $(function ()
 {
     $('.select').select2({minimumResultsForSearch: Infinity});
 
-    $(document).on("input", ".numeric", function ()
-    {
-        this.value = this.value.replace(/\D/g, '');
-    });
+    $('#banner_id').on("focusout", validateBannerId);
+    $('#year').on("focusout", validateGradYear);
+    $('#first_name').on("focusout", validateFirstName);
+    $('#last_name').on("focusout", validateLastName);
 
-    $('#banner_id').on("focusout", function () { setError(validateBannerId(), "banner_id"); })
-    $('#year').on("focusout", function () { setError(validateGradMonth(), "year"); })
-    $('#first_name').on("focusout", function () { setError(validateFirstName(), "first_name"); })
-    $('#last_name').on("focusout", function () { setError(validateLastName(), "last_name"); })
+    $('#standing').on("change", validateStanding);
+    $('#grad_month').on("change", validateGradMonth);
 
     $('#next').on("click", createStudent);
 });

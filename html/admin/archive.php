@@ -11,11 +11,11 @@ $inactive = Semester::listInactive();
     <link rel="stylesheet" href="/css/admin/archive.css">
 </head>
 
-<body class="grid-container">
+<body>
 <?php require_once '../php/header.php'; ?>
 <?php require_once '../php/navbar.php'; facultyNavbar("Archive"); ?>
 
-<div class="grid-item content content-grid-container">
+<section class="content-grid-container">
     <div class="grid-item active-semesters">
         <h2 class="truman-dark-bg">Active Semesters</h2>
         <table id="semester-table">
@@ -47,6 +47,6 @@ $inactive = Semester::listInactive();
             <?php endforeach; ?>
         </table>
     </div>
-</div>
+</section>
 </body>
 </html>

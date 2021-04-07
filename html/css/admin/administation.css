@@ -9,10 +9,6 @@ table {
     width: 100%;
 }
 
-input {
-    width: calc(100% - 20px);
-}
-
 table {
     border-collapse: collapse;
     width: 100%;
@@ -28,13 +24,13 @@ table th {
     padding-bottom: 12px;
     text-align: left;
     color: black;
-    background-color: lightgrey;
+    background-color: darkgrey;
 }
 
-table button {
-    background-color: grey;
+table .ui.button {
     width: 100%;
     white-space: nowrap;
+    background-color: lightgrey;
 }
 
 #overlay {
@@ -52,16 +48,11 @@ table button {
 
 #popup {
     width: 75%;
-    height: calc(100% - 100px);
     background-color: white;
     margin: 50px auto auto;
-    padding: 10px;
-}
-
-#entries {
-    width: calc(100% - 20px);
-    height: 75%;
-    resize: none;
+    padding: 20px;
+    max-height: calc(100% - 100px);
+    overflow-y: scroll;
 }
 
 .ol-btn {

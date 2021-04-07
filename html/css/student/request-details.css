@@ -38,6 +38,7 @@ button.edit {
     padding: 4px 8px;
     float:right;
     cursor: pointer;
+    border: none;
 }
 
 button.edit:hover {
@@ -53,12 +54,6 @@ textarea, select, input {
     box-sizing: border-box;
 }
 
-.error {
-    outline: none;
-    border-color: #ff4d61;
-    box-shadow: 0 0 5px #ff4d61;
-}
-
 table, td {
     width: 100%;
 }
@@ -69,8 +64,4 @@ th {
 
 div.edit {
     display: none;
-}
-
-button.cancel {
-    margin-right: 4px;
 }

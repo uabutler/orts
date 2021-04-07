@@ -28,7 +28,7 @@ $(function () {
     requests.forEach(function createHtml(request)
     {
         // The opening tag including the get request for the details page
-        let out = '<tr class="clickable-row" onclick="window.location=\'request-details.php?id=' + request.id + '\'" class="request-item">';
+        let out = '<tr class="clickable-row request-item" onclick="window.location=\'request-details.php?id=' + request.id + '\'">';
         out += '<td>' + request.section.course.department.department + '</td>';
         out += '<td>' + request.section.course.course_num + '</td>';
         out += '<td>' + request.section.course.title + '</td>';
