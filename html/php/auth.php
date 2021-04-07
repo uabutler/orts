@@ -22,7 +22,7 @@ class Auth
         return phpCAS::getUser();
     }
 
-    static function isAuthenticatedStudent(string $expectedStudent): bool
+    static function isAuthenticatedStudent(?string $expectedStudent): bool
     {
         $ret = self::isAuthenticated() && !is_null(Student::get(self::getUser()));
         if(!is_null($expectedStudent))
@@ -44,9 +44,9 @@ class Auth
     /**
      * Authenticate. If not student, create new profile. If the specific student is not allowed to access that
      * page, HTTP Forbidden
-     * @param $expectedStudent string The email of the student who is permitted to access this page
+     * @param string|null $expectedStudent string The email of the student who is permitted to access this page
      */
-    static function forceAuthenticationStudent(string $expectedStudent)
+    static function forceAuthenticationStudent(?string $expectedStudent)
     {
         self::forceAuthentication();
         if(!self::isAuthenticatedStudent(null))
