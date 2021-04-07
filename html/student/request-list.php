@@ -3,7 +3,8 @@ require_once '../php/database/requests.php';
 require_once '../php/auth.php';
 
 Auth::createClient();
-Auth::forceAuthenticationStudent();
+Auth::forceAuthenticationStudent(null);
+
 $student_email = Auth::getUser();
 $student = Student::get($student_email);
 $requests = Request::get($student);

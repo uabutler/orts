@@ -22,9 +22,15 @@ class Auth
         return phpCAS::getUser();
     }
 
-    static function isAuthenticatedStudent(): bool
+    static function isAuthenticatedStudent(string $expectedStudent): bool
     {
-        return self::isAuthenticated() && !is_null(Student::get(self::getUser()));
+        $ret = self::isAuthenticated() && !is_null(Student::get(self::getUser()));
+        if(!is_null($expectedStudent))
+        {
+            $ret = $ret && ($expectedStudent === self::getUser());
+        }
+
+        return $ret;
     }
 
     static function isAuthenticatedFaculty(): bool
@@ -38,13 +44,17 @@ class Auth
     }
 
     /**
-     * Authenticate. If not student, create new profile
+     * Authenticate. If not student, create new profile. If the specific student is not allowed to access that
+     * page, HTTP Forbidden
+     * @param $expectedStudent string The email of the student who is permitted to access this page
      */
-    static function forceAuthenticationStudent()
+    static function forceAuthenticationStudent(string $expectedStudent)
     {
         self::forceAuthentication();
-        if(is_null(Student::get(self::getUser())))
+        if(!self::isAuthenticatedStudent(null))
             header("Location: /student/new-profile.php");
+        elseif(!self::isAuthenticatedStudent($expectedStudent))
+            include '../error/error403.php';
     }
 
     /**
@@ -59,7 +69,6 @@ class Auth
 
     static function logout()
     {
-        // TODO: Update to use config URL
-        phpCAS::logoutWithRedirectService("orts.uabutler.com/home.php");
+        phpCAS::logoutWithRedirectService(SERVER['name'] . "/home.php");
     }
 }

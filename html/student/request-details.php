@@ -1,5 +1,6 @@
 <?php
 include_once '../php/database/requests.php';
+include_once '../php/database/students.php';
 
 if (isset($_GET['id']))
     $request = Request::getById(intval($_GET['id']));
@@ -8,6 +9,9 @@ else
 
 if (is_null($request))
     include '../error/error400.php';
+
+Auth::createClient();
+Auth::forceAuthenticationStudent($request->getStudent()->getEmail());
 
 $departments = Department::list();
 $semesters = Semester::listActive();
