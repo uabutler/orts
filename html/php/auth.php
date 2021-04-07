@@ -26,9 +26,7 @@ class Auth
     {
         $ret = self::isAuthenticated() && !is_null(Student::get(self::getUser()));
         if(!is_null($expectedStudent))
-        {
             $ret = $ret && ($expectedStudent === self::getUser());
-        }
 
         return $ret;
     }

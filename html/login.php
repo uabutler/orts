@@ -11,6 +11,6 @@ if(Auth::isAuthenticatedFaculty())
 }
 else
 {
-    Auth::forceAuthenticationStudent();
+    Auth::forceAuthenticationStudent(null);
     header("Location: /student/request-list.php");
 }

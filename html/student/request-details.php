@@ -1,6 +1,7 @@
 <?php
 include_once '../php/database/requests.php';
 include_once '../php/database/students.php';
+include_once '../php/auth.php';
 
 if (isset($_GET['id']))
     $request = Request::getById(intval($_GET['id']));
