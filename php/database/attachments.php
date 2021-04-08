@@ -76,7 +76,7 @@ class Attachment implements JsonSerializable
         $this->path = $path;
     }
 
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $attachment_tbl;
         $pdo = connectDB();
@@ -94,7 +94,7 @@ class Attachment implements JsonSerializable
         return true;
     }
 
-    private function updateDB()
+    private function updateDB(): bool
     {
         global $attachment_tbl;
         $pdo = connectDB();
@@ -116,13 +116,35 @@ class Attachment implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
             return $this->insertDB();
         else
             return $this->updateDB();
+    }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        // TODO: Delete file
+        global $attachment_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+        return deleteByIdFrom($attachment_tbl, $id, $pdo);
     }
 
     /**

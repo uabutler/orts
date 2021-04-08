@@ -35,6 +35,9 @@ class API
 
     public static function delete(callable $func)
     {
+        global $_DELETE;
+        // A DELETE equivalent to $_GET isn't included by default
+        parse_str(file_get_contents('php://input'), $_DELETE);
         self::paramHelper('DELETE', $func);
     }
 

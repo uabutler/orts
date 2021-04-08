@@ -194,14 +194,6 @@ class Request implements JsonSerializable
     }
 
     /**
-     * Activate the request, this moves it out of the archive
-     */
-    public function setActive(): void
-    {
-        $this->active = true;
-    }
-
-    /**
      * Deactivate the request, this effectively archives it
      */
     public function setInactive(): void
@@ -226,7 +218,7 @@ class Request implements JsonSerializable
         $this->active = $active;
     }
 
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $request_tbl;
 
@@ -256,14 +248,14 @@ class Request implements JsonSerializable
         return true;
     }
 
-    private function updateDB()
+    private function updateDB(): bool
     {
         global $request_tbl;
 
         $pdo = connectDB();
 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
-        $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, faculty_id=:faculty_id, status=:status, justification=:justification, banner=:banner, reason=:reason, explanation=:explanation, active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, faculty_id=:faculty_id, status=:status, justification=:justification, banner=:banner, reason=:reason, explanation=:explanation WHERE id=:id");
 
         $studentid = $this->student->getId();
         $facultyid = $this->faculty->getId();
@@ -278,11 +270,13 @@ class Request implements JsonSerializable
         $smt->bindParam(":banner", $this->banner, PDO::PARAM_BOOL);
         $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
-        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
         if(!$smt->execute()) return false;
 
-        return true;
+        if($this->active)
+            return true;
+        else
+            return self::inactiveById($this->id, $pdo);
     }
 
     /**
@@ -290,13 +284,52 @@ class Request implements JsonSerializable
      * a new entry into the DB is made. If the request has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the database
         if (is_null($this->id))
             return $this->insertDB();
         else
             return $this->updateDB();
+    }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $request_tbl, $attachment_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        // TODO: Notifications?
+
+        // Delete all attachments
+        $smt = $pdo->prepare("SELECT id FROM $attachment_tbl WHERE request_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Attachment::deleteById($i, $pdo);
+
+        // Delete the request
+        return deleteByIdFrom($request_tbl, $id, $pdo);
+    }
+
+    public static function inactiveById(int $id, PDO $pdo = null): bool
+    {
+        global $request_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+        return inactiveByIdFrom($request_tbl, $id, $pdo);
     }
 
     /**
@@ -343,6 +376,7 @@ class Request implements JsonSerializable
     /**
      * Retrieve a students requests from the database
      * @param Student $student
+     * @return array
      */
     public static function get(Student $student): array
     {
@@ -374,6 +408,7 @@ class Request implements JsonSerializable
     /**
      * Retrieve a faculty's requests from the database
      * @param Faculty $faculty
+     * @return array
      */
     public static function getByFaculty(Faculty $faculty): array
     {
@@ -405,6 +440,7 @@ class Request implements JsonSerializable
     /**
      * Retrieve a faculty's requests from the database
      * @param Semester $semester
+     * @return array
      */
     public static function getInactive(Semester $semester): array
     {
@@ -486,7 +522,7 @@ class Request implements JsonSerializable
         return $returnList;
     }
 
-    public function getStatusHtml()
+    public function getStatusHtml(): string
     {
         switch ($this->status)
         {

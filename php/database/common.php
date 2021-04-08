@@ -19,6 +19,20 @@ function flattenResult(array $result): array
     return $out;
 }
 
+function deleteByIdFrom(string $table, int $id, PDO $pdo): bool
+{
+    $smt = $pdo->prepare("DELETE FROM $table WHERE id=:id");
+    $smt->bindParam(":id", $id, PDO::PARAM_INT);
+    return $smt->execute();
+}
+
+function inactiveByIdFrom(string $table, int $id, PDO $pdo): bool
+{
+    $smt = $pdo->prepare("UPDATE $table SET active=false WHERE id=:id");
+    $smt->bindParam(":id", $id, PDO::PARAM_INT);
+    return $smt->execute();
+}
+
 function getEnums(string $table, string $field, $pdo = null): array
 {
     if (is_null($pdo))

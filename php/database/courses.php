@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/common.php';
 require_once __DIR__ . '/programs.php';
+require_once __DIR__ . '/requests.php';
 
 /**
  * Represents a department object from the database. Essentially acts as a wrapper for the department's prefix string
@@ -47,14 +48,6 @@ class Department implements JsonSerializable
     }
 
     /**
-     * Activate the department
-     */
-    public function setActive()
-    {
-        $this->active = true;
-    }
-
-    /**
      * Deactivate the department
      */
     public function setInactive()
@@ -93,7 +86,7 @@ class Department implements JsonSerializable
         return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
     }
 
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $department_tbl;
         $pdo = connectDB();
@@ -101,34 +94,29 @@ class Department implements JsonSerializable
         $smt = $pdo->prepare("INSERT INTO $department_tbl (department, active) VALUES (:department, :active)");
         $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
-    private function updateDB()
+    private function updateDB(): bool
     {
-        global $department_tbl, $course_tbl, $section_tbl;
+        global $department_tbl;
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("UPDATE $department_tbl SET department=:department active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $department_tbl SET department=:department WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
-        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
 
-        // If this department is no longer active, we need to deactivate all of the courses of that department and
-        // sections of those courses
-        if (!$this->active)
-        {
-            $smt = $pdo->prepare("UPDATE $course_tbl SET active=false WHERE department_id=:department_id");
-            $smt->bindParam(":department_id", $this->id, PDO::PARAM_INT);
-            $smt->execute();
+        if (!$smt->execute()) return false;
 
-            $smt = $pdo->prepare("UPDATE $section_tbl JOIN $course_tbl SET $section_tbl.active=false WHERE $course_tbl.id=course_id AND department_id=:department_id");
-            $smt->bindParam(":department_id", $this->id, PDO::PARAM_INT);
-            $smt->execute();
-        }
+        if ($this->active)
+            return true;
+        else
+            return self::inactiveById($this->id);
     }
 
     /**
@@ -136,13 +124,57 @@ class Department implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
+    }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $department_tbl, $course_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        // Delete all attachments
+        $smt = $pdo->prepare("select id from $course_tbl where department_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Course::deleteById($i, $pdo);
+
+        // Delete the request
+        return deleteByIdFrom($department_tbl, $id, $pdo);
+    }
+
+    public static function inactiveById(int $id, PDO $pdo = null): bool
+    {
+        global $department_tbl, $course_tbl;
+        if(is_null($pdo)) $pdo = connectDB();
+
+        $smt = $pdo->prepare("select id from $course_tbl where department_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Course::inactiveById($i, $pdo);
+
+        return inactiveByIdFrom($department_tbl, $id, $pdo);
     }
 
     /**
@@ -309,7 +341,7 @@ class Course implements JsonSerializable
         $this->active = false;
     }
 
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $course_tbl;
         $pdo = connectDB();
@@ -320,31 +352,32 @@ class Course implements JsonSerializable
         $smt->bindParam(":course_num", $this->course_num, PDO::PARAM_INT);
         $smt->bindParam(":title", $this->title, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
-    private function updateDB()
+    private function updateDB(): bool
     {
-        global $course_tbl, $section_tbl;
+        global $course_tbl;
         $pdo = connectDB();
 
         $department_id = $this->department->getId();
-        $smt = $pdo->prepare("UPDATE $course_tbl SET department_id:department_id, course_num=:course_num, title=:title active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $course_tbl SET department_id:department_id, course_num=:course_num, title=:title WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":department_id", $department_id, PDO::PARAM_INT);
         $smt->bindParam(":course_num", $this->course_num, PDO::PARAM_INT);
         $smt->bindParam(":title", $this->title, PDO::PARAM_STR);
-        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
 
-        if (!$this->active)
-        {
-            $smt = $pdo->prepare("UPDATE $section_tbl SET active=false WHERE course_id=:course_id");
-            $smt->bindParam(":course_id", $this->id, PDO::PARAM_INT);
-            $smt->execute();
-        }
+        if (!$smt->execute()) return false;
+
+        if ($this->active)
+            return true;
+        else
+            return self::inactiveById($this->id);
     }
 
     /**
@@ -352,14 +385,59 @@ class Course implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
     }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $course_tbl, $section_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        // Delete all attachments
+        $smt = $pdo->prepare("select id from $section_tbl where course_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Section::deleteById($i, $pdo);
+
+        // Delete the request
+        return deleteByIdFrom($course_tbl, $id, $pdo);
+    }
+
+    public static function inactiveById(int $id, PDO $pdo = null): bool
+    {
+        global $course_tbl, $section_tbl;
+        if(is_null($pdo)) $pdo = connectDB();
+
+        $smt = $pdo->prepare("select id from $section_tbl where course_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Section::inactiveById($i, $pdo);
+
+        return inactiveByIdFrom($course_tbl, $id, $pdo);
+    }
+
 
     /**
      * Creates a local course object given a {@link Department} that's already stored in the DB, course number, and title
@@ -446,7 +524,7 @@ class Semester implements JsonSerializable
      * The semester code. E.g., "202160"
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->semester;
     }
@@ -464,7 +542,7 @@ class Semester implements JsonSerializable
      * Is the system currently accepting request for this semester
      * @return bool
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->active;
     }
@@ -472,7 +550,7 @@ class Semester implements JsonSerializable
     /**
      * @param string $semester
      */
-    public function setCode(string $semester)
+    public function setCode(string $semester): void
     {
         $this->semester = $semester;
     }
@@ -480,7 +558,7 @@ class Semester implements JsonSerializable
     /**
      * @param string $description
      */
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -488,7 +566,7 @@ class Semester implements JsonSerializable
     /**
      * Set this semester to active
      */
-    public function setActive()
+    public function setActive(): void
     {
         $this->active = true;
     }
@@ -496,7 +574,7 @@ class Semester implements JsonSerializable
     /**
      * Set this semester to inactive
      */
-    public function setInactive()
+    public function setInactive(): void
     {
         $this->active = false;
     }
@@ -556,7 +634,7 @@ class Semester implements JsonSerializable
         $this->active = $active;
     }
 
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $semester_tbl;
         $pdo = connectDB();
@@ -565,34 +643,29 @@ class Semester implements JsonSerializable
         $smt->bindParam(":semester", $this->semester, PDO::PARAM_STR);
         $smt->bindParam(":description", $this->description, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
 
         return true;
     }
 
-    private function updateDB()
+    private function updateDB(): bool
     {
-        global $semester_tbl, $section_tbl;
+        global $semester_tbl;
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("UPDATE $semester_tbl SET semester=:semester, description=:description, active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $semester_tbl SET semester=:semester, description=:description WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":semester", $this->semester, PDO::PARAM_STR);
         $smt->bindParam(":description", $this->description, PDO::PARAM_STR);
-        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        if(!$smt->execute()) return false;
 
-        // Deactivate all sections in that semester
-        if (!$this->active)
-        {
-            $smt = $pdo->prepare("UPDATE $section_tbl SET active=false WHERE semester_id=:semester_id");
-            $smt->bindParam(":semester_id", $this->id, PDO::PARAM_INT);
-            if(!$smt->execute()) return false;
-        }
+        if (!$smt->execute()) return false;
 
-        return true;
+        if ($this->active)
+            return true;
+        else
+            return self::inactiveById($this->id);
     }
 
     /**
@@ -600,7 +673,7 @@ class Semester implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
@@ -608,6 +681,50 @@ class Semester implements JsonSerializable
         else
             return $this->updateDB();
     }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $semester_tbl, $section_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        // Delete all attachments
+        $smt = $pdo->prepare("SELECT id FROM $section_tbl WHERE semester_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Section::deleteById($i, $pdo);
+
+        return deleteByIdFrom($semester_tbl, $id, $pdo);
+    }
+
+    public static function inactiveById(int $id, PDO $pdo = null): bool
+    {
+        global $semester_tbl, $section_tbl;
+        if(is_null($pdo)) $pdo = connectDB();
+
+        $smt = $pdo->prepare("SELECT id FROM $section_tbl WHERE semester_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Section::inactiveById($i, $pdo);
+
+        return inactiveByIdFrom($semester_tbl, $id, $pdo);
+    }
+
 
     /**
      * Build a semester object locally
@@ -766,7 +883,7 @@ class Section implements JsonSerializable
     /**
      * @param Semester $semester
      */
-    public function setSemster(Semester $semester)
+    public function setSemester(Semester $semester)
     {
         $this->semester = $semester;
     }
@@ -815,7 +932,7 @@ class Section implements JsonSerializable
         $this->active = $active;
     }
 
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $section_tbl;
         $pdo = connectDB();
@@ -828,25 +945,33 @@ class Section implements JsonSerializable
         $smt->bindParam(":section", $this->section, PDO::PARAM_INT);
         $smt->bindParam(":crn", $this->crn, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
-    private function updateDB()
+    private function updateDB(): bool
     {
         global $section_tbl;
         $pdo = connectDB();
 
         $course_id = $this->course->getId();
         $semester_id = $this->semester->getId();
-        $smt = $pdo->prepare("UPDATE $section_tbl SET course_id=:course_id, semester_id=:semester_id, section=:section, active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $section_tbl SET course_id=:course_id, semester_id=:semester_id, section=:section WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":course_id", $course_id, PDO::PARAM_INT);
         $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
         $smt->bindParam(":section", $section, PDO::PARAM_INT);
-        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+
+        if (!$smt->execute()) return false;
+
+        if ($this->active)
+            return true;
+        else
+            return self::inactiveById($this->id);
     }
 
     /**
@@ -854,13 +979,57 @@ class Section implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
+    }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $section_tbl, $request_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        // Delete all attachments
+        $smt = $pdo->prepare("select id from $request_tbl where section_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Request::deleteById($i, $pdo);
+
+        // Delete the request
+        return deleteByIdFrom($section_tbl, $id, $pdo);
+    }
+
+    public static function inactiveById(int $id, PDO $pdo = null): bool
+    {
+        global $section_tbl, $request_tbl;
+        if(is_null($pdo)) $pdo = connectDB();
+
+        $smt = $pdo->prepare("select id from $request_tbl where section_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $i) Request::inactiveById($i, $pdo);
+
+        return inactiveByIdFrom($section_tbl, $id, $pdo);
     }
 
     /**
@@ -871,7 +1040,7 @@ class Section implements JsonSerializable
      * @param string $crn
      * @return Section An object that only exists locally, isn't stored in DB
      */
-    public static function build(Course $course, Semester $semester, int $section, string $crn)
+    public static function build(Course $course, Semester $semester, int $section, string $crn): Section
     {
         return new Section($course, $semester, $section, $crn);
     }

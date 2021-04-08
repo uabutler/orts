@@ -95,7 +95,7 @@ class Faculty implements JsonSerializable
         return $out;
     }
 
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $faculty_tbl;
         $pdo = connectDB();
@@ -116,7 +116,7 @@ class Faculty implements JsonSerializable
         return true;
     }
 
-    private function updateDB()
+    private function updateDB(): bool
     {
         global $department_tbl;
         $pdo = connectDB();
@@ -137,7 +137,7 @@ class Faculty implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the databse
         if (is_null($this->id))

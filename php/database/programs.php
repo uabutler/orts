@@ -50,14 +50,6 @@ class Program
         $this->name = $name;
     }
 
-    /**
-     * Sets the current major to active
-     */
-    public function setActive(): void
-    {
-        $this->active = true;
-    }
-
     public function setInactive(): void
     {
         $this->active = false;
@@ -79,7 +71,7 @@ class Program
 class Major extends Program implements JsonSerializable
 {
     // Create a new entry in the database
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $major_tbl;
 
@@ -90,7 +82,7 @@ class Major extends Program implements JsonSerializable
         $smt->bindParam(":major", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
 
@@ -98,7 +90,7 @@ class Major extends Program implements JsonSerializable
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object
-    private function updateDB()
+    private function updateDB(): bool
     {
         global $major_tbl;
 
@@ -110,9 +102,12 @@ class Major extends Program implements JsonSerializable
         $smt->bindParam(":major", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
-        return true;
+        if ($this->active)
+            return true;
+        else
+            return self::inactiveById($this->id);
     }
 
     /**
@@ -120,13 +115,47 @@ class Major extends Program implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the database
         if (is_null($this->id))
             return $this->insertDB();
         else
             return $this->updateDB();
+    }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $major_tbl, $student_major_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        $smt = $pdo->prepare("DELETE FROM $student_major_tbl WHERE major_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+
+        // Delete the request
+        return deleteByIdFrom($major_tbl, $id, $pdo);
+    }
+
+    public static function inactiveById(int $id, PDO $pdo = null): bool
+    {
+        global $major_tbl;
+        if(is_null($pdo)) $pdo = connectDB();
+        return inactiveByIdFrom($major_tbl, $id, $pdo);
     }
 
     /**
@@ -167,6 +196,18 @@ class Major extends Program implements JsonSerializable
         global $major_tbl;
         $pdo = connectDB();
         $smt = $pdo->query("SELECT major FROM $major_tbl");
+        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+    }
+
+    /**
+     * An array of strings representing all possible majors
+     * @return array
+     */
+    public static function listActive(): array
+    {
+        global $major_tbl;
+        $pdo = connectDB();
+        $smt = $pdo->query("SELECT major FROM $major_tbl WHERE active=true");
         return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
     }
 
@@ -221,7 +262,7 @@ class Major extends Program implements JsonSerializable
 class Minor extends Program implements JsonSerializable
 {
     // Create a new entry in the database
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $minor_tbl;
 
@@ -238,18 +279,23 @@ class Minor extends Program implements JsonSerializable
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object
-    private function updateDB()
+    private function updateDB(): bool
     {
         global $minor_tbl;
 
         $pdo = connectDB();
 
         // First, update the basic student info
-        $smt = $pdo->prepare("UPDATE $minor_tbl SET minor=:minor active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $minor_tbl SET minor=:minor WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":minor", $this->name, PDO::PARAM_STR);
-        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
+
+        if (!$smt->execute()) return false;
+
+        if($this->active)
+            return true;
+        else
+            return self::inactiveById($this->id);
     }
 
     /**
@@ -257,13 +303,47 @@ class Minor extends Program implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the database
         if (is_null($this->id))
-            $this->insertDB();
+            return $this->insertDB();
         else
-            $this->updateDB();
+            return $this->updateDB();
+    }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $minor_tbl, $student_minor_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        $smt = $pdo->prepare("DELETE FROM $student_minor_tbl WHERE minor_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+
+        // Delete the request
+        return deleteByIdFrom($minor_tbl, $id, $pdo);
+    }
+
+    public static function inactiveById(int $id, PDO $pdo = null): bool
+    {
+        global $minor_tbl;
+        if(is_null($pdo)) $pdo = connectDB();
+        return inactiveByIdFrom($minor_tbl, $id, $pdo);
     }
 
     /**
@@ -304,6 +384,18 @@ class Minor extends Program implements JsonSerializable
         global $minor_tbl;
         $pdo = connectDB();
         $smt = $pdo->query("SELECT minor FROM $minor_tbl");
+        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+    }
+
+    /**
+     * An array of strings representing all possible minors
+     * @return array
+     */
+    public static function listActive(): array
+    {
+        global $minor_tbl;
+        $pdo = connectDB();
+        $smt = $pdo->query("SELECT minor FROM $minor_tbl WHERE active=true");
         return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
     }
 

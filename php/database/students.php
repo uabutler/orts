@@ -2,6 +2,7 @@
 require_once __DIR__ . '/common.php';
 require_once __DIR__ . '/courses.php';
 require_once __DIR__ . '/programs.php';
+require_once __DIR__ . '/requests.php';
 // TODO: Data validation on constructor and setters
 
 /**
@@ -251,7 +252,7 @@ class Student implements JsonSerializable
     }
 
     // If the student is newly created, this will create a new entry in the database
-    private function insertDB()
+    private function insertDB(): bool
     {
         global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
@@ -281,7 +282,7 @@ class Student implements JsonSerializable
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object
-    private function updateDB()
+    private function updateDB(): bool
     {
         global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
@@ -340,7 +341,7 @@ class Student implements JsonSerializable
      * a new entry into the DB is made. If the student has been stored in the DB,
      * we update the existing entry
      */
-    public function storeInDB()
+    public function storeInDB(): bool
     {
         // The id is set only when the student is already in the database
         if (is_null($this->id))
@@ -348,6 +349,45 @@ class Student implements JsonSerializable
         else
             return $this->updateDB();
     }
+
+    /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $student_tbl, $student_major_tbl, $student_minor_tbl, $request_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        // Delete all requests
+        $smt = $pdo->query("SELECT id FROM $request_tbl WHERE student_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        foreach ($ids as $id) Request::deleteById($id, $pdo);
+
+        // Delete the majors and minors
+        $smt = $pdo->query("DELETE FROM $student_major_tbl WHERE student_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+
+        $smt = $pdo->query("DELETE FROM $student_minor_tbl WHERE student_id=:id");
+        $smt->bindParam(":id", $id, PDO::PARAM_INT);
+        $smt->execute();
+
+        // Delete the student
+        return deleteByIdFrom($student_tbl, $id, $pdo);
+    }
+
 
     /**
      * Constructs a new student locally
