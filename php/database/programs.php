@@ -55,6 +55,14 @@ class Program
         $this->active = false;
     }
 
+    protected static function listHelper(bool $active, string $table, string $col): array
+    {
+        $pdo = connectDB();
+        $smt = $pdo->prepare("SELECT $col FROM $table WHERE active=:active");
+        $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
+        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+    }
+
     public static function buildStringList(array $arr): array
     {
         $get_name = function (Program $program) { return $program->getName(); };
@@ -63,7 +71,7 @@ class Program
 
     public static function buildListString(array $arr): string
     {
-        if(empty($arr)) return "";
+        if (empty($arr)) return "";
         return implode(', ', preg_filter('/^/', "'", preg_filter('/$/', "'", $arr)));
     }
 }
@@ -154,8 +162,20 @@ class Major extends Program implements JsonSerializable
     public static function inactiveById(int $id, PDO $pdo = null): bool
     {
         global $major_tbl;
-        if(is_null($pdo)) $pdo = connectDB();
+        if (is_null($pdo)) $pdo = connectDB();
         return inactiveByIdFrom($major_tbl, $id, $pdo);
+    }
+
+    public static function listActive(): array
+    {
+        global $major_tbl;
+        return self::listHelper(true, $major_tbl, "major");
+    }
+
+    public static function listInactive(): array
+    {
+        global $major_tbl;
+        return self::listHelper(false, $major_tbl, "major");
     }
 
     /**
@@ -181,34 +201,10 @@ class Major extends Program implements JsonSerializable
         {
             $major = Major::get($name);
             if (is_null($major)) return null;
-            array_push($out, $major);
+            $out[] = $major;
         }
 
         return $out;
-    }
-
-    /**
-     * An array of strings representing all possible majors
-     * @return array
-     */
-    public static function list(): array
-    {
-        global $major_tbl;
-        $pdo = connectDB();
-        $smt = $pdo->query("SELECT major FROM $major_tbl");
-        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-    }
-
-    /**
-     * An array of strings representing all possible majors
-     * @return array
-     */
-    public static function listActive(): array
-    {
-        global $major_tbl;
-        $pdo = connectDB();
-        $smt = $pdo->query("SELECT major FROM $major_tbl WHERE active=true");
-        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
     }
 
     /**
@@ -292,7 +288,7 @@ class Minor extends Program implements JsonSerializable
 
         if (!$smt->execute()) return false;
 
-        if($this->active)
+        if ($this->active)
             return true;
         else
             return self::inactiveById($this->id);
@@ -342,8 +338,20 @@ class Minor extends Program implements JsonSerializable
     public static function inactiveById(int $id, PDO $pdo = null): bool
     {
         global $minor_tbl;
-        if(is_null($pdo)) $pdo = connectDB();
+        if (is_null($pdo)) $pdo = connectDB();
         return inactiveByIdFrom($minor_tbl, $id, $pdo);
+    }
+
+    public static function listActive(): array
+    {
+        global $minor_tbl;
+        return self::listHelper(true, $minor_tbl, "minor");
+    }
+
+    public static function listInactive(): array
+    {
+        global $minor_tbl;
+        return self::listHelper(false, $minor_tbl, "minor");
     }
 
     /**
@@ -369,34 +377,10 @@ class Minor extends Program implements JsonSerializable
         {
             $minor = Minor::get($name);
             if (is_null($minor)) return null;
-            array_push($out, $minor);
+            $out[] = $minor;
         }
 
         return $out;
-    }
-
-    /**
-     * An array of strings representing all possible minors
-     * @return array
-     */
-    public static function list(): array
-    {
-        global $minor_tbl;
-        $pdo = connectDB();
-        $smt = $pdo->query("SELECT minor FROM $minor_tbl");
-        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-    }
-
-    /**
-     * An array of strings representing all possible minors
-     * @return array
-     */
-    public static function listActive(): array
-    {
-        global $minor_tbl;
-        $pdo = connectDB();
-        $smt = $pdo->query("SELECT minor FROM $minor_tbl WHERE active=true");
-        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
     }
 
     /**

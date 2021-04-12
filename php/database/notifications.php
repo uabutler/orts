@@ -110,7 +110,7 @@ class Notification implements JsonSerializable
         $smt->bindParam(":receiver_email", $this->receiver_email, PDO::PARAM_STR);
         $smt->bindParam(":body", $this->body, PDO::PARAM_LOB);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
 
@@ -129,7 +129,7 @@ class Notification implements JsonSerializable
         $smt->bindParam(":receiver_email", $this->receiver_email, PDO::PARAM_STR);
         $smt->bindParam(":body", $this->body, PDO::PARAM_LOB);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         return true;
     }
@@ -199,8 +199,8 @@ class Notification implements JsonSerializable
         $out = [];
 
         foreach ($data as $row)
-            array_push($out, new Notification(Request::getById($row['request_id']), $row['sender_email'],
-                $row['receiver_email'], $row['body'], $row['id']));
+            $out[] = new Notification(Request::getById($row['request_id']), $row['sender_email'],
+                $row['receiver_email'], $row['body'], $row['id']);
 
         return $out;
     }

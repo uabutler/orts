@@ -63,18 +63,6 @@ class Department implements JsonSerializable
     }
 
     /**
-     * An array of strings representing all departments
-     * @return array
-     */
-    public static function list(): array
-    {
-        global $department_tbl;
-        $pdo = connectDB();
-        $smt = $pdo->query("SELECT department FROM $department_tbl");
-        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-    }
-
-    /**
      * An array of strings representing all active departments
      * @return array
      */
@@ -83,6 +71,18 @@ class Department implements JsonSerializable
         global $department_tbl;
         $pdo = connectDB();
         $smt = $pdo->query("SELECT department FROM $department_tbl WHERE active=true");
+        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+    }
+
+    /**
+     * An array of strings representing all inactive departments
+     * @return array
+     */
+    public static function listInactive(): array
+    {
+        global $department_tbl;
+        $pdo = connectDB();
+        $smt = $pdo->query("SELECT department FROM $department_tbl WHERE active=false");
         return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
     }
 
@@ -166,7 +166,7 @@ class Department implements JsonSerializable
     public static function inactiveById(int $id, PDO $pdo = null): bool
     {
         global $department_tbl, $course_tbl;
-        if(is_null($pdo)) $pdo = connectDB();
+        if (is_null($pdo)) $pdo = connectDB();
 
         $smt = $pdo->prepare("select id from $course_tbl where department_id=:id");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -287,7 +287,7 @@ class Course implements JsonSerializable
      * The title of the course. E.g., Software Engineering
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -323,14 +323,6 @@ class Course implements JsonSerializable
     public function setTitle(string $title)
     {
         $this->title = $title;
-    }
-
-    /**
-     * Activated the course if it's inactive.
-     */
-    public function setActive()
-    {
-        $this->active = true;
     }
 
     /**
@@ -427,7 +419,7 @@ class Course implements JsonSerializable
     public static function inactiveById(int $id, PDO $pdo = null): bool
     {
         global $course_tbl, $section_tbl;
-        if(is_null($pdo)) $pdo = connectDB();
+        if (is_null($pdo)) $pdo = connectDB();
 
         $smt = $pdo->prepare("select id from $section_tbl where course_id=:id");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -449,6 +441,48 @@ class Course implements JsonSerializable
     public static function build(Department $department, int $course_num, string $title): Course
     {
         return new Course($department, $course_num, $title);
+    }
+
+    private static function listHelper(bool $active): array
+    {
+        global $course_tbl;
+        $pdo = connectDB();
+        $smt = $pdo->prepare("SELECT * FROM $course_tbl WHERE active=:active");
+        $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
+        $smt->execute();
+
+        $data = $smt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$data) return [];
+
+        $returnList = array();
+
+        foreach ($data as $row)
+        {
+            $department = Department::getById($row['department_id']);
+            $request = new Course($department, $data['course_num'], $data['title'], $data['active'], $data['id']);
+            $returnList[] = $request;
+        }
+
+        return $returnList;
+    }
+
+    /**
+     * An array of strings representing all active courses
+     * @return array
+     */
+    public static function listActive(): array
+    {
+        return self::listHelper(true);
+    }
+
+    /**
+     * An array of strings representing all inactive courses
+     * @return array
+     */
+    public static function listInactive(): array
+    {
+        return self::listHelper(false);
     }
 
     /**
@@ -564,66 +598,11 @@ class Semester implements JsonSerializable
     }
 
     /**
-     * Set this semester to active
-     */
-    public function setActive(): void
-    {
-        $this->active = true;
-    }
-
-    /**
      * Set this semester to inactive
      */
     public function setInactive(): void
     {
         $this->active = false;
-    }
-
-    /**
-     * List all active semesters
-     * @return array
-     */
-    public static function listActive(): array
-    {
-        global $semester_tbl;
-        $pdo = connectDB();
-
-        $smt = $pdo->query("SELECT * FROM $semester_tbl WHERE active=true");
-
-        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (!$data) return [];
-
-        $out = [];
-
-        foreach ($data as $row)
-            array_push($out, new Semester($row['semester'], $row['description'], $row['active'], $row['id']));
-
-        return $out;
-    }
-
-    /**
-     * List all active semesters
-     * @return array
-     */
-    public static function listInactive(): array
-    {
-        global $semester_tbl;
-        $pdo = connectDB();
-
-        $smt = $pdo->query("SELECT * FROM $semester_tbl WHERE active=false");
-
-        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
-
-        // TODO: Ensure this is the convention for all list functions
-        if (!$data) return [];
-
-        $out = [];
-
-        foreach ($data as $row)
-            array_push($out, new Semester($row['semester'], $row['description'], $row['active'], $row['id']));
-
-        return $out;
     }
 
     private function __construct(string $semester, string $description, bool $active = true, int $id = null)
@@ -714,7 +693,7 @@ class Semester implements JsonSerializable
     public static function inactiveById(int $id, PDO $pdo = null): bool
     {
         global $semester_tbl, $section_tbl;
-        if(is_null($pdo)) $pdo = connectDB();
+        if (is_null($pdo)) $pdo = connectDB();
 
         $smt = $pdo->prepare("SELECT id FROM $section_tbl WHERE semester_id=:id");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -735,6 +714,37 @@ class Semester implements JsonSerializable
     public static function build(string $semester, string $description)
     {
         return new Semester($semester, $description);
+    }
+
+    private static function listHelper(bool $active): array
+    {
+        global $semester_tbl;
+        $pdo = connectDB();
+
+        $smt = $pdo->prepare("SELECT * FROM $semester_tbl WHERE active=:active");
+        $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
+        $smt->execute();
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$data) return [];
+
+        $out = [];
+
+        foreach ($data as $row)
+            $out[] = new Semester($row['semester'], $row['description'], $row['active'], $row['id']);
+
+        return $out;
+    }
+
+    public static function listActive(): array
+    {
+        return self::listHelper(true);
+    }
+
+    public static function listInactive(): array
+    {
+        return self::listHelper(true);
     }
 
     /**
@@ -905,14 +915,6 @@ class Section implements JsonSerializable
     }
 
     /**
-     * Active this section
-     */
-    public function setActive(): void
-    {
-        $this->active = true;
-    }
-
-    /**
      * Inactive this section
      */
     public function setInactive(): void
@@ -1021,7 +1023,7 @@ class Section implements JsonSerializable
     public static function inactiveById(int $id, PDO $pdo = null): bool
     {
         global $section_tbl, $request_tbl;
-        if(is_null($pdo)) $pdo = connectDB();
+        if (is_null($pdo)) $pdo = connectDB();
 
         $smt = $pdo->prepare("select id from $request_tbl where section_id=:id");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -1043,6 +1045,11 @@ class Section implements JsonSerializable
     public static function build(Course $course, Semester $semester, int $section, string $crn): Section
     {
         return new Section($course, $semester, $section, $crn);
+    }
+
+    private static function listHelper(): array
+    {
+
     }
 
     /**

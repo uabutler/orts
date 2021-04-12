@@ -241,7 +241,7 @@ class Request implements JsonSerializable
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
 
@@ -271,9 +271,9 @@ class Request implements JsonSerializable
         $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
-        if($this->active)
+        if ($this->active)
             return true;
         else
             return self::inactiveById($this->id, $pdo);
@@ -374,97 +374,62 @@ class Request implements JsonSerializable
     }
 
     /**
-     * Retrieve a students requests from the database
-     * @param Student $student
-     * @return array
+     * @param bool $active Should the results be active or inactive?
+     * @param Student|null $student Filter the results to only those from a specific student. Null means don't care.
+     * @param Semester|null $semester Filter the results to only those for a specific semester. Null means don't care.
+     * @param Faculty|null $faculty Filter the results to only those assigned to a specific faculty member. Null means don't care.
+     * @return array An array containing a list of the requests
      */
-    public static function get(Student $student): array
-    {
-        global $request_tbl;
-        $pdo = connectDB();
-
-        $studentid = $student->getId();
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE student_id=:student_id");
-        $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
-        $smt->execute();
-
-        $requestsList = $smt->fetchAll();
-
-        if(!$requestsList) return [];
-
-        $returnList = array();
-
-        foreach ($requestsList as $row)
-        {
-            $section = Section::getById($row['section_id']);
-            $request = new Request($student, $section, $row['last_modified'], Faculty::getById($row['faculty_id']),
-            $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
-            array_push($returnList, $request);
-        }
-
-        return $returnList;
-    }
-
-    /**
-     * Retrieve a faculty's requests from the database
-     * @param Faculty $faculty
-     * @return array
-     */
-    public static function getByFaculty(Faculty $faculty): array
-    {
-        global $request_tbl;
-        $pdo = connectDB();
-
-        $facultyid = $faculty->getId();
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE faculty_id=:faculty_id");
-        $smt->bindParam(":faculty_id", $facultyid, PDO::PARAM_INT);
-        $smt->execute();
-
-        $requestsList = $smt->fetchAll();
-
-        if(!$requestsList) return [];
-
-        $returnList = array();
-
-        foreach ($requestsList as $row)
-        {
-            $section = Section::getById($row['section_id']);
-            $request = new Request(Student::getById($row['student_id']), $section, $row['last_modified'],
-            $faculty, $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
-            array_push($returnList, $request);
-        }
-
-        return $returnList;
-    }
-
-    /**
-     * Retrieve a faculty's requests from the database
-     * @param Semester $semester
-     * @return array
-     */
-    public static function getInactive(Semester $semester): array
+    public static function get(bool $active, Student $student=null, Semester $semester=null, Faculty $faculty=null): array
     {
         global $request_tbl, $section_tbl;
         $pdo = connectDB();
 
-        $semesterid = $semester->getId();
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE section_id IN (SELECT id FROM $section_tbl WHERE semester_id=:semester_id) AND active=false");
-        $smt->bindParam(":semester_id", $semesterid, PDO::PARAM_INT);
+        $query = "SELECT * FROM $request_tbl WHERE active=:active";
+
+        if (!is_null($semester))
+        {
+            $query .= " AND section_id IN (SELECT id FROM $section_tbl WHERE semester_id=:semester_id)";
+            $semester_id = $semester->getId();
+        }
+
+        if (!is_null($student))
+        {
+            $query .= " AND student_id=:student_id";
+            $student_id = $student->getId();
+        }
+
+        if (!is_null($faculty))
+        {
+            $query .= " AND faculty_id=:faculty_id";
+            $faculty_id = $faculty->getId();
+        }
+
+        $smt = $pdo->prepare($query);
+
+        if (!is_null($semester))
+            $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
+
+        if (!is_null($student))
+            $smt->bindParam(":student_id", $student_id, PDO::PARAM_INT);
+
+        if (!is_null($faculty))
+            $smt->bindParam(":faculty_id", $faculty_id, PDO::PARAM_INT);
+
         $smt->execute();
 
         $requestsList = $smt->fetchAll();
 
-        if(!$requestsList) return [];
+        if (!$requestsList) return [];
 
         $returnList = array();
-
         foreach ($requestsList as $row)
         {
-            $section = Section::getById($row['section_id']);
-            $request = new Request(Student::getById($row['student_id']), $section, $row['last_modified'],
-                Faculty::getById($row['faculty_id']), $row['status'], $row['justification'], $row['banner'], $row['reason'],
-                $row['explanation'], $row['active'], $row['id']);
-            array_push($returnList, $request);
+            $student = $student ?? Student::getById($row['student_id']);
+            $faculty = $faculty ?? Faculty::getById($row['faculty_id']);
+            $request = new Request($student, Section::getById($row['section_id']), $row['last_modified'], $faculty,
+                $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
+            $returnList[] = $request;
         }
 
         return $returnList;
@@ -486,40 +451,12 @@ class Request implements JsonSerializable
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
 
-        if(!$data) return null;
+        if (!$data) return null;
 
         $student = Student::getById($data['student_id']);
         $section = Section::getById($data['section_id']);
         return new Request($student, $section, $data['last_modified'], Faculty::getById($data['faculty_id']),
         $data['status'], $data['justification'], $data['banner'], $data['reason'], $data['explanation'], $data['active'], $data['id']);
-    }
-
-    /**
-     * Retrieve all requests from the database
-     */
-    public static function listActive(): array
-    {
-        global $request_tbl;
-        $pdo = connectDB();
-
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE active=true");
-        $smt->execute();
-
-        $requestsList = $smt->fetchAll();
-
-        if(!$requestsList) return [];
-
-        $returnList = array();
-        foreach ($requestsList as $row)
-        {
-            $student = Student::getById($row['student_id']);
-            $section = Section::getById($row['section_id']);
-            $request = new Request($student, $section, $row['last_modified'], Faculty::getById($row['faculty_id']),
-            $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
-            array_push($returnList, $request);
-        }
-
-        return $returnList;
     }
 
     public function getStatusHtml(): string
@@ -529,12 +466,12 @@ class Request implements JsonSerializable
             case 'Received':
                 return '<i class="material-icons" style="color:orange">warning</i> Received';
             case 'Approved':
-                if($this->banner)
+                if ($this->banner)
                     return '<i class="material-icons" style="color:green">done_all</i> Approved: In Banner';
                 else
                     return '<i class="material-icons" style="color:green">done</i> Approved';
             case 'Provisionally Approved':
-                if($this->banner)
+                if ($this->banner)
                     return '<i class="material-icons" style="color:yellowgreen">done_all</i> Provisionally Approved: In Banner';
                 else
                     return '<i class="material-icons" style="color:yellowgreen">done</i> Provisionally Approved';

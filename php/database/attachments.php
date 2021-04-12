@@ -87,7 +87,7 @@ class Attachment implements JsonSerializable
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
 
@@ -106,7 +106,7 @@ class Attachment implements JsonSerializable
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         return true;
     }
@@ -181,8 +181,7 @@ class Attachment implements JsonSerializable
         $out = [];
 
         foreach ($data as $row)
-            array_push($out, new Attachment(Request::getById($row['request_id']),
-                $row['name'], $row['path'], $row['id']));
+            $out[] = new Attachment(Request::getById($row['request_id']), $row['name'], $row['path'], $row['id']);
 
         return $out;
     }

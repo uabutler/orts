@@ -12,10 +12,7 @@ function connectDB(): PDO
 function flattenResult(array $result): array
 {
     $out = [];
-
-    foreach ($result as $row)
-        array_push($out, $row[0]);
-
+    foreach ($result as $row) $out[] = $row[0];
     return $out;
 }
 
@@ -35,8 +32,7 @@ function inactiveByIdFrom(string $table, int $id, PDO $pdo): bool
 
 function getEnums(string $table, string $field, $pdo = null): array
 {
-    if (is_null($pdo))
-        $pdo = connectDB();
+    if (is_null($pdo)) $pdo = connectDB();
 
     $smt = $pdo->prepare("SHOW COLUMNS FROM $table WHERE Field=:field");
     $smt->bindParam(":field", $field, PDO::PARAM_STR);

@@ -90,7 +90,7 @@ class Faculty implements JsonSerializable
         $out = [];
 
         foreach ($data as $row)
-            array_push($out, new Faculty($row['email'], $row['first_name'], $row['last_name'], $row['id']));
+            $out[] = new Faculty($row['email'], $row['first_name'], $row['last_name'], $row['id']);
 
         return $out;
     }
@@ -109,7 +109,7 @@ class Faculty implements JsonSerializable
         $smt = $pdo->prepare("SELECT id FROM $faculty_tbl WHERE email=:email");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
 
@@ -127,7 +127,7 @@ class Faculty implements JsonSerializable
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         return true;
     }

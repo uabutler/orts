@@ -269,7 +269,7 @@ class Student implements JsonSerializable
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         // get the newly created ID
         $this->id = $pdo->lastInsertId();
@@ -300,7 +300,7 @@ class Student implements JsonSerializable
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
-        if(!$smt->execute()) return false;
+        if (!$smt->execute()) return false;
 
         // Next, get the majors currently stored in the database
         $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.email = :email");
@@ -318,12 +318,12 @@ class Student implements JsonSerializable
         // Add all the majors that aren't in the database to the database
         $majors_to_add = [];
         foreach ($old_majors as $major)
-            if (!in_array($major, $current_majors)) array_push($majors_to_add, $major);
+            if (!in_array($major, $current_majors)) $majors_to_add[] = $major;
         $this->add_majors($majors_to_add, $pdo);
 
         $minors_to_add = [];
         foreach ($old_minors as $minor)
-            if (!in_array($minor, $current_minors)) array_push($minors_to_add, $minor);
+            if (!in_array($minor, $current_minors)) $minors_to_add[] = $minor;
         $this->add_minors($minors_to_add, $pdo);
 
         // If a major is in the database, but is no longer a major, remove it
@@ -388,6 +388,23 @@ class Student implements JsonSerializable
         return deleteByIdFrom($student_tbl, $id, $pdo);
     }
 
+    public static function list(): array
+    {
+        global $student_tbl;
+        $pdo = connectDB();
+
+        $smt = $pdo->query("SELECT * FROM $student_tbl");
+        $data = $smt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$data) return [];
+
+        $returnList = [];
+
+        foreach ($data as $student)
+            $returnList[] = Student::loadStudent($data, $pdo);
+
+        return $returnList;
+    }
 
     /**
      * Constructs a new student locally
@@ -402,12 +419,12 @@ class Student implements JsonSerializable
      * @return Student An object that only exists locally, isn't stored in DB
      */
     public static function build(string $email, string $first_name, string $last_name, string $banner_id,
-                                 string $grad_month, string $standing, array $majors, array $minors)
+                                 string $grad_month, string $standing, array $majors, array $minors): ?Student
     {
         $major_arr = Major::buildArray($majors);
         $minor_arr = Minor::buildArray($minors);
 
-        if(is_null($major_arr) or is_null($minor_arr)) return null;
+        if (is_null($major_arr) or is_null($minor_arr)) return null;
 
         return new Student($email, $first_name, $last_name, $banner_id,
             $grad_month, $standing, $major_arr, $minor_arr);
