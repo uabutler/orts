@@ -1,126 +1,56 @@
 <?php
-require_once '../php/database/requests.php';
-require_once '../php/database/students.php';
-require_once '../php/database/faculty.php';
-require_once '../php/database/courses.php';
+require_once '../../../php/auth.php';
+require_once '../../../php/api.php';
+require_once '../../../php/database/requests.php';
+require_once '../../../php/database/faculty.php';
 
-if($_SERVER['REQUEST_METHOD'] === 'GET')
-    getRequest();
-else if($_SERVER['REQUEST_METHOD'] === 'POST')
-    putRequest();
-else if($_SERVER['REQUEST_METHOD'] === 'PUT')
-    updateRequest();
-else
-    http_response_code(404);
+Auth::createClient();
 
-function getRequest()
+API::put(function($data)
 {
-    if(!isset($_GET['id']))
+    if(isset($data->id) && is_numeric($data->id))
     {
-        http_response_code(400);
-        exit();
-    }
+        $request = Request::getById(intval($data->id));
 
-    $request = Request::getById($_GET['id']);
-
-    if($request)
-    {
-        http_response_code(200);
-        echo json_encode($request);
-    }
-    else
-    {
-        http_response_code(204);
-    }
-}
-
-function putRequest()
-{
-    $input = file_get_contents('php://input');
-
-    $data = json_decode($input);
-
-    // TODO: Validate data
-
-    // TODO: Change default faculty in admin functions
-    $request = Request::build(Student::getById($data->student_id), Section::getByCrn(Semester::getByCode($data->semester),
-                            $data->crn), Faculty::getById(1), 'Received', $data->reason, $data->explanation);
-
-    if($request->storeInDB())
-        http_response_code(200);
-    else
-        http_response_code(409);
-
-    http_response_code(200);
-}
-
-function updateRequest()
-{
-    parse_str(file_get_contents('php://input'), $_PUT);
-
-    if(isset($_PUT['id']) && is_numeric($_PUT['id']))
-    {
-        $request = Request::getById(intval($_PUT['id']));
-
-        // TODO: These are the things the student edits
-        if(isset($_PUT['semester']) || isset($_PUT['crn']))
+        if(isset($data->active))
         {
-            if(!(isset($_PUT['semester']) && isset($_PUT['crn'])))
-            {
-                http_response_code(400);
-                exit();
-            }
-
-            $request->setSection(Section::getByCrn(Semester::getByCode($_PUT['semester']), $_PUT['crn']));
-        }
-
-        if(isset($_PUT['reason']))
-            $request->setReason($_PUT['reason']);
-
-        if(isset($_PUT['explanation']))
-            $request->setExplanation($_PUT['explanation']);
-
-        if(isset($_PUT['active']))
-        {
-            if(filter_var($_PUT['active'], FILTER_VALIDATE_BOOLEAN))
-                $request->setActive();
-            else
+            if(!filter_var($data->active, FILTER_VALIDATE_BOOLEAN))
                 $request->setInactive();
         }
 
-        if(isset($_PUT['faculty']))
-            $request->setFaculty(Faculty::get($_PUT['faculty']));
+        if(isset($data->faculty))
+            $request->setFaculty(Faculty::get($data->faculty));
 
-        // TODO: These are the things the faculty edit
-        if(isset($_PUT['status']))
+        if(isset($data->status))
         {
-            if(!in_array($_PUT['status'], Request::listStatuses()))
-            {
-                http_response_code(400);
-                exit();
-            }
+            if(!in_array($data->status, Request::listStatuses()))
+                API::error(400, "The specified status was not recognized by the system");
 
-            $request->setStatus($_PUT['status']);
+            $request->setStatus($data->status);
         }
 
-        if(isset($_PUT['justification']))
-            $request->setJustification($_PUT['justification']);
+        if(isset($data->justification))
+            $request->setJustification($data->justification);
 
-        if(isset($_PUT['banner']))
+        if(isset($data->banner))
         {
-            if(filter_var($_PUT['banner'], FILTER_VALIDATE_BOOLEAN))
+            if(filter_var($data->banner, FILTER_VALIDATE_BOOLEAN))
                 $request->setInBanner();
             else
                 $request->setNotInBanner();
         }
 
         if($request->storeInDB())
-            http_response_code(200);
+            return "Success";
         else
-            http_response_code(400);
+            API::error(500, "Could not write to database");
     }
     else
     {
-        http_response_code(400);
+        API::error(400, "Please specify the id of the request to modify");
     }
-}
+
+    return null;
+});
+
+API::error(404, "Not Found");

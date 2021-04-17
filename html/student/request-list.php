@@ -1,13 +1,12 @@
 <?php
-require_once '../php/database/requests.php';
-require_once '../php/auth.php';
+require_once '../../php/database/requests.php';
+require_once '../../php/auth.php';
 
 Auth::createClient();
 Auth::forceAuthenticationStudent(null);
 
-$student_email = Auth::getUser();
-$student = Student::get($student_email);
-$requests = Request::get($student);
+$student = Student::get(Auth::getUser());
+$requests = Request::get(true, $student);
 
 if (is_null($requests))
     include '../error/error400.php';
@@ -16,7 +15,7 @@ if (is_null($requests))
 <html lang="en">
 <head>
     <title>ORTS - Override Requests</title>
-    <?php require '../php/common-head.php'; ?>
+    <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/student/request-list.css">
     <script>
         const JSON_DATA = '<?= json_encode($requests) ?>';
@@ -25,8 +24,8 @@ if (is_null($requests))
 </head>
 
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
 <section>
     <h1 id="page-title">Override Requests</h1>

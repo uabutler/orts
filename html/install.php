@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/php/database/tables.php';
+require_once __DIR__ . '../php/database/tables.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -294,14 +294,23 @@ function createStudentIdx($pdo)
 {
     global $student_tbl;
     echo "&emsp;$student_tbl<br>";
-    $pdo->exec("CREATE INDEX email_inx ON $student_tbl (email)");
+    $pdo->exec("CREATE INDEX email_idx ON $student_tbl (email)");
 }
 
 function createFacultyIdx($pdo)
 {
     global $faculty_tbl;
     echo "&emsp;$faculty_tbl<br>";
-    $pdo->exec("CREATE INDEX email_inx ON $faculty_tbl (email)");
+    $pdo->exec("CREATE INDEX email_idx ON $faculty_tbl (email)");
+}
+
+function createRequestIdx($pdo)
+{
+    global $request_tbl;
+    echo "&emsp;$request_tbl<br>";
+    $pdo->exec("CREATE INDEX student_idx ON $request_tbl (student_id)");
+    $pdo->exec("CREATE INDEX faculty_idx ON $request_tbl (faculty_id)");
+    $pdo->exec("CREATE INDEX section_idx ON $request_tbl (section_id)");
 }
 
 function populateFaculty($pdo)
@@ -500,6 +509,7 @@ function populateSemester($pdo)
     <?php
     createStudentIdx($pdo);
     createFacultyIdx($pdo);
+    createRequestIdx($pdo);
     ?>
 
     done<br><br>

@@ -1,5 +1,5 @@
 <?php
-include_once '../php/database/courses.php';
+include_once '../../php/database/courses.php';
 $active = Semester::listActive();
 $inactive = Semester::listInactive();
 ?>
@@ -7,13 +7,13 @@ $inactive = Semester::listInactive();
 <html lang="en">
 <head>
     <title>ORTS - Archives</title>
-    <?php require '../php/common-head.php'; ?>
+    <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/archive.css">
 </head>
 
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; facultyNavbar("Archive"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; facultyNavbar("Archive"); ?>
 
 <section class="content-grid-container">
     <div class="grid-item active-semesters">

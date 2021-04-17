@@ -744,7 +744,7 @@ class Semester implements JsonSerializable
 
     public static function listInactive(): array
     {
-        return self::listHelper(true);
+        return self::listHelper(false);
     }
 
     /**

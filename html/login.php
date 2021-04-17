@@ -1,5 +1,5 @@
 <?php
-require_once 'php/auth.php';
+require_once '../php/auth.php';
 
 Auth::createClient();
 Auth::forceAuthentication();

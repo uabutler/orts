@@ -1,6 +1,6 @@
 <?php
-require_once '../php/database/courses.php';
-require_once '../php/database/faculty.php';
+require_once '../../php/database/courses.php';
+require_once '../../php/database/faculty.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -10,20 +10,20 @@ $inactive_semesters = Semester::listInactive();
 
 $faculty = Faculty::list();
 
-$majors = Major::list();
-$minors = Minor::list();
+$majors = Major::listActive();
+$minors = Minor::listActive();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>ORTS - Administration</title>
-    <?php require '../php/common-head.php'; ?>
+    <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/administation.css">
     <script src="/js/admin/administration.js"></script>
 </head>
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; facultyNavbar("Administration"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; facultyNavbar("Administration"); ?>
 
 <section class="content-grid-container">
     <div>

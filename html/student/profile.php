@@ -1,17 +1,17 @@
 <?php
-require_once '../php/database/students.php';
-require_once '../php/database/requests.php';
-require_once '../php/database/programs.php';
-require_once '../php/auth.php';
+require_once '../../php/database/students.php';
+require_once '../../php/database/requests.php';
+require_once '../../php/database/programs.php';
+require_once '../../php/auth.php';
 
 Auth::createClient();
 Auth::forceAuthenticationStudent(null);
 
 $student_email = Auth::getUser();
 
-$majors = Major::list();
-$minors = Minor::list();
-$departments = Department::list();
+$majors = Major::listActive();
+$minors = Minor::listActive();
+$departments = Department::listActive();
 $standings = Student::listStandings();
 $reasons = Request::listReasons();
 $semesters = Semester::listActive();
@@ -21,7 +21,7 @@ $semesters = Semester::listActive();
 <html lang="en">
 <head>
     <title>ORTS - Profile</title>
-    <?php require '../php/common-head.php';?>
+    <?php require '../../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
     <script>
         STUDENT_EMAIL = "<?= $student_email ?>";
@@ -30,8 +30,8 @@ $semesters = Semester::listActive();
 </head>
 
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; studentNavbar("Profile"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; studentNavbar("Profile"); ?>
 
 <section>
     <h1>Profile</h1>

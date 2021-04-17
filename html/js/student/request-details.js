@@ -6,16 +6,20 @@ function changeAdditional()
     let reason = $('#reason');
     let explanation = $('#explanation');
 
-    let data = "id=" + REQUEST_ID + "&";
-    data += "reason=" + encodeURIComponent(reason.val()) + "&";
-    data += "explanation=" + encodeURIComponent(explanation.val());
+    let data = {};
+
+    data.id = REQUEST_ID;
+    data.reason = reason.val();
+    data.explanation = explanation.val();
+
+    console.log(data);
 
     $('#additional-form').addClass('loading');
 
     $.ajax({
-        url: '/api/request.php',
+        url: '/api/student/request.php',
         type: 'PUT',
-        data: data,
+        data: JSON.stringify(data),
         success: function (data)
         {
             $('#reason-display').parent().children(".text").html(reason.val());
@@ -39,16 +43,18 @@ function changeCourse()
     let semester = $('#semester');
     let crn = $('#crn');
 
-    let data = "id=" + REQUEST_ID + "&";
-    data += "semester=" + encodeURIComponent(semester.val()) + "&";
-    data += "crn=" + encodeURIComponent(crn.val());
+    let data = {};
+
+    data.id = REQUEST_ID;
+    data.semester = semester.val();
+    data.crn = crn.val();
 
     $('#course-form').addClass('loading');
 
     $.ajax({
-        url: '/api/request.php',
+        url: '/api/student/request.php',
         type: 'PUT',
-        data: data,
+        data: JSON.stringify(data),
         success: function (data)
         {
             $('#semester-display').html(semester.html());

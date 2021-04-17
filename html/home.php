@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <title>ORTS - Main Page</title>
-    <?php require 'php/common-head.php' ?>
+    <?php require '../php/common-head.php' ?>
     <style>
         h1 {
             font-size: 100px;
@@ -12,8 +12,8 @@
 </head>
 
 <body class="grid-container">
-<?php require_once 'php/header.php'; ?>
-<?php require_once 'php/navbar.php'; homeNavbar(); ?>
+<?php require_once '../php/header.php'; ?>
+<?php require_once '../php/navbar.php'; homeNavbar(); ?>
 
 <section>
     <noscript style="color:red;">

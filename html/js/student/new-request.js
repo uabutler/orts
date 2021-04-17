@@ -13,7 +13,7 @@ function createRequest()
     data.reason = $('#reason').val();
     data.explanation = $('#explanation').val();
 
-    $.post("/api/request.php", JSON.stringify(data), function(data)
+    $.post("/api/student/request.php", JSON.stringify(data), function(data)
     {
         window.location.href = "/student/request-list.php";
     })

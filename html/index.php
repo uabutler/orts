@@ -1,5 +1,5 @@
 <?php
-require_once 'php/auth.php';
+require_once '../php/auth.php';
 
 if(!file_exists('../conf/app.ini'))
     header("Location: /install.php");

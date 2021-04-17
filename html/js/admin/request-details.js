@@ -1,14 +1,22 @@
 function changeStatus()
 {
+    let data = {};
+    /*
     let data = "id=" + REQUEST_ID + "&";
     data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
     data += "banner=" + $('#banner').is(":checked") + "&";
     data += "justification=" + encodeURIComponent($('#justification').val());
+     */
+
+    data.id = REQUEST_ID;
+    data.status = $('#status_input').val();
+    data.banner = $('#banner').is(':checked');
+    data.justification = $('#justification').val();
 
     $.ajax({
-        url: '/api/request.php',
+        url: '/api/admin/request.php',
         type: 'PUT',
-        data: data,
+        data: JSON.stringify(data),
         timeout: 5000,
         success: function (data)
         {
@@ -17,7 +25,7 @@ function changeStatus()
         },
         error: function ()
         {
-            setMessage("Error", "We weren't able to add", false);
+            setMessage("Error", "The request could not be completed", false);
         }
     });
 }

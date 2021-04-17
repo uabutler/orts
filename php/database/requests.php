@@ -336,7 +336,7 @@ class Request implements JsonSerializable
      * A list of strings representing all the options for statuses
      * @return array
      */
-    public static function listStatuses()
+    public static function listStatuses(): array
     {
         global $request_tbl;
         return getEnums($request_tbl, "status");
@@ -346,7 +346,7 @@ class Request implements JsonSerializable
      * A list of strings representing all of the options for request reasons
      * @return array
      */
-    public static function listReasons()
+    public static function listReasons(): array
     {
         global $request_tbl;
         return getEnums($request_tbl, "reason");
@@ -363,7 +363,7 @@ class Request implements JsonSerializable
      * @return Request|null
      */
     public static function build(Student $student, Section $section, Faculty $faculty, string $status, string $reason,
-                                 string $explanation) //Need?: OverrideRequest
+                                 string $explanation): ?Request
     {
         $time = gmmktime();
         $now = date("Y-m-d H:i:s", $time);
@@ -406,6 +406,7 @@ class Request implements JsonSerializable
         }
 
         $smt = $pdo->prepare($query);
+        $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
 
         if (!is_null($semester))
             $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);

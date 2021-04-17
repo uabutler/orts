@@ -1,4 +1,4 @@
-let MODE = "major\n"; // Arbitrarily chosen so this field will always have a value
+let MODE = "major"; // Arbitrarily chosen so this field will always have a value
 
 $(function ()
 {
@@ -6,14 +6,14 @@ $(function ()
    {
       $("#overlay").css("display", "initial");
       $("body").css("overflow-y", "hidden");
-      MODE = "major\n";
+      MODE = "major";
    });
 
    $('#minor-add').on("click", function ()
    {
       $("#overlay").css("display", "initial");
       $("body").css("overflow-y", "hidden");
-      MODE = "minor\n";
+      MODE = "minor";
    });
 
    $('#cancel').on("click", function ()
@@ -32,7 +32,25 @@ $(function ()
 
 function addPrograms()
 {
-   $.post("/api/administration/programs.php", MODE + $('#entries').val(), function(data)
+   let data = {};
+   data.type = MODE;
+   data.programs = [];
+
+   for (let program of $('#entries').val().split(/\r?\n+/))
+   {
+       program.trim();
+       if (/^[A-Za-z ]+$/.test(program))
+       {
+          data.programs.push(program);
+       }
+       else if (program !== "")
+       {
+          // TODO: Display error
+          return;
+       }
+   }
+
+   $.post("/api/admin/programs.php", JSON.stringify(data), function(data)
    {
       $("#overlay").css("display", "none");
       $("body").css("overflow-y", "scroll");

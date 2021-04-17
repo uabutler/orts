@@ -1,5 +1,5 @@
 <?php
-include_once '../php/database/requests.php';
+include_once '../../php/database/requests.php';
 
 if (isset($_GET['id']))
     $request = Request::getById(intval($_GET['id']));
@@ -13,7 +13,7 @@ if (is_null($request))
 <html lang="en">
 <head>
     <title>ORTS - Request Details</title>
-    <?php require '../php/common-head.php'; ?>
+    <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/request-details.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
@@ -23,8 +23,8 @@ if (is_null($request))
 </head>
 
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; facultyNavbar($request->isActive() ? "Current Semester" : "Archive"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; facultyNavbar($request->isActive() ? "Current Semester" : "Archive"); ?>
 
 <section class="content-grid-container">
     <div class="ui message hidden">

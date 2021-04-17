@@ -1,7 +1,7 @@
 <?php
-include_once '../php/database/requests.php';
-include_once '../php/database/students.php';
-include_once '../php/auth.php';
+include_once '../../php/database/requests.php';
+include_once '../../php/database/students.php';
+include_once '../../php/auth.php';
 
 if (isset($_GET['id']))
     $request = Request::getById(intval($_GET['id']));
@@ -14,14 +14,14 @@ if (is_null($request))
 Auth::createClient();
 Auth::forceAuthenticationStudent($request->getStudent()->getEmail());
 
-$departments = Department::list();
+$departments = Department::listActive();
 $semesters = Semester::listActive();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>ORTS - Request Details</title>
-    <?php require '../php/common-head.php'; ?>
+    <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/student/request-details.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
@@ -31,8 +31,8 @@ $semesters = Semester::listActive();
 </head>
 
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; studentNavbar("Active Requests"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
 <section class="content-grid-container">
     <div id="status">

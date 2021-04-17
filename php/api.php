@@ -60,4 +60,9 @@ class API
 
         exit();
     }
+
+    public static function log(string $message)
+    {
+        file_put_contents("/var/www/orts/log", $message);
+    }
 }

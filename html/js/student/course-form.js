@@ -53,7 +53,7 @@ function setSection()
     data.course_num = $('#course_num').val();
     data.section = parseInt($('#section').val(), 10);
 
-    let request = $.get("/api/section.php", data, function (data, status, xhr)
+    let request = $.get("/api/truman/section.php", data, function (data, status, xhr)
     {
         crn.parent().removeClass("loading");
         title.parent().removeClass("loading");

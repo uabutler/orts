@@ -1,31 +1,42 @@
 <?php
-require_once '../../php/database/programs.php';
+require_once '../../../php/auth.php';
+require_once '../../../php/api.php';
+require_once '../../../php/database/programs.php';
 
-error_log("MAKING REQUEST");
-if($_SERVER['REQUEST_METHOD'] === 'POST')
-    postRequest();
-else if($_SERVER['REQUEST_METHOD'] === 'DELETE')
-    deleteRequest();
-else
-    http_response_code(404);
+Auth::createClient();
 
-function postRequest()
+// Create new programs, either majors or minors
+API::post(function($data)
 {
-    error_log("USING POST");
-    $lines = file("php://input", FILE_IGNORE_NEW_LINES);
-    $lines = array_filter(array_map('trim', $lines));
-    $program_type = array_shift($lines);
-
-    foreach ($lines as $program)
+    foreach ($data->programs as $program)
     {
-        if($program_type === "major")
+        if ($data->type === "major")
             Major::build($program)->storeInDB();
         else
             Minor::build($program)->storeInDB();
     }
-}
+});
 
-function deleteRequest()
+// Set a given program to inactive
+API::delete(function()
 {
-    // TODO
-}
+    global $_DELETE;
+
+    if(!(isset($_DELETE['type']) && isset($_DELETE['program'])))
+        API::error(400, "Please the program and type of program");
+
+    if ($_DELETE['type'] === 'major')
+        $program = Major::get($_DELETE['program']);
+    else
+        $program = Minor::get($_DELETE['program']);
+
+    if (is_null($program))
+        API::error(204, "No such program found");
+
+    $program->setInactive();
+
+    if ($program->storeInDB())
+        return "Success";
+    else
+        API::error(500, "Could not write to database");
+});

@@ -1,8 +1,8 @@
 <?php
-require_once '../php/database/students.php';
-require_once '../php/database/requests.php';
-require_once '../php/database/programs.php';
-require_once '../php/auth.php';
+require_once '../../php/database/students.php';
+require_once '../../php/database/requests.php';
+require_once '../../php/database/programs.php';
+require_once '../../php/auth.php';
 
 Auth::createClient();
 Auth::forceAuthenticationStudent(null);
@@ -10,7 +10,7 @@ $student_email = Auth::getUser();
 $student = Student::get($student_email);
 $student_id = $student->getId();
 
-$departments = Department::list();
+$departments = Department::listActive();
 $reasons = Request::listReasons();
 $semesters = Semester::listActive();
 
@@ -19,7 +19,7 @@ $semesters = Semester::listActive();
 <html lang="en">
 <head>
     <title>ORTS - New Request</title>
-    <?php require '../php/common-head.php';?>
+    <?php require '../../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
     <script>
         STUDENT_ID = <?= $student_id ?>;
@@ -29,13 +29,13 @@ $semesters = Semester::listActive();
 </head>
 
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; studentNavbar("New Request"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; studentNavbar("New Request"); ?>
 
 <section>
     <form class="ui form">
         <div class="info">
-            <?php require '../php/new-request-info.php'; ?>
+            <?php require '../../php/new-request-info.php'; ?>
         </div>
         <div>
             <h2 class="truman-dark-bg">Request</h2>

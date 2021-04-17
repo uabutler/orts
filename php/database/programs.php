@@ -60,6 +60,7 @@ class Program
         $pdo = connectDB();
         $smt = $pdo->prepare("SELECT $col FROM $table WHERE active=:active");
         $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
+        $smt->execute();
         return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
     }
 

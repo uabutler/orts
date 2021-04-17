@@ -1,5 +1,5 @@
 <?php
-include_once '../php/database/requests.php';
+include_once '../../php/database/requests.php';
 
 if (isset($_GET['semester']))
 {
@@ -9,12 +9,12 @@ if (isset($_GET['semester']))
     if (is_null($semester))
         $requests = null;
     else
-        $requests = Request::getInactive($semester);
+        $requests = Request::get(false, null, $semester);
 }
 else
 {
     $archive = false;
-    $requests = Request::listActive();
+    $requests = Request::get(true);
 }
 
 if (is_null($requests))
@@ -25,7 +25,7 @@ if (is_null($requests))
 <html lang="en">
 <head>
     <title>ORTS - <?php echo $archive ? 'Archive' : 'Override Requests'; ?></title>
-    <?php require '../php/common-head.php'; ?>
+    <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/request-list.css">
     <!-- Data passed from the server using PHP for use JS -->
     <script>
@@ -35,8 +35,8 @@ if (is_null($requests))
 </head>
 
 <body>
-<?php require_once '../php/header.php'; ?>
-<?php require_once '../php/navbar.php'; facultyNavbar(!$archive ? "Current Semester" : "Archive"); ?>
+<?php require_once '../../php/header.php'; ?>
+<?php require_once '../../php/navbar.php'; facultyNavbar(!$archive ? "Current Semester" : "Archive"); ?>
 
 <section>
     <h1 id="page-title">Override Requests<?php if ($archive) echo ' - Archive for ' . $semester->getDescription(); ?></h1>
