@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '../php/database/tables.php';
+require_once __DIR__ . '/../php/database/tables.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -12,6 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
     $installing = true;
     $missing = [];
+    // Declared here to suppress errors
+    $disabled = [];
 
     $config = "[Database]\n";
     if(isset($_POST['db_name']))
@@ -90,6 +92,16 @@ else
     {
         if(!extension_loaded($module))
             array_push($missing, $module);
+    }
+
+    $required = ["file_uploads"];
+
+    $disabled = [];
+
+    foreach($required as $setting)
+    {
+        if(!( (bool) ini_get($setting)))
+            array_push($disabled, $setting);
     }
 }
 
@@ -345,12 +357,12 @@ function populateSemester($pdo)
 <head>
     <title>ORTS - Main Page</title>
     <link rel="stylesheet" href="/css/root/install.css">
-    <?php require 'php/common-head.php' ?>
+    <?php require_once __DIR__ . '/../php/common-head.php' ?>
     <script src="/js/root/install.js"></script>
 </head>
 
 <body>
-<?php require_once 'php/header.php'; ?>
+<?php require_once __DIR__ . '/../php/header.php'; ?>
 
 <section>
     <?php if (!$installing): ?>
@@ -384,6 +396,18 @@ function populateSemester($pdo)
             <?php endforeach; ?>
         </ul>
     </div>
+    <?php endif; ?>
+    <?php if(count($disabled) != 0): ?>
+        <div class="ui warning message">
+            <div class="header">
+                The following PHP configuration settings should be enabled before continuing
+            </div>
+            <ul>
+                <?php foreach($disabled as $setting): ?>
+                    <li><?= $setting ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     <?php endif; ?>
     <noscript style="color:red;">
         <b>WARNING:</b> This site will <em>not</em> function without javascript. Please whitelist it before continuing.
