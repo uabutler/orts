@@ -34,10 +34,52 @@ $semesters = Semester::listActive();
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
+<div class="ui modal">
+    <div class="header">
+        Select a File
+    </div>
+    <div class="content">
+
+        <div class="ui placeholder segment">
+        <!--TODO: Drag and drop-->
+            <div class="ui icon header">
+                <i class="file outline icon"></i>
+                <span id="default-upload-text">Select a file to upload</span>
+                <span id="file-upload-name" class="hidden"></span>
+            </div>
+
+            <div id="upload-browse-button">
+                <input type="file" class="inputfile" id="file-selector" style="display: none;"/>
+                <label for="file-selector" class="ui primary right labeled icon button">
+                    Browse
+                    <i class="open folder icon"></i>
+                </label>
+            </div>
+
+            <div id="upload-progress-bar" class="ui progress hidden">
+                <div class="bar">
+                    <div class="progress"></div>
+                </div>
+                <div class="label">Uploading File</div>
+            </div>
+        </div>
+
+    </div>
+    <div class="actions">
+        <div id="file-cancel" class="ui black deny button">
+            Cancel
+        </div>
+        <div id="upload-file-button" class="ui disabled positive right labeled icon button">
+            Upload
+            <i class="upload icon"></i>
+        </div>
+    </div>
+</div>
+
 <section class="content-grid-container">
     <div id="status">
         <h2 class="truman-dark-bg">Override Status</h2>
-        <table>
+        <table class="status-table">
             <tr>
                 <th>Status:</th>
                 <td><?= $request->getStatusHtml() ?></td>
@@ -51,40 +93,52 @@ $semesters = Semester::listActive();
                 <td>1970-01-01T00:00:00</td>
             </tr>
             <tr>
-                <th style="padding-right:1em">Designated Faculty:</th>
-                <td><?= $request->getFaculty()->getLastName() ?>, <?= $request->getFaculty()->getFirstName() ?></td>
+                <th>Explanation:</th>
+                <td class="ui form">
+                    <div class="field disabled">
+                        <textarea rows="2" readonly><?= $request->getJustification() ?></textarea>
+                    </div>
+                </td>
             </tr>
         </table>
     </div>
     <div id="course">
         <h2 class="truman-dark-bg">Course Information</h2>
-        <div id="course-display">
-            <table>
-                <tr>
-                    <th style="padding-right:1em">Semester:</th>
-                    <td id="semester-display"><?= $request->getSection()->getSemester()->getDescription() ?></td>
-                    <td rowspan="3">
-                        <button id="course-edit-button" class="edit"><i class="material-icons">create</i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Course:</th>
-                    <td id="section-display">
-                        <?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>
-                        <?= $request->getSection()->getCourse()->getCourseNum() ?>
-                        <?php
-                        if($request->getSection()->getSectionNum() < 10)
-                            echo '0';
-                        echo $request->getSection()->getSectionNum();
-                        ?>:
-                        <?= $request->getSection()->getCourse()->getTitle() ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th>CRN:</th>
-                    <td id="crn-display"><?= $request->getSection()->getCrn() ?></td>
-                </tr>
-            </table>
+        <div id="course-display" class="editable">
+            <div>
+                <table class="status-table">
+                    <tr>
+                        <th>Semester:</th>
+                        <td id="semester-display"><?= $request->getSection()->getSemester()->getDescription() ?></td>
+                    </tr>
+                    <tr>
+                        <th>Course:</th>
+                        <td id="course-info-display"><?= $request->getSection()->getCourse()->getDepartment()->getDept() ?> <?= $request->getSection()->getCourse()->getCourseNum() ?></td>
+                    </tr>
+                    <tr>
+                        <th>Title:</th>
+                        <td id="course-title-display"><?= $request->getSection()->getCourse()->getTitle() ?></td>
+                    </tr>
+                    <tr>
+                        <th>Section:</th>
+                        <td id="section-display">
+                            <?php
+                            $section = $request->getSection()->getSectionNum();
+                            if ($section < 10)
+                                echo "0";
+                            echo $section;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>CRN:</th>
+                        <td id="crn-display"><?= $request->getSection()->getCrn() ?></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="edit-button-container">
+                <button id="course-edit-button" class="edit"><i class="material-icons">create</i></button>
+            </div>
         </div>
         <div id="course-edit" class="edit">
             <form id="course-form" class="ui form">
@@ -143,30 +197,26 @@ $semesters = Semester::listActive();
     </div>
     <div id="additional">
         <h2 class="truman-dark-bg">Additional Information</h2>
-        <div id="additional-display">
-            <table>
-                <tr>
-                    <td>
-                        <form class="ui form">
-                            <div class="field">
-                                <label>Reason</label>
-                                <select id="reason-display" class="ui dropdown disabled">
-                                    <option value="<?= $request->getReason() ?>"><?= $request->getReason() ?></option>
-                                </select>
-                            </div>
-                            <div class="field">
-                                <label>Explanation</label>
-                                <div class="ui input disabled">
-                                    <textarea rows="2" id="explanation-display" readonly><?= $request->getExplanation() ?></textarea>
-                                </div>
-                            </div>
-                        </form>
-                    </td>
-                    <td>
-                        <button id="additional-edit-button" class="edit"><i class="material-icons">create</i></button>
-                    </td>
-                </tr>
-            </table>
+        <div id="additional-display" class="editable">
+            <div>
+                <form class="ui form">
+                    <div class="field">
+                        <label>Reason</label>
+                        <select id="reason-display" class="ui dropdown disabled">
+                            <option value="<?= $request->getReason() ?>"><?= $request->getReason() ?></option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Explanation</label>
+                        <div class="ui input disabled">
+                            <textarea rows="2" id="explanation-display" readonly><?= $request->getExplanation() ?></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="edit-button-container">
+                <button id="additional-edit-button" class="edit"><i class="material-icons">create</i></button>
+            </div>
         </div>
         <div id="additional-edit" class="edit">
             <form id="additional-form" class="ui form">
@@ -188,6 +238,54 @@ $semesters = Semester::listActive();
                 <div id="additional-submit-button" class="ui right floated button" tabindex="0">Submit</div>
                 <div id="additional-cancel-button" class="ui right floated button course-cancel">Cancel</div>
             </form>
+        </div>
+    </div>
+    <div id="attachments">
+        <h2 class="truman-dark-bg">Attachments</h2>
+        <div id="attachment-preview-container">
+            <div id="file-list">
+                <div class="header-button">
+                    <button id="upload-window-button" class="ui small right labeled icon button">
+                        <i class="upload icon"></i>
+                        Upload New File
+                    </button>
+                </div>
+                <h3 class="file-section-header">Files</h3>
+                <div>
+                    <table class="ui celled table">
+                        <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Uploaded</th>
+                            <th>Size</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-value="file-identifier" class="clickable-row attachment-entry">
+                            <td>resume.pdf</td>
+                            <td>2020-12-12 12:00:00</td>
+                            <td>14.3M</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="file-preview-container">
+                <div class="header-button">
+                    <button id="close-file-preview" class="ui small basic icon button">
+                        <i class="close icon"></i>
+                    </button>
+                </div>
+                <h3 class="file-section-header">Preview</h3>
+                <div id="file-preview">
+                    <embed  src="https://uabutler.com/files/resume.pdf"
+                            type="application/pdf"
+                            scrolling="auto"
+                            width="100%"
+                            style="min-height: 50vw;"
+                    ></embed>
+                </div>
+            </div>
         </div>
     </div>
 </section>
