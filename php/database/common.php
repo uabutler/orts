@@ -40,3 +40,8 @@ function getEnums(string $table, string $field, $pdo = null): array
 
     return explode("','", substr($smt->fetch(PDO::FETCH_ASSOC)['Type'], 6, -2));
 }
+
+function getTimeStamp(): string
+{
+    return (new DateTime('now', DateTimeZone::UTC))->format('Y-m-d H:i:s');
+}

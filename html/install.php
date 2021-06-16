@@ -261,6 +261,7 @@ function createRequestTbl($pdo)
     $pdo->exec("CREATE TABLE $request_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     student_id int NOT NULL,
+    creation_time datetime NOT NULL,
     last_modified datetime NOT NULL,
     section_id int NOT NULL,
     faculty_id int NOT NULL,
@@ -283,6 +284,7 @@ function createAttachmentTbl($pdo)
     $pdo->exec("CREATE TABLE $attachment_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     request_id int NOT NULL,
+    upload_time datetime NOT NULL,
     name varchar(255) NOT NULL,
     path varchar(255) NOT NULL UNIQUE,
     FOREIGN KEY (request_id) REFERENCES $request_tbl(id))");
@@ -295,6 +297,7 @@ function createNotificationTbl($pdo)
     echo "&emsp;$notification_tbl<br>";
     $pdo->exec("CREATE TABLE $notification_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
+    creation_time datetime NOT NULL,
     sender_email varchar(64) NOT NULL,
     receiver_email varchar(64) NOT NULL,
     creation datetime NOT NULL,

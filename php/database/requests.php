@@ -9,6 +9,7 @@ class Request implements JsonSerializable
     private $id;
     private $student;
     private $section;
+    private $creation_time;
     private $last_modified;
     private $faculty;
     private $status;
@@ -44,10 +45,19 @@ class Request implements JsonSerializable
     }
 
     /**
+     * A timestamp representing the last time the request was created
+     * @return string
+     */
+    public function getCreationTime(): ?string
+    {
+        return $this->creation_time;
+    }
+
+    /**
      * A timestamp representing the last time the request was modified
      * @return string
      */
-    public function getLastModified(): string
+    public function getLastModified(): ?string
     {
         return $this->last_modified;
     }
@@ -130,14 +140,6 @@ class Request implements JsonSerializable
     }
 
     /**
-     * @param string $last_modified
-     */
-    public function setLastModified(string $last_modified)
-    {
-        $this->last_modified = $last_modified;
-    }
-
-    /**
      * @param Faculty $faculty
      */
     public function setFaculty(Faculty $faculty): void
@@ -201,14 +203,15 @@ class Request implements JsonSerializable
         $this->active = false;
     }
 
-    private function __construct(Student $student, Section $section, string $last_modified, Faculty $faculty, string
+    private function __construct(Student $student, ?string $creation_time, ?string $last_modified, Section $section, Faculty $faculty, string
     $status, ?string $justification, bool $banner, string $reason, string $explanation, bool $active = true, int $id
     = null)
     {
         $this->id = $id;
         $this->student = $student;
-        $this->section = $section;
         $this->last_modified = $last_modified;
+        $this->creation_time = $creation_time;
+        $this->section = $section;
         $this->faculty = $faculty;
         $this->status = $status;
         $this->justification = $justification;
@@ -222,16 +225,19 @@ class Request implements JsonSerializable
     {
         global $request_tbl;
 
+        $timestamp = getTimeStamp();
+
         $pdo = connectDB();
 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
-        $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, last_modified, section_id, faculty_id, status, justification, banner, reason, explanation, active) VALUES (:student_id, :last_modified, :section_id, :faculty_id, :status, :justification, :banner, :reason, :explanation, :active)");
+        $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, creation_time, last_modified, section_id, faculty_id, status, justification, banner, reason, explanation, active) VALUES (:student_id, :creation_time, :last_modified, :section_id, :faculty_id, :status, :justification, :banner, :reason, :explanation, :active)");
 
         $studentid = $this->student->getId();
         $facultyid = $this->faculty->getId();
         $sectionid = $this->section->getId();
         $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
-        $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
+        $smt->bindParam(":creation_time", $timestamp, PDO::PARAM_STR);
+        $smt->bindParam(":last_modified", $timestamp, PDO::PARAM_STR);
         $smt->bindParam(":section_id", $sectionid, PDO::PARAM_INT);
         $smt->bindParam(":faculty_id", $facultyid, PDO::PARAM_INT);
         $smt->bindParam(":status", $this->status, PDO::PARAM_STR);
@@ -244,6 +250,8 @@ class Request implements JsonSerializable
         if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+        $this->creation_time = $timestamp;
+        $this->last_modified = $timestamp;
 
         return true;
     }
@@ -251,6 +259,8 @@ class Request implements JsonSerializable
     private function updateDB(): bool
     {
         global $request_tbl;
+
+        $timestamp = getTimeStamp();
 
         $pdo = connectDB();
 
@@ -262,7 +272,7 @@ class Request implements JsonSerializable
         $sectionid = $this->section->getId();
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":student_id", $studentid, PDO::PARAM_INT);
-        $smt->bindParam(":last_modified", $this->last_modified, PDO::PARAM_STR);
+        $smt->bindParam(":last_modified", $timestamp, PDO::PARAM_STR);
         $smt->bindParam(":section_id", $sectionid, PDO::PARAM_INT);
         $smt->bindParam(":faculty_id", $facultyid, PDO::PARAM_INT);
         $smt->bindParam(":status", $this->status, PDO::PARAM_STR);
@@ -272,6 +282,8 @@ class Request implements JsonSerializable
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
 
         if (!$smt->execute()) return false;
+
+        $this->last_modified = $timestamp;
 
         if ($this->active)
             return true;
@@ -365,10 +377,8 @@ class Request implements JsonSerializable
     public static function build(Student $student, Section $section, Faculty $faculty, string $status, string $reason,
                                  string $explanation): ?Request
     {
-        $time = gmmktime();
-        $now = date("Y-m-d H:i:s", $time);
         if (in_array($status, Request::listStatuses()) && in_array($reason, Request::listReasons()))
-            return new Request($student, $section, $now, $faculty, $status, null, false, $reason, $explanation);
+            return new Request($student, null, null, $section, $faculty, $status, null, false, $reason, $explanation);
         else
             return null; //null? error message?
     }
@@ -428,7 +438,7 @@ class Request implements JsonSerializable
         {
             $student = $student ?? Student::getById($row['student_id']);
             $faculty = $faculty ?? Faculty::getById($row['faculty_id']);
-            $request = new Request($student, Section::getById($row['section_id']), $row['last_modified'], $faculty,
+            $request = new Request($student, $row['creation_time'], $row['last_modified'], Section::getById($row['section_id']), $faculty,
                 $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
             $returnList[] = $request;
         }
@@ -456,7 +466,7 @@ class Request implements JsonSerializable
 
         $student = Student::getById($data['student_id']);
         $section = Section::getById($data['section_id']);
-        return new Request($student, $section, $data['last_modified'], Faculty::getById($data['faculty_id']),
+        return new Request($student, $data['creation_time'], $data['last_modified'], $section, Faculty::getById($data['faculty_id']),
         $data['status'], $data['justification'], $data['banner'], $data['reason'], $data['explanation'], $data['active'], $data['id']);
     }
 
