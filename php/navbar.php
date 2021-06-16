@@ -13,7 +13,7 @@ function genNavbar(array $left_map, array $right_map, string $active)
     foreach ($left_map as $name => $url)
     {
         echo "<li><a";
-        echo $active == $name ? " class='active' " : " ";
+        echo $active == $name ? " id='active' " : " ";
         echo "href='$url'>$name</a></li>";
     }
 
