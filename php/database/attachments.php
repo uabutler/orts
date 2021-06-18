@@ -107,8 +107,10 @@ class Attachment implements JsonSerializable
 
         $pdo = connectDB();
 
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
+
         $request_id = $this->request->getId();
-        $smt = $pdo->prepare("INSERT INTO $attachment_tbl (request_id, upload_time, name, path) VALUES (:request_id, :upload_time :name, :path)");
+        $smt = $pdo->prepare("INSERT INTO $attachment_tbl (request_id, upload_time, name, path) VALUES (:request_id, :upload_time, :name, :path)");
         $smt->bindParam(":request_id", $request_id, PDO::PARAM_INT);
         $smt->bindParam(":upload_time", $timestamp, PDO::PARAM_STR);
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
@@ -146,7 +148,7 @@ class Attachment implements JsonSerializable
      */
     public function storeInDB(): bool
     {
-        // The id is set only when the student is already in the databse
+        // The id is set only when the student is already in the database
         if (is_null($this->id))
             return $this->insertDB();
         else
@@ -209,7 +211,7 @@ class Attachment implements JsonSerializable
         $out = [];
 
         foreach ($data as $row)
-            $out[] = new Attachment(Request::getById($row['request_id']), $row['upload_time'], $row['name'], $row['path'] ,$row['id']);
+            $out[] = new Attachment(Request::getById($row['request_id']), $row['upload_time'], $row['name'], $row['path'], self::computeFileSize($data['path']), $row['id']);
 
         return $out;
     }
@@ -258,6 +260,12 @@ class Attachment implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $out = get_object_vars($this);
+
+        unset($out['path']);
+        unset($out['request']);
+        $out['request_id'] = $this->request->getId();
+
+        return $out;
     }
 }

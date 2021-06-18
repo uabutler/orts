@@ -90,7 +90,7 @@ $semesters = Semester::listActive();
             </tr>
             <tr>
                 <th>Date Received:</th>
-                <td>1970-01-01T00:00:00</td>
+                <td><?= $request->getCreationTime() ?></td>
             </tr>
             <tr>
                 <th>Explanation:</th>
@@ -251,23 +251,8 @@ $semesters = Semester::listActive();
                     </button>
                 </div>
                 <h3 class="file-section-header">Files</h3>
-                <div>
-                    <table class="ui celled table">
-                        <thead>
-                        <tr>
-                            <th>File Name</th>
-                            <th>Uploaded</th>
-                            <th>Size</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr data-value="file-identifier" class="clickable-row attachment-entry">
-                            <td>resume.pdf</td>
-                            <td>2020-12-12 12:00:00</td>
-                            <td>14.3M</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div id="file-list-table">
+                    <div class="ui active centered inline loader"></div>
                 </div>
             </div>
             <div id="file-preview-container">

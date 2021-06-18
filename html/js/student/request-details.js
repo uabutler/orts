@@ -127,33 +127,90 @@ function uploadFile()
     // Reset the progress bar in case this isn't the first upload
     $('#upload-progress-bar').progress({percent: 0});
 
-    let fileReader = new FileReader();
-    fileReader.readAsText($('#file-selector').prop('files')[0], 'UTF-8');
-    fileReader.onload = shipOff;
-    fileReader.onprogress = uploadStatus;
+    let data = new FormData();
+    data.append("request", REQUEST_ID);
+    data.append("attachment", $('#file-selector').prop('files')[0]);
+
+    $.ajax({
+        url: '/api/student/upload.php',
+        method: 'POST',
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        xhr: function()
+        {
+            let xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener("progress", uploadStatus, false);
+            return xhr;
+        },
+        success: completeUpload
+    });
 
     // prevent the upload dialog from closing
     return false;
 }
 
-function shipOff(event)
-{
-    let result = event.target.result;
-    let fileName = $('#file-selector').prop('files')[0].name;
-    $.post('/attachment-upload.php', { data: result, name: fileName, request: REQUEST_ID }, completeUpload);
-}
 
 function completeUpload()
 {
     // This resets the interface for us
     cancelUpload();
-    // TODO: Update the list of attachments
+    updateAttachmentTable();
 }
 
 function uploadStatus(event)
 {
     let percentage = Math.floor((event.loaded / event.total) * 100)
     $('#upload-progress-bar').progress({percent: percentage});
+}
+
+function updateAttachmentTable()
+{
+    $.ajax({
+       url: '/api/student/attachments.php',
+        method: 'GET',
+        data: 'id=' + REQUEST_ID,
+        success: function(response)
+        {
+            let display = $('#file-list-table');
+            if (response)
+            {
+                let data = JSON.parse(response);
+                let table = `
+                    <table class="ui celled table">
+                        <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Uploaded</th>
+                            <th>Size</th>
+                        </tr>
+                        </thead>
+                        <tbody>`;
+
+                for (const file of data)
+                {
+                    table += `
+                    <tr data-value="${file.id}" class="clickable-row attachment-entry">
+                        <td>${file.name}</td>
+                        <td>${file.upload_time}</td>
+                        <td>${file.filesize}</td>
+                    </tr>`;
+                }
+
+                table += `
+                        </tbody>
+                    </table>`;
+
+                display.html(table);
+                $('.attachment-entry').on('click', displayFilePreview);
+            }
+            else
+            {
+                display.html("<h3 style='text-align: center;'>Nothing to show</h3>");
+            }
+        }
+    });
 }
 
 function createHandlers(edit_button, cancel_button, edit, display)
@@ -173,6 +230,8 @@ function createHandlers(edit_button, cancel_button, edit, display)
 
 $(function()
 {
+    updateAttachmentTable();
+
     $(document).on("input", ".numeric", function ()
     {
         this.value = this.value.replace(/\D/g, '');
@@ -193,17 +252,16 @@ $(function()
     $('#additional-submit-button').on("click", changeAdditional)
     $('#course-submit-button').on("click", changeCourse);
 
-    $('.attachment-entry').on('click', displayFilePreview);
     $('#close-file-preview').on('click', closeFilePreview)
 
     $('.ui.modal').modal(
     {
         closable: false,
-        onDeny: cancelUpload,
-        onApprove: uploadFile
     });
 
     $('#upload-window-button').on('click', function() { $('.ui.modal').modal('show'); });
+    $('#file-cancel').on('click', cancelUpload);
+    $('#upload-file-button').on('click', uploadFile);
 
     $('#file-selector').on('change', selectFile);
 })
