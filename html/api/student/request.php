@@ -19,7 +19,7 @@ API::get(function ()
     if (!Auth::isAuthenticatedStudent($request->getStudent()->getEmail()))
         API::error(403, "You aren't allowed to access this request");
 
-    if($request)
+    if ($request)
         return $request;
     else
         API::error(204, "No request found");

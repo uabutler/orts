@@ -1,5 +1,5 @@
 <?php
-require_once '../../php/database/programs.php';
+require_once '../../../php/database/programs.php';
 
 error_log("MAKING REQUEST");
 if($_SERVER['REQUEST_METHOD'] === 'POST')
