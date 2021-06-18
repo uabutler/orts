@@ -43,5 +43,5 @@ function getEnums(string $table, string $field, $pdo = null): array
 
 function getTimeStamp(): string
 {
-    return (new DateTime('now', DateTimeZone::UTC))->format('Y-m-d H:i:s');
+    return (new DateTime('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
 }
