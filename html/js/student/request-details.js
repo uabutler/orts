@@ -83,15 +83,47 @@ function changeCourse()
 
 function displayFilePreview()
 {
-    // TODO: load the file? Maybe?
-    console.log($(this).data('value'));
+    let file_preview = $('#file-preview');
+    let id = $(this).data('value');
 
+    console.log("Loading preview for attachment " + id);
+
+    file_preview.html('<div class="ui active centered inline loader"> </div>');
     $('#file-list').css('grid-column-end', '2');
     $('#file-preview-container').css('display', 'initial');
 
-    // Do we need to remove the current preview?
-    // TODO: Set the file preview to display the contents of the file if possible. Otherwise, start download
-    // Do we need to display a download button?
+    // TODO: load the file? Maybe?
+    $.ajax({
+        url: '/api/file.php',
+        data: 'id=' + id,
+        cache: true,
+        success: function (response, status, xhr)
+        {
+            if (xhr.getResponseHeader('content-type').indexOf("application/pdf") > -1)
+            {
+                file_preview.html(`
+                <embed  src="/api/file.php?id=${id}"
+                        type="application/pdf"
+                        scrolling="auto"
+                        width="100%"
+                        style="min-height: 50vw;"
+                >`);
+            }
+            else if (xhr.getResponseHeader('content-type').indexOf("image") > -1)
+            {
+                file_preview.html(`
+                <img    src="/api/file.php?id=${id}"
+                        alt="A preview of the user uploaded attachment"
+                        width="100%"
+                >`);
+            }
+            else
+            {
+                file_preview.html('<h3 style="text-align: center;">Cannot preview filetype</h3>')
+            }
+        }
+    })
+
 }
 
 function closeFilePreview()
@@ -132,7 +164,7 @@ function uploadFile()
     data.append("attachment", $('#file-selector').prop('files')[0]);
 
     $.ajax({
-        url: '/api/student/upload.php',
+        url: '/api/upload.php',
         method: 'POST',
         data: data,
         cache: false,

@@ -268,7 +268,7 @@ $semesters = Semester::listActive();
                             scrolling="auto"
                             width="100%"
                             style="min-height: 50vw;"
-                    ></embed>
+                    >
                 </div>
             </div>
         </div>
