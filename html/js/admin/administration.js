@@ -26,7 +26,7 @@ $(function ()
 
    $('.major-del').on("click", function ()
    {
-      console.log($(this).val());
+      console.log($(this).data('value'));
    })
 });
 
