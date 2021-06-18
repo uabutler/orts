@@ -271,8 +271,11 @@ class Minor extends Program implements JsonSerializable
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
         $smt->execute();
 
-        // get the newly created ID
+        if (!$smt->execute()) return false;
+
         $this->id = $pdo->lastInsertId();
+
+        return true;
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object

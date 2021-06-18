@@ -229,7 +229,6 @@ class Request implements JsonSerializable
 
         $pdo = connectDB();
 
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
         $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, creation_time, last_modified, section_id, faculty_id, status, justification, banner, reason, explanation, active) VALUES (:student_id, :creation_time, :last_modified, :section_id, :faculty_id, :status, :justification, :banner, :reason, :explanation, :active)");
 
         $studentid = $this->student->getId();
@@ -264,7 +263,6 @@ class Request implements JsonSerializable
 
         $pdo = connectDB();
 
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
         $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, faculty_id=:faculty_id, status=:status, justification=:justification, banner=:banner, reason=:reason, explanation=:explanation WHERE id=:id");
 
         $studentid = $this->student->getId();
