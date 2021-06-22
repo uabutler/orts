@@ -1,8 +1,8 @@
 <?php
-require_once '../../../php/auth.php';
-require_once '../../../php/api.php';
-require_once '../../../php/database/requests.php';
-require_once '../../../php/database/attachments.php';
+require_once '../../php/auth.php';
+require_once '../../php/api.php';
+require_once '../../php/database/requests.php';
+require_once '../../php/database/attachments.php';
 
 Auth::createClient();
 
@@ -13,7 +13,10 @@ API::get(function ()
 
    $request = Request::getById($_GET['id']);
 
-    if (!Auth::isAuthenticatedStudent($request->getStudent()->getEmail()))
+   $authed = Auth::isAuthenticatedStudent($request->getStudent()->getEmail());
+   $authed = $authed || Auth::isAuthenticatedFaculty();
+
+    if (!$authed)
         API::error(403, "You aren't allowed to access this request");
 
    $attachments = Attachment::list($request);

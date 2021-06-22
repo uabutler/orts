@@ -10,86 +10,89 @@
     grid-row: 1;
 }
 
-.orinfo {
+#orinfo {
     grid-column: 1;
     grid-row: 2;
 }
 
-.stuinfo {
+#stuinfo {
     grid-column: 2;
     grid-row: 2;
 }
 
-.explain {
+#explain {
     grid-column: 1 / span 2;
     grid-row: 3;
 }
 
-.action-title {
+#action-title {
     grid-column: 1 / span 2;
     grid-row: 4;
 }
 
-.status {
+#status {
     grid-column: 1;
     grid-row: 5;
 }
 
-.send {
+#send {
     grid-column: 2;
     grid-row: 5;
 }
 
-.log {
+#attachments {
     grid-column: 1 / span 2;
     grid-row: 6;
-    padding-bottom: 100px;
 }
 
-.log-box {
-    overflow: auto;
-    width: 95%;
-    height: 500px;
-    border: 1px solid grey;
+
+
+#attachment-preview-container
+{
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 2fr;
 }
 
-.log-item {
-    width: 60%;
-    height: auto;
-    margin: 10px;
+#file-list
+{
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
 
-.log-other {
-    float: left;
+#file-preview-container
+{
+    display: none;
+    grid-column: 2;
+}
+
+.file-section-header
+{
+    margin-top: 10px;
+}
+
+th
+{
     text-align: left;
 }
 
-.log-mine {
-    float: right;
-    text-align: left;
-}
-
-.log-info, .log-msg {
-    height: auto;
-    width: 100%;
-    padding: 10px;
-    margin: 5px;
-}
-
-.log-msg {
-    border-radius: 25px;
-    /* The fact that I have to do this proves that, if there is a God, he wants nothing to do with css */
-    font-family: monospace, monospace;
-}
-
-.log-other.log-msg, .log-other.log-info {
-    background: lightgrey;
-}
-
-.log-mine.log-msg, .log-mine.log-info {
-    background: darkgrey;
+h2
+{
+    font-family: nexabold, sans-serif;
     color: white;
+    padding: 10px
 }
+
+.hidden
+{
+    display: none !important;
+}
+
+.header-button
+{
+    float: right;
+}
+
 
 #class-info {
     border-collapse: collapse;

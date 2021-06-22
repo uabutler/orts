@@ -14,7 +14,11 @@ if (!isset($_GET['id']))
 
 $attachment = Attachment::getById($_GET['id']);
 
-if (!Auth::isAuthenticatedStudent($attachment->getRequest()->getStudent()->getEmail()) || !$attachment)
+$authed = Auth::isAuthenticatedStudent($attachment->getRequest()->getStudent()->getEmail());
+$authed = $authed || Auth::isAuthenticatedFaculty();
+$authed = $authed || $attachment;
+
+if (!$authed)
 {
     http_response_code(404);
 

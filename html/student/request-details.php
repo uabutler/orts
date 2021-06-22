@@ -28,6 +28,7 @@ $semesters = Semester::listActive();
     </script>
     <script src="/js/student/course-form.js"></script>
     <script src="/js/student/request-details.js"></script>
+    <script src="/js/common/attachments.js"></script>
 </head>
 
 <body>
@@ -262,14 +263,7 @@ $semesters = Semester::listActive();
                     </button>
                 </div>
                 <h3 class="file-section-header">Preview</h3>
-                <div id="file-preview">
-                    <embed  src="https://uabutler.com/files/resume.pdf"
-                            type="application/pdf"
-                            scrolling="auto"
-                            width="100%"
-                            style="min-height: 50vw;"
-                    >
-                </div>
+                <div id="file-preview"></div>
             </div>
         </div>
     </div>

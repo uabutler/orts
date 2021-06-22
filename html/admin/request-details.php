@@ -20,11 +20,54 @@ if (is_null($request))
         REQUEST_STATUS = "<?= $request->getStatus() ?>";
     </script>
     <script src="/js/admin/request-details.js"></script>
+    <script src="/js/common/attachments.js"></script>
 </head>
 
 <body>
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; facultyNavbar($request->isActive() ? "Current Semester" : "Archive"); ?>
+
+<div class="ui modal">
+    <div class="header">
+        Select a File
+    </div>
+    <div class="content">
+
+        <div class="ui placeholder segment">
+            <!--TODO: Drag and drop-->
+            <div class="ui icon header">
+                <i class="file outline icon"></i>
+                <span id="default-upload-text">Select a file to upload</span>
+                <span id="file-upload-name" class="hidden"></span>
+            </div>
+
+            <div id="upload-browse-button">
+                <input type="file" class="inputfile" id="file-selector" style="display: none;"/>
+                <label for="file-selector" class="ui primary right labeled icon button">
+                    Browse
+                    <i class="open folder icon"></i>
+                </label>
+            </div>
+
+            <div id="upload-progress-bar" class="ui progress hidden">
+                <div class="bar">
+                    <div class="progress"></div>
+                </div>
+                <div class="label">Uploading File</div>
+            </div>
+        </div>
+
+    </div>
+    <div class="actions">
+        <div id="file-cancel" class="ui black deny button">
+            Cancel
+        </div>
+        <div id="upload-file-button" class="ui disabled positive right labeled icon button">
+            Upload
+            <i class="upload icon"></i>
+        </div>
+    </div>
+</div>
 
 <section class="content-grid-container">
     <div class="ui message hidden">
@@ -34,7 +77,7 @@ if (is_null($request))
         </div>
         <p>TEST</p>
     </div>
-    <div class="grid-item orinfo">
+    <div id="orinfo" class="grid-item">
         <h2 class="truman-dark-bg">Override Request Info</h2>
         <table style="padding-bottom:20px;">
             <tr>
@@ -71,7 +114,7 @@ if (is_null($request))
         </table>
     </div>
 
-    <div class="grid-item stuinfo">
+    <div id="stuinfo" class="grid-item">
         <h2 class="truman-dark-bg">Student Info</h2>
         <table style="padding-bottom:20px;">
             <?php $student = $request->getStudent(); ?>
@@ -110,7 +153,7 @@ if (is_null($request))
         </table>
     </div>
 
-    <div class="grid-item explain">
+    <div id="explain" class="grid-item">
         <h2 class="truman-dark-bg">Explaination</h2>
         <table style="padding-bottom:20px;">
             <tr>
@@ -126,11 +169,11 @@ if (is_null($request))
         </div>
     </div>
 
-    <div class="grid-item action-title">
+    <div id="action-title" class="grid-item">
         <h2 class="truman-dark-bg">Actions</h2>
     </div>
 
-    <div class="grid-item status">
+    <div id="status" class="grid-item">
         <h3 style="margin:0;">Approve or Deny</h3>
         <form class="ui form">
             <div class="field">
@@ -151,7 +194,7 @@ if (is_null($request))
             <div id="submit" class="ui right floated button">Submit</div>
         </form>
     </div>
-    <div class="grid-item send">
+    <div id="send" class="grid-item">
         <h3 style="margin:0;">Delegate to Faculty</h3>
         <form class="ui form">
             <div class="field">
@@ -167,70 +210,32 @@ if (is_null($request))
         </form>
     </div>
 
-    <!--
-    <div class="grid-item log">
-        <h2 class="truman-dark-bg">Log</h2>
-        <center>
-            <div class="log-box">
-                <div class="log-item log-other">
-                    <b>James Kirk</b> (student)
-                    <div class="log-other log-info">
-                        Student submitted request at 1970-01-01T00:00:00<br>
-                        <b>Reason</b>: Prerequisite restriction<br><br>
-                        <b>MSG</b>:
-                        See, the thing is, I don't actaully know Java, but this course requires Java. But also, I'm
-                        like, really smart, so I should be exempt. Right? The rules only apply to *normal* people
-                        anyway. As we all know, I'm better than those guys, so go ahead and approve the request, will
-                        ya?
-                    </div>
+    <div id="attachments">
+        <h2 class="truman-dark-bg">Attachments</h2>
+        <div id="attachment-preview-container">
+            <div id="file-list">
+                <div class="header-button">
+                    <button id="upload-window-button" class="ui small right labeled icon button">
+                        <i class="upload icon"></i>
+                        Upload New File
+                    </button>
                 </div>
-
-                <div class="log-item log-mine">
-                    <b>Diane Sandefur</b> to <b>James Kirk</b>
-                    <div class="log-mine log-msg">
-                        You can't seriouly expect me to approve this?
-                    </div>
-                    <div class="log-mine log-info">
-                        Request denied at 2020-10-08T16:19:34<br><br>
-                        <b>MSG</b>:
-                        This doesn't include any of the required information
-                    </div>
-                </div>
-
-                <div class="log-item log-mine">
-                    <b>Diane Sandefur</b> to <b>Dr. Beck</b>
-                    <div class="log-mine log-msg">
-                        Can you believe this kid?
-                    </div>
-                </div>
-
-                <div class="log-item log-other">
-                    <b>Dr. Beck</b> to <b>Diane Sandefur</b>
-                    <div class="log-other log-msg">
-                        lol
-                    </div>
-                </div>
-
-                <div class="log-item log-other">
-                    <b>James Kirk</b> to <b>Diane Sandefur</b>
-                    <div class="log-other log-msg">
-                        I forgot to mention that I'm taking Calc II over the summer at SEMO
-                    </div>
+                <h3 class="file-section-header">Files</h3>
+                <div id="file-list-table">
+                    <div class="ui active centered inline loader"></div>
                 </div>
             </div>
-        </center>
-        <br>
-        <div style="width:95%;padding-left:2.5%;">
-            <form>
-                <label for="email">User:</label>
-                <input type="email">
-                <br>
-                <textarea placeholder="Message"></textarea>
-            </form>
-            <button>Send</button>
+            <div id="file-preview-container">
+                <div class="header-button">
+                    <button id="close-file-preview" class="ui small basic icon button">
+                        <i class="close icon"></i>
+                    </button>
+                </div>
+                <h3 class="file-section-header">Preview</h3>
+                <div id="file-preview"></div>
+            </div>
         </div>
     </div>
-    -->
 </section>
 </body>
 </html>
