@@ -1,12 +1,6 @@
 function changeStatus()
 {
     let data = {};
-    /*
-    let data = "id=" + REQUEST_ID + "&";
-    data += "status=" + encodeURIComponent($('#status_input').val()) + "&";
-    data += "banner=" + $('#banner').is(":checked") + "&";
-    data += "justification=" + encodeURIComponent($('#justification').val());
-     */
 
     data.id = REQUEST_ID;
     data.status = $('#status_input').val();
@@ -30,25 +24,36 @@ function changeStatus()
     });
 }
 
-function setMessage(header, body, success)
+function changeFaculty()
 {
-    let element = $(".ui.message");
-    element.removeClass("success", "error");
+    let data = {};
 
-    if(success)
-        element.addClass("success");
-    else
-        element.addClass("error");
+    data.id = REQUEST_ID;
+    data.faculty = $('#faculty_input').val();
+    data.note = $('#note').val();
 
-    element.children(".header").html(header);
-    element.children("p").html(body);
-
-    element.removeClass("hidden");
+    $.ajax({
+        url: '/api/admin/request.php',
+        type: 'PUT',
+        data: JSON.stringify(data),
+        timeout: 5000,
+        success: function (data)
+        {
+            $('#faculty_info').html($('#faculty_input option:selected').text())
+            $('#faculty_input').dropdown('clear');
+            $('#note').val('');
+            setMessage("Success", "The request has been reassigned", true);
+        },
+        error: function ()
+        {
+            setMessage("Error", "The request could not be completed", false);
+        }
+    });
 }
-
 
 $(function ()
 {
     $(`#status_input option[value="${REQUEST_STATUS}"]`).prop("selected", true);
     $('#submit').on("click", changeStatus);
+    $('#submit-faculty').on("click", changeFaculty);
 })

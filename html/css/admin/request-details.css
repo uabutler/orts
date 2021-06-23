@@ -45,27 +45,6 @@
     grid-row: 6;
 }
 
-
-
-#attachment-preview-container
-{
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: 1fr 2fr;
-}
-
-#file-list
-{
-    grid-column-start: 1;
-    grid-column-end: 3;
-}
-
-#file-preview-container
-{
-    display: none;
-    grid-column: 2;
-}
-
 .file-section-header
 {
     margin-top: 10px;

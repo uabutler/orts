@@ -171,7 +171,6 @@ class Attachment implements JsonSerializable
      */
     public static function deleteById(int $id, PDO $pdo = null): bool
     {
-        // TODO: Delete file
         global $attachment_tbl;
         if (is_null($pdo)) $pdo = connectDB();
         return deleteByIdFrom($attachment_tbl, $id, $pdo);
@@ -211,7 +210,7 @@ class Attachment implements JsonSerializable
         $out = [];
 
         foreach ($data as $row)
-            $out[] = new Attachment(Request::getById($row['request_id']), $row['upload_time'], $row['name'], $row['path'], self::computeFileSize($data['path']), $row['id']);
+            $out[] = new Attachment(Request::getById($row['request_id']), $row['upload_time'], $row['name'], $row['path'], self::computeFileSize($row['path']), $row['id']);
 
         return $out;
     }

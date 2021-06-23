@@ -1,5 +1,6 @@
 <?php
 include_once '../../php/database/requests.php';
+include_once '../../php/database/faculty.php';
 
 if (isset($_GET['id']))
     $request = Request::getById(intval($_GET['id']));
@@ -27,7 +28,27 @@ if (is_null($request))
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; facultyNavbar($request->isActive() ? "Current Semester" : "Archive"); ?>
 
-<div class="ui modal">
+<div id="delete-confirmation" class="ui basic modal">
+    <div class="ui icon header">
+        <i class="trash icon"></i>
+        Delete Attachment
+    </div>
+    <div class="content">
+        <p>Are you sure you want to delete this file? This cannot be undone.</p>
+    </div>
+    <div class="actions">
+        <div class="ui red basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+        <div class="ui green ok inverted button">
+            <i class="checkmark icon"></i>
+            Yes
+        </div>
+    </div>
+</div>
+
+<div id="upload-popup" class="ui modal">
     <div class="header">
         Select a File
     </div>
@@ -90,11 +111,11 @@ if (is_null($request))
             </tr>
             <tr>
                 <th>Date Received:</th>
-                <td>1970-01-01T00:00:00</td>
+                <td><?= $request->getCreationTime() ?></td>
             </tr>
             <tr>
                 <th style="padding-right:1em">Designated Faculty:</th>
-                <td><?= $request->getFaculty()->getLastName() ?>, <?= $request->getFaculty()->getFirstName() ?></td>
+                <td id="faculty_info"><?= $request->getFaculty()->getLastName() ?>, <?= $request->getFaculty()->getFirstName() ?></td>
             </tr>
         </table>
         <table id="class-info">
@@ -198,13 +219,15 @@ if (is_null($request))
         <h3 style="margin:0;">Delegate to Faculty</h3>
         <form class="ui form">
             <div class="field">
-                <div class="ui right labeled input">
-                    <input required class="email-input" type="text" name="email" placeholder="Truman email">
-                    <div class="ui label">@truman.edu</div>
-                </div>
+                <select id="faculty_input" class="ui search dropdown">
+                    <option value="">Select faculty</option>
+                    <?php foreach(Faculty::list() as $faculty): ?>
+                        <option value="<?= $faculty->getEmail() ?>"><?= $faculty->getLastName() ?>, <?= $faculty->getFirstName() ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="field">
-                <textarea id="justification" placeholder="Note for faculty"></textarea>
+                <textarea id="note" placeholder="Include note in email"></textarea>
             </div>
             <div id="submit-faculty" class="ui right floated button">Submit</div>
         </form>
@@ -212,27 +235,16 @@ if (is_null($request))
 
     <div id="attachments">
         <h2 class="truman-dark-bg">Attachments</h2>
-        <div id="attachment-preview-container">
-            <div id="file-list">
-                <div class="header-button">
-                    <button id="upload-window-button" class="ui small right labeled icon button">
-                        <i class="upload icon"></i>
-                        Upload New File
-                    </button>
-                </div>
-                <h3 class="file-section-header">Files</h3>
-                <div id="file-list-table">
-                    <div class="ui active centered inline loader"></div>
-                </div>
+        <div id="file-list">
+            <div class="header-button">
+                <button id="upload-window-button" class="ui small right labeled icon button">
+                    <i class="upload icon"></i>
+                    Upload New File
+                </button>
             </div>
-            <div id="file-preview-container">
-                <div class="header-button">
-                    <button id="close-file-preview" class="ui small basic icon button">
-                        <i class="close icon"></i>
-                    </button>
-                </div>
-                <h3 class="file-section-header">Preview</h3>
-                <div id="file-preview"></div>
+            <h3 class="file-section-header">Files</h3>
+            <div id="file-list-table">
+                <div class="ui active centered inline loader"></div>
             </div>
         </div>
     </div>

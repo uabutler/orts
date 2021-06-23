@@ -6,47 +6,33 @@
     padding: 0 0 50px;
 }
 
+.ui.message {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+}
+
 #status
 {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 2;
 }
 
 #course
 {
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 2;
 }
 
 #additional
 {
     grid-column: 1 / span 2;
-    grid-row: 2;
+    grid-row: 3;
 }
 
 #attachments
 {
     grid-column: 1 / span 2;
-    grid-row: 3;
-}
-
-#attachment-preview-container
-{
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: 1fr 2fr;
-}
-
-#file-list
-{
-    grid-column-start: 1;
-    grid-column-end: 3;
-}
-
-#file-preview-container
-{
-    display: none;
-    grid-column: 2;
+    grid-row: 4;
 }
 
 .file-section-header

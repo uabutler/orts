@@ -28,3 +28,18 @@ API::get(function ()
 
    return null;
 });
+
+API::delete(function()
+{
+    global $_DELETE;
+
+    $attachment = Attachment::getById($_DELETE['id']);
+
+    $ret = unlink($attachment->getPath());
+    $ret = $ret && Attachment::deleteById($_DELETE['id']);
+
+    if ($ret)
+        return "Success";
+    else
+        API::error(400, "Could not delete attachment");
+});

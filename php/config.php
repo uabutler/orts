@@ -8,5 +8,5 @@ if($config = parse_ini_file(__DIR__ . '/../conf/app.ini', true, INI_SCANNER_TYPE
 }
 else
 {
-    include '../error/error500.php';
+    include '../html/error/error500.php';
 }

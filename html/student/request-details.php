@@ -35,7 +35,27 @@ $semesters = Semester::listActive();
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; studentNavbar("Active Requests"); ?>
 
-<div class="ui modal">
+<div id="delete-confirmation" class="ui basic modal">
+    <div class="ui icon header">
+        <i class="trash icon"></i>
+        Delete Attachment
+    </div>
+    <div class="content">
+        <p>Are you sure you want to delete this file? This cannot be undone.</p>
+    </div>
+    <div class="actions">
+        <div class="ui red basic cancel inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+        <div class="ui green ok inverted button">
+            <i class="checkmark icon"></i>
+            Yes
+        </div>
+    </div>
+</div>
+
+<div id="upload-popup" class="ui modal">
     <div class="header">
         Select a File
     </div>
@@ -78,6 +98,13 @@ $semesters = Semester::listActive();
 </div>
 
 <section class="content-grid-container">
+    <div class="ui message hidden">
+        <i class="close icon"></i>
+        <div class="header">
+            TEST
+        </div>
+        <p>TEST</p>
+    </div>
     <div id="status">
         <h2 class="truman-dark-bg">Override Status</h2>
         <table class="status-table">
@@ -243,27 +270,16 @@ $semesters = Semester::listActive();
     </div>
     <div id="attachments">
         <h2 class="truman-dark-bg">Attachments</h2>
-        <div id="attachment-preview-container">
-            <div id="file-list">
-                <div class="header-button">
-                    <button id="upload-window-button" class="ui small right labeled icon button">
-                        <i class="upload icon"></i>
-                        Upload New File
-                    </button>
-                </div>
-                <h3 class="file-section-header">Files</h3>
-                <div id="file-list-table">
-                    <div class="ui active centered inline loader"></div>
-                </div>
+        <div id="file-list">
+            <div class="header-button">
+                <button id="upload-window-button" class="ui small right labeled icon button">
+                    <i class="upload icon"></i>
+                    Upload New File
+                </button>
             </div>
-            <div id="file-preview-container">
-                <div class="header-button">
-                    <button id="close-file-preview" class="ui small basic icon button">
-                        <i class="close icon"></i>
-                    </button>
-                </div>
-                <h3 class="file-section-header">Preview</h3>
-                <div id="file-preview"></div>
+            <h3 class="file-section-header">Files</h3>
+            <div id="file-list-table">
+                <div class="ui active centered inline loader"></div>
             </div>
         </div>
     </div>

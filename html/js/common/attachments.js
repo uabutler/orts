@@ -1,57 +1,16 @@
 function displayFilePreview()
 {
     let file_preview = $('#file-preview');
-    let id = $(this).data('value');
+    let id = $(this).parent().data('value');
 
     console.log("Loading preview for attachment " + id);
 
-    file_preview.html('<div class="ui active centered inline loader"> </div>');
-    $('#file-list').css('grid-column-end', '2');
-    $('#file-preview-container').css('display', 'initial');
-
-    // TODO: load the file? Maybe?
-    $.ajax({
-        url: '/api/file.php',
-        data: 'id=' + id,
-        cache: true,
-        success: function (response, status, xhr)
-        {
-            if (xhr.getResponseHeader('content-type').indexOf("application/pdf") > -1)
-            {
-                file_preview.html(`
-                <embed  src="/api/file.php?id=${id}"
-                        type="application/pdf"
-                        scrolling="auto"
-                        width="100%"
-                        style="min-height: 50vw;"
-                >`);
-            }
-            else if (xhr.getResponseHeader('content-type').indexOf("image") > -1)
-            {
-                file_preview.html(`
-                <img    src="/api/file.php?id=${id}"
-                        alt="A preview of the user uploaded attachment"
-                        width="100%"
-                >`);
-            }
-            else
-            {
-                file_preview.html('<h3 style="text-align: center;">Cannot preview filetype</h3>')
-            }
-        }
-    })
-
-}
-
-function closeFilePreview()
-{
-    $('#file-preview-container').css('display', 'none');
-    $('#file-list').css('grid-column-end', '3');
+    window.open('/api/file.php?id=' + id, "_blank");
 }
 
 function cancelUpload()
 {
-    $('.ui.modal').modal('hide');
+    $('#upload-popup').modal('hide');
     $('#file-selector').val('');
     $('#upload-file-button').addClass('disabled');
     $('#file-upload-name').addClass('hidden');
@@ -114,6 +73,34 @@ function uploadStatus(event)
     $('#upload-progress-bar').progress({percent: percentage});
 }
 
+function deleteAttachment()
+{
+    let id = $(this).data('value');
+
+    $('#delete-confirmation')
+        .modal({
+            closable: false,
+            onApprove: function ()
+            {
+                $.ajax({
+                    url: '/api/attachments.php',
+                    method: 'DELETE',
+                    data: 'id=' + id,
+                    success: function(data)
+                    {
+                        setMessage('Success', 'Attachment deleted', true);
+                        updateAttachmentTable();
+                    },
+                    fail: function()
+                    {
+                        setMessage('Error', 'Could not delete attachment', false);
+                    }
+                });
+            }
+        })
+        .modal('show');
+}
+
 function updateAttachmentTable()
 {
     $.ajax({
@@ -133,6 +120,7 @@ function updateAttachmentTable()
                             <th>File Name</th>
                             <th>Uploaded</th>
                             <th>Size</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>`;
@@ -140,10 +128,31 @@ function updateAttachmentTable()
                 for (const file of data)
                 {
                     table += `
-                    <tr data-value="${file.id}" class="clickable-row attachment-entry">
-                        <td>${file.name}</td>
-                        <td>${file.upload_time}</td>
-                        <td>${file.filesize}</td>
+                    <tr data-value="${file.id}">
+                        <td class="clickable-row attachment-entry">${file.name}</td>
+                        <td class="clickable-row attachment-entry">${file.upload_time}</td>
+                        <td class="clickable-row attachment-entry">${file.filesize}</td>
+                        <td>
+                            <div class="ui dropdown file-actions">
+                              <div class="text">File</div>
+                              <i class="dropdown icon"></i>
+                              <div class="menu">
+                                <div class="item">
+                                    <a
+                                        href="/api/file.php?id=${file.id}"
+                                        download="${file.name}"
+                                        style="color: inherit;">
+                                      <i class="download icon"></i>
+                                      Download
+                                    </a>
+                                </div>
+                                <div class="item delete-file" data-value="${file.id}">
+                                  <i class="trash icon"></i>
+                                  Delete
+                                </div>
+                              </div>
+                            </div>
+                        </td>
                     </tr>`;
                 }
 
@@ -152,7 +161,10 @@ function updateAttachmentTable()
                     </table>`;
 
                 display.html(table);
+
+                $('.file-actions').dropdown({action: 'hide'});
                 $('.attachment-entry').on('click', displayFilePreview);
+                $('.delete-file').on('click', deleteAttachment)
             }
             else
             {
@@ -162,19 +174,33 @@ function updateAttachmentTable()
     });
 }
 
+function setMessage(header, body, success)
+{
+    let element = $(".ui.message");
+    element.removeClass("success", "error");
+
+    if(success)
+        element.addClass("success");
+    else
+        element.addClass("error");
+
+    element.children(".header").html(header);
+    element.children("p").html(body);
+
+    element.removeClass("hidden");
+}
+
 $(function ()
 {
     updateAttachmentTable();
 
-    $('#upload-window-button').on('click', function() { $('.ui.modal').modal('show'); });
+    $('#upload-window-button').on('click', function() { $('#upload-popup').modal('show'); });
     $('#file-cancel').on('click', cancelUpload);
     $('#upload-file-button').on('click', uploadFile);
 
     $('#file-selector').on('change', selectFile);
 
-    $('#close-file-preview').on('click', closeFilePreview)
-
-    $('.ui.modal').modal({
+    $('#upload-popup').modal({
         closable: false,
     });
 });

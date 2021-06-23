@@ -28,15 +28,16 @@ if (!$authed)
     exit();
 }
 
-$mime_type = mime_content_type("../uploads/" . $attachment->getPath()) ?: 'application/octet-stream';
+$mime_type = mime_content_type($attachment->getPath()) ?: 'application/octet-stream';
 
 // TODO: Fix this non-sense
-//$filesize = $attachment->getFileSize();
-$filesize = "../uploads/" . $attachment->getPath();
+$filesize = filesize($attachment->getPath());
+$filename = $attachment->getName();
 
 header("Content-Type: $mime_type");
 header("Content-Length: $filesize");
+header("Content-Disposition: filename=$filename");
 
-$fp = fopen("../uploads/" . $attachment->getPath(), "rb");
+$fp = fopen($attachment->getPath(), "rb");
 fpassthru($fp);
 fclose($fp);

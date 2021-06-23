@@ -1,5 +1,6 @@
 <?php
 require_once '../../php/auth.php';
+require_once '../../php/config.php';
 require_once '../../php/database/requests.php';
 require_once '../../php/database/attachments.php';
 
@@ -19,12 +20,11 @@ if (!Auth::isAuthenticatedStudent(Request::getById($requestId)->getStudent()->ge
 
 $fileName = $_FILES['attachment']['name'];
 // The lazy man's way of ensuring uniqueness
-$serverFile = Auth::getUser() . '-' . time() . '-' . $fileName;
+$serverFile =  SERVER['attachment_loc'] . '/' . Auth::getUser() . '-' . time() . '-' . $fileName;
 
 $attachment = Attachment::build(Request::getById($requestId), $fileName, $serverFile);
 
-// TODO: Use config upload directory
-move_uploaded_file($_FILES['attachment']['tmp_name'], 'uploads/' . $serverFile);
+move_uploaded_file($_FILES['attachment']['tmp_name'], $serverFile);
 
 if ($attachment->storeInDB())
     echo "success";

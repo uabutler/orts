@@ -19,7 +19,10 @@ API::put(function($data)
         }
 
         if(isset($data->faculty))
+        {
             $request->setFaculty(Faculty::get($data->faculty));
+            // TODO: Email faculty
+        }
 
         if(isset($data->status))
         {
@@ -27,6 +30,8 @@ API::put(function($data)
                 API::error(400, "The specified status was not recognized by the system");
 
             $request->setStatus($data->status);
+
+            // TODO: Email student
         }
 
         if(isset($data->justification))
