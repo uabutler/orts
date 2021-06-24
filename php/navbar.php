@@ -20,7 +20,7 @@ function genNavbar(array $left_map, array $right_map, string $active)
     foreach (array_reverse($right_map) as $name => $url)
     {
         echo "<li class='right'><a";
-        echo $active == $name ? " class='active' " : " ";
+        echo $active == $name ? " id='active' " : " ";
         echo "href='$url'>$name</a></li>";
     }
 
@@ -59,7 +59,6 @@ function facultyNavbar($active)
         ),
         array
         (
-            "Profile" => "/admin/profile.php",
             "Log Out" => "/logout.php",
         ),
         $active
