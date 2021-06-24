@@ -63,6 +63,9 @@ API::put(function ($data)
     if (isset($data->last_name))
         $student->setLastName($data->last_name);
 
+    if (isset($data->standing))
+        $student->setStanding($data->standing);
+
     if (isset($data->majors))
         $student->setMajors($data->majors);
 

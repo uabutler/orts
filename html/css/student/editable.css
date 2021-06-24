@@ -1,0 +1,35 @@
+.editable
+{
+    display: grid;
+    grid-template-columns: 1fr auto;
+}
+
+.edit-button-container
+{
+    display: flex;
+    align-items: center;
+}
+
+button.edit
+{
+    background: none;
+    color: grey;
+    text-decoration: none;
+    display: inline-block;
+    padding: 4px 8px;
+    float:right;
+    cursor: pointer;
+    border: none;
+}
+
+button.edit:hover
+{
+    background: none;
+    color: black;
+}
+
+div.edit
+{
+    display: none;
+}
+

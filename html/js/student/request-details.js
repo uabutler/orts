@@ -81,21 +81,6 @@ function changeCourse()
     });
 }
 
-function createHandlers(edit_button, cancel_button, edit, display)
-{
-    $(`#${edit_button}`).on("click", function ()
-    {
-        $(`#${display}`).css("display", "none");
-        $(`#${edit}`).css("display", "grid");
-    });
-
-    $(`#${cancel_button}`).on("click", function ()
-    {
-        $(`#${edit}`).css("display", "none");
-        $(`#${display}`).css("display", "grid");
-    });
-}
-
 $(function()
 {
     $(document).on("input", ".numeric", function ()

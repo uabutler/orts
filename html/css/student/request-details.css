@@ -57,30 +57,6 @@ h2
     display: none !important;
 }
 
-.edit-button-container
-{
-    display: flex;
-    align-items: center;
-}
-
-button.edit
-{
-    background: none;
-    color: grey;
-    text-decoration: none;
-    display: inline-block;
-    padding: 4px 8px;
-    float:right;
-    cursor: pointer;
-    border: none;
-}
-
-button.edit:hover
-{
-    background: none;
-    color: black;
-}
-
 /* Shamelessly stolen from Stack Overflow */
 textarea, select, input
 {
@@ -100,17 +76,6 @@ table.status-table th
     padding-right: 1em;
     vertical-align: top;
     white-space: nowrap;
-}
-
-div.edit
-{
-    display: none;
-}
-
-.editable
-{
-    display: grid;
-    grid-template-columns: 1fr auto;
 }
 
 .header-button

@@ -23,10 +23,12 @@ $semesters = Semester::listActive();
     <title>ORTS - Request Details</title>
     <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/student/request-details.css">
+    <link rel="stylesheet" href="/css/student/editable.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
     </script>
     <script src="/js/student/course-form.js"></script>
+    <script src="/js/student/editable.js"></script>
     <script src="/js/student/request-details.js"></script>
     <script src="/js/common/attachments.js"></script>
 </head>

@@ -20,24 +20,6 @@ function validate()
     return ret;
 }
 
-/*
- * INPUT DISABLE
- */
-function inputEnable(bool)
-{
-    bool = !bool;
-
-    $('#first_name').attr("readonly", bool);
-    $('#last_name').attr("readonly", bool);
-    $('#banner_id').attr("readonly", bool);
-    $('#year').attr("readonly", bool);
-
-    $('#standing').attr("disabled", bool);
-    $('#grad_month').attr("disabled", bool);
-    $('#majors').attr("disabled", bool);
-    $('#minors').attr("disabled", bool);
-}
-
 function createStudent()
 {
     if(!validate())
