@@ -55,13 +55,31 @@ class Program
         $this->active = false;
     }
 
-    protected static function listHelper(bool $active, string $table, string $col): array
+    protected static function listActiveHelper(string $table, string $col): array
     {
         $pdo = connectDB();
-        $smt = $pdo->prepare("SELECT $col FROM $table WHERE active=:active");
+        $smt = $pdo->prepare("SELECT $col FROM $table WHERE active=true");
         $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
         $smt->execute();
         return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+    }
+
+    protected static function listAllHelper(string $table, string $col): array
+    {
+        $pdo = connectDB();
+
+        $smt = $pdo->query("SELECT * FROM $table");
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$data) return [];
+
+        $out = [];
+
+        foreach ($data as $row)
+            $out[] = new Major($row[$col], $row['active'], $row['id']);
+
+        return $out;
     }
 
     public static function buildStringList(array $arr): array
@@ -170,13 +188,13 @@ class Major extends Program implements JsonSerializable
     public static function listActive(): array
     {
         global $major_tbl;
-        return self::listHelper(true, $major_tbl, "major");
+        return self::listActiveHelper($major_tbl, "major");
     }
 
-    public static function listInactive(): array
+    public static function list(): array
     {
         global $major_tbl;
-        return self::listHelper(false, $major_tbl, "major");
+        return self::listAllHelper($major_tbl, "major");
     }
 
     /**
@@ -349,13 +367,13 @@ class Minor extends Program implements JsonSerializable
     public static function listActive(): array
     {
         global $minor_tbl;
-        return self::listHelper(true, $minor_tbl, "minor");
+        return self::listActiveHelper($minor_tbl, "minor");
     }
 
-    public static function listInactive(): array
+    public static function list(): array
     {
         global $minor_tbl;
-        return self::listHelper(false, $minor_tbl, "minor");
+        return self::listAllHelper($minor_tbl, "minor");
     }
 
     /**

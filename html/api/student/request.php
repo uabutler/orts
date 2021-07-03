@@ -47,7 +47,6 @@ API::post(function ($data)
     return null;
 });
 
-// TODO: Rewrite requests to send JSON
 API::put(function ($data)
 {
     if(isset($data->id) && is_numeric($data->id))

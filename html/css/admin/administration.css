@@ -1,25 +1,30 @@
-.content-grid-container {
+.content-grid-container
+{
     display: grid;
     grid-gap: 10px;
     grid-template-columns: 1fr 1fr;
     padding: 0 0 50px;
 }
 
-table {
+table
+{
     width: 100%;
 }
 
-table {
+table
+{
     border-collapse: collapse;
     width: 100%;
 }
 
-table td, table th {
+table td, table th
+{
     border: 1px solid #ddd;
     padding: 8px;
 }
 
-table th {
+table th
+{
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
@@ -27,13 +32,15 @@ table th {
     background-color: darkgrey;
 }
 
-table .ui.button {
+table .ui.button
+{
     width: 100%;
     white-space: nowrap;
     background-color: lightgrey;
 }
 
-#overlay {
+#overlay
+{
     display: none;
     position: fixed; /* Sit on top of the page content */
     width: 100%; /* Full width (cover the whole page) */
@@ -46,7 +53,8 @@ table .ui.button {
     z-index: 1; /* Specify a stack order in case you're using a different order for other elements */
 }
 
-#popup {
+#popup
+{
     width: 75%;
     background-color: white;
     margin: 50px auto auto;
@@ -55,6 +63,12 @@ table .ui.button {
     overflow-y: scroll;
 }
 
-.ol-btn {
+.ol-btn
+{
     margin: 10px;
+}
+
+.hidden
+{
+    display: none !important;
 }

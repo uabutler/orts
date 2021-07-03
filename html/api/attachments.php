@@ -35,10 +35,7 @@ API::delete(function()
 
     $attachment = Attachment::getById($_DELETE['id']);
 
-    $ret = unlink($attachment->getPath());
-    $ret = $ret && Attachment::deleteById($_DELETE['id']);
-
-    if ($ret)
+    if (Attachment::deleteById($_DELETE['id']))
         return "Success";
     else
         API::error(400, "Could not delete attachment");

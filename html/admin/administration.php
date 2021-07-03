@@ -18,131 +18,237 @@ $minors = Minor::listActive();
 <head>
     <title>ORTS - Administration</title>
     <?php require '../../php/common-head.php'; ?>
-    <link rel="stylesheet" href="/css/admin/administation.css">
+    <link rel="stylesheet" href="/css/admin/administration.css">
+    <link rel="stylesheet" href="/css/admin/administration-semesters.css">
+    <link rel="stylesheet" href="/css/admin/administration-faculty.css">
+    <link rel="stylesheet" href="/css/admin/administration-programs.css">
     <script src="/js/admin/administration.js"></script>
+    <script src="/js/admin/administration-semesters.js"></script>
+    <script src="/js/admin/administration-faculty.js"></script>
+    <script src="/js/admin/administration-programs.js"></script>
+    <script>
+        let STATE = ""
+    </script>
 </head>
 <body>
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; facultyNavbar("Administration"); ?>
 
-<section class="content-grid-container">
-    <div>
-        <h2>Semesters</h2>
-        <table>
-            <tr>
-                <td class="ui form field">
-                    <input type="text" name="semester_code" id="semester_code" placeholder="Code">
-                </td>
-                <td class="ui form field">
-                    <input type="text" name="semester_name" id="semester_name" placeholder="Name">
-                </td>
-                <td><div class="ui button" id="semester">Add</div></td>
-            </tr>
-            <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Action</th>
-            </tr>
-            <?php foreach ($active_semesters as $semester): ?>
-            <tr>
-                <td class="clickable-row" onclick="window.location='administration.php?semester=<?= $semester->getCode() ?>'"><?= $semester->getCode() ?></td>
-                <td class="clickable-row" onclick="window.location='administration.php?semester=<?= $semester->getCode() ?>'"><?= $semester->getDescription() ?></td>
-                <td><div class="ui button" id="semester">Archive</div></td>
-            </tr>
-            <?php endforeach; ?>
-            <?php foreach ($inactive_semesters as $semester): ?>
-            <tr>
-                <td><?= $semester->getCode() ?></td>
-                <td><?= $semester->getDescription() ?></td>
-                <td><div class="ui button" id="semester">Delete</div></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
+<section id="administration-menu">
+    <div class="ui fluid vertical pointing menu">
+        <a id="semester-menu-button" class="active administration-menu item">
+            Semesters
+        </a>
+        <a id="faculty-menu-button" class="administration-menu item">
+            Faculty
+        </a>
+        <a id="program-menu-button" class="administration-menu item">
+            Programs
+        </a>
+        <a id="student-menu-button" class="administration-menu item">
+            Students
+        </a>
+        <a id="course-menu-button" class="administration-menu item">
+            Courses
+        </a>
     </div>
-    <div>
-        <h2>Faculty</h2>
-        <table>
-            <tr>
-                <td class="ui form field">
-                    <input type="text" name="faculty_user" id="faculty_user" placeholder="Username">
-                </td>
-                <td class="ui form field">
-                    <input type="text" name="faculty_first" id="faculty_first" placeholder="First Name">
-                </td>
-                <td class="ui form field">
-                    <input type="text" name="faculty_last" id="faculty_last" placeholder="Last Name">
-                </td>
-                <td><div class="ui button" id="faculty">Add</div></td>
-            </tr>
-            <tr>
-                <th>Username</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Action</th>
-            </tr>
-            <?php foreach ($faculty as $fac): ?>
-            <tr>
-                <td><?= $fac->getEmail() ?></td>
-                <td><?= $fac->getFirstName() ?></td>
-                <td><?= $fac->getLastName() ?></td>
-                <td><div class="ui button" id="semester">Delete</div></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
-    <div>
-        <h2>Majors</h2>
-        <table>
-            <colgroup>
-                <col style="width: 100%;">
-            </colgroup>
-            <tr>
-                <th>Major Name</th>
-                <th><div class="ui button" id="major-add">Bulk Add</div></th>
-            </tr>
-            <?php foreach ($majors as $major): ?>
-            <tr>
-                <td><?= $major ?></td>
-                <td><div class="ui button major-del" data-value="<?= $major ?>">Delete</div></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
-    <div>
-        <h2>Minors</h2>
-        <table>
-            <colgroup>
-                <col style="width: 100%;">
-            </colgroup>
-            <tr>
-                <th>Minor Name</th>
-                <th><div class="ui button" id="minor-add">Bulk Add</div></th>
-            </tr>
-            <?php foreach ($minors as $minor): ?>
-            <tr>
-                <td><?= $minor ?></td>
-                <td><div class="ui button minor-del" data-value="<?= $minor ?>">Delete</div></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-    </div>
-    <div style="grid-column: 1 / span 2;">
-        <h2>Courses</h2>
-    </div>
-    <div id="overlay">
-        <div id="popup">
-            <h3>Bulk Add</h3>
-            <div class="ui form">
+</section>
+
+<section id="semester-administration" class="administration-section">
+    <div id="new-semester-popup" class="ui modal">
+        <div class="header">
+            New Semester
+        </div>
+        <div class="content">
+            <form class="ui form">
                 <div class="field">
-                   <label>Put each entry on its own line.</label>
-                    <textarea id="entries" rows="30"></textarea>
+                    <label>Semester Info</label>
+                    <div class="two fields">
+                        <div class="field">
+                            <input id="semester-description" type="text" placeholder='Ex. "Spring 2021"'>
+                        </div>
+                        <div class="field">
+                            <input id="semester-code" type="text" class="numeric" placeholder='Ex. "202110"'>
+                        </div>
+                    </div>
                 </div>
-                <div id="add-programs" class="ui right floated button" tabindex="0">Submit</div>
-                <div id="cancel" class="ui right floated button">Cancel</div>
+            </form>
+        </div>
+        <div class="actions">
+            <button id="new-semester-cancel-button" class="ui button">
+                Cancel
+            </button>
+            <button id="new-semester-submit-button" class="ui button">
+                Submit
+            </button>
+        </div>
+    </div>
+    <div>
+        <h1 class="left floated">Semesters</h1>
+        <button id="new-semester-popup-button" class="right floated ui labeled icon button">
+            <i class="plus icon"></i>
+            New
+        </button>
+    </div>
+    <div id="semester-primary-content-display">
+        <div class="ui centered inline active loader"></div>
+    </div>
+</section>
+
+<section id="faculty-administration" class="administration-section hidden">
+    <div id="new-faculty-popup" class="ui modal">
+        <div class="header">
+            New Faculty
+        </div>
+        <div class="content">
+            <form class="ui form">
+                <div class="field">
+                    <label>Faculty Info</label>
+                    <div class="two fields">
+                        <div class="field">
+                            <input id="faculty-first-name" type="text" placeholder="First Name">
+                        </div>
+                        <div class="field">
+                            <input id="faculty-last-name" type="text" placeholder="Last Name">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui right labeled input">
+                            <input required id="faculty-email" type="text" name="email" placeholder="Truman email">
+                            <div class="ui label">@truman.edu</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <button id="new-faculty-cancel-button" class="ui button">
+                Cancel
+            </button>
+            <button id="new-faculty-submit-button" class="ui button">
+                Submit
+            </button>
+        </div>
+    </div>
+    <div id="faculty-default-confirmation" class="ui basic modal">
+        <div class="ui icon header">
+            <i class="check circle icon"></i>
+            Make Default
+        </div>
+        <div class="content">
+            <p>Are you sure you want to make this the default faculty? The default faculty member cannot be deleted, and all requests assigned to the current default will be reassigned.</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
             </div>
-            <div class="clearfix"></div>
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+    <div id="faculty-delete-confirmation" class="ui basic modal">
+        <div class="ui icon header">
+            <i class="trash icon"></i>
+            Delete Faculty
+        </div>
+        <div class="content">
+            <p>Are you sure you want to delete this faculty member? All requests assigned to them will be reassigned to the default faculty member.</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                No
+            </div>
+            <div class="ui green ok inverted button">
+                <i class="checkmark icon"></i>
+                Yes
+            </div>
+        </div>
+    </div>
+    <div>
+        <h1 class="left floated">Faculty</h1>
+        <button id="new-faculty-popup-button" class="right floated ui labeled icon button">
+            <i class="plus icon"></i>
+            New
+        </button>
+    </div>
+    <div id="faculty-primary-content-display">
+    </div>
+</section>
+
+<section id="program-administration" class="administration-section hidden">
+    <div id="new-program-popup" class="ui modal">
+        <div id="new-program-popup-header" class="header">
+            New Programs
+        </div>
+        <div class="scrolling content">
+            <form class="ui form">
+                <div class="field">
+                    <label id="new-program-popup-description">Place each program on a separate line</label>
+                    <textarea id="program-input" rows="25"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <button id="new-program-cancel-button" class="ui button">
+                Cancel
+            </button>
+            <button id="new-program-submit-button" class="ui button">
+                Submit
+            </button>
+        </div>
+    </div>
+    <div id="program-primary-content-display">
+        <div>
+            <div>
+                <h1 class="left floated">Majors</h1>
+                <button id="new-majors-popup-button" class="right floated ui labeled icon button">
+                    <i class="plus icon"></i>
+                    New
+                </button>
+            </div>
+            <div id="majors-primary-content-display">
+                <div class="ui centered inline active loader"></div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <h1 class="left floated">Minors</h1>
+                <button id="new-minors-popup-button" class="right floated ui labeled icon button">
+                    <i class="plus icon"></i>
+                    New
+                </button>
+            </div>
+            <div id="minors-primary-content-display">
+                <div class="ui centered inline active loader"></div>
+            </div>
         </div>
     </div>
 </section>
+
+<section id="student-administration" class="administration-section hidden">
+    <div>
+        <h1>Students</h1>
+    </div>
+    <div id="student-primary-content-display">
+        <div class="ui centered inline active loader"></div>
+    </div>
+</section>
+
+<section id="course-administration" class="administration-section hidden">
+    <div>
+        <h1 class="left floated">Courses</h1>
+        <button id="new-courses-popup-button" class="right floated ui labeled icon button">
+            <i class="plus icon"></i>
+            New
+        </button>
+    </div>
+    <div id="course-primary-content-display">
+    </div>
+</section>
+
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/attachments.php';
 require_once __DIR__ . '/courses.php';
 require_once __DIR__ . '/students.php';
 require_once __DIR__ . '/faculty.php';

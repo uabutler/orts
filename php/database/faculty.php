@@ -10,6 +10,7 @@ class Faculty implements JsonSerializable
     private $email;
     private $first_name;
     private $last_name;
+    private $default;
 
     /**
      * The database id. Null if it hasn't been stored
@@ -45,6 +46,14 @@ class Faculty implements JsonSerializable
     }
 
     /**
+     * @return bool Is this the default faculty member? New requests are assigned to them
+     */
+    public function isDefault(): bool
+    {
+        return $this->default;
+    }
+
+    /**
      * @param string $email
      */
     public function setEmail(string $email)
@@ -68,11 +77,20 @@ class Faculty implements JsonSerializable
         $this->last_name = $last_name;
     }
 
-    private function __construct(string $email, string $first_name, string $last_name, int $id = null)
+    /**
+     * Make this faculty the default
+     */
+    public function setDefault()
+    {
+        $this->default = true;
+    }
+
+    private function __construct(string $email, string $first_name, string $last_name, bool $default = null, int $id = null)
     {
         $this->email = $email;
         $this->first_name = $first_name;
         $this->last_name = $last_name;
+        $this->default = $default;
         $this->id = $id;
     }
 
@@ -90,9 +108,24 @@ class Faculty implements JsonSerializable
         $out = [];
 
         foreach ($data as $row)
-            $out[] = new Faculty($row['email'], $row['first_name'], $row['last_name'], $row['id']);
+            $out[] = new Faculty($row['email'], $row['first_name'], $row['last_name'], $row['is_default'], $row['id']);
 
         return $out;
+    }
+
+    // Ensures exactly one default
+    private function makeDefault($pdo): bool
+    {
+        global $faculty_tbl;
+
+        $smt = $pdo->exec("UPDATE $faculty_tbl SET is_default=false WHERE is_default=true");
+
+        $smt = $pdo->prepare("UPDATE $faculty_tbl SET is_default=true WHERE id=:id");
+        $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
+
+        if (!$smt->execute()) return false;
+
+        return true;
     }
 
     private function insertDB(): bool
@@ -104,30 +137,36 @@ class Faculty implements JsonSerializable
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
-        $smt->execute();
-
-        $smt = $pdo->prepare("SELECT id FROM $faculty_tbl WHERE email=:email");
-        $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
 
         if (!$smt->execute()) return false;
 
         $this->id = $pdo->lastInsertId();
+
+        $smt = $pdo->prepare("SELECT id FROM $faculty_tbl WHERE is_default=true");
+        $smt->execute();
+
+        // If there is no default, or the user indicated this should be the new default
+        if ($smt->rowCount() === 0 || $this->default)
+            if (!$this->makeDefault($pdo)) return false;
 
         return true;
     }
 
     private function updateDB(): bool
     {
-        global $department_tbl;
+        global $faculty_tbl;
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("UPDATE $department_tbl SET email=:email, first_name=:first_name, last_name=:last_name WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $faculty_tbl SET email=:email, first_name=:first_name, last_name=:last_name WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
 
         if (!$smt->execute()) return false;
+
+        if ($this->default)
+            if (!$this->makeDefault($pdo)) return false;
 
         return true;
     }
@@ -139,7 +178,7 @@ class Faculty implements JsonSerializable
      */
     public function storeInDB(): bool
     {
-        // The id is set only when the student is already in the databse
+        // The id is set only when the student is already in the database
         if (is_null($this->id))
             return $this->insertDB();
         else
@@ -147,15 +186,39 @@ class Faculty implements JsonSerializable
     }
 
     /**
+     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
+     * @return bool Did the deletion succeed?
+     */
+    public function deleteFromDB(): bool
+    {
+        return self::deleteById($this->id);
+    }
+
+    /**
+     * @param int $id The id of the element to be deleted
+     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
+     * @return bool Did the deletion succeed?
+     */
+    public static function deleteById(int $id, PDO $pdo = null): bool
+    {
+        global $faculty_tbl;
+        if (is_null($pdo)) $pdo = connectDB();
+
+        return deleteByIdFrom($faculty_tbl, $id, $pdo);
+    }
+
+
+    /**
      * Create a local object representing a faculty member
      * @param string $email
      * @param string $first_name
      * @param string $last_name
+     * @param bool $default Note: If this is the first faculty member added, they will be default regardless of this setting
      * @return Faculty An object that only exists locally, isn't stored in DB
      */
-    public static function build(string $email, string $first_name, string $last_name): Faculty
+    public static function build(string $email, string $first_name, string $last_name, bool $default = false): Faculty
     {
-        return new Faculty($email, $first_name, $last_name);
+        return new Faculty($email, $first_name, $last_name, $default);
     }
 
     /**
@@ -176,7 +239,7 @@ class Faculty implements JsonSerializable
 
         if (!$data) return null;
 
-        return new Faculty($email, $data['first_name'], $data['last_name'], $data['id']);
+        return new Faculty($email, $data['first_name'], $data['last_name'], $data['is_default'], $data['id']);
     }
 
     /**
@@ -197,7 +260,7 @@ class Faculty implements JsonSerializable
 
         if (!$data) return null;
 
-        return new Faculty($data['email'], $data['first_name'], $data['last_name'], $id);
+        return new Faculty($data['email'], $data['first_name'], $data['last_name'], $data['is_default'], $id);
     }
 
     public function jsonSerialize()

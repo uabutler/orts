@@ -196,6 +196,7 @@ function createFacultyTbl($pdo)
     $pdo->exec("CREATE TABLE $faculty_tbl (
     id int PRIMARY KEY AUTO_INCREMENT,
     email varchar(64) NOT NULL UNIQUE,
+    is_default boolean NOT NULL DEFAULT false,
     first_name varchar(255),
     last_name varchar(255) NOT NULL)");
 }
@@ -335,7 +336,7 @@ function populateFaculty($pdo)
     $email = $_POST['email'];
     $first = $_POST['first_name'];
     $last = $_POST['last_name'];
-    $pdo->exec("INSERT INTO $faculty_tbl (email, first_name, last_name) VALUES ('$email', '$first', '$last')");
+    $pdo->exec("INSERT INTO $faculty_tbl (email, first_name, last_name, is_default) VALUES ('$email', '$first', '$last', true)");
 }
 
 function populateDepartments($pdo)

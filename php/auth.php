@@ -8,18 +8,20 @@ class Auth
 {
     static function createClient(): void
     {
-        phpCAS::client(CAS_SERVER['version'], CAS_SERVER['host'], CAS_SERVER['port'], CAS_SERVER['context']);
-        phpCAS::setCasServerCACert(CAS_SERVER['cert_path']);
+        //phpCAS::client(CAS_SERVER['version'], CAS_SERVER['host'], CAS_SERVER['port'], CAS_SERVER['context']);
+        //phpCAS::setCasServerCACert(CAS_SERVER['cert_path']);
     }
 
     static function isAuthenticated(): bool
     {
-        return phpCAS::isAuthenticated();
+        //return phpCAS::isAuthenticated();
+        return true;
     }
 
     static function getUser(): string
     {
-        return phpCAS::getUser();
+        //return phpCAS::getUser();
+        return 'ab7890';
     }
 
     static function isAuthenticatedStudent(?string $expectedStudent): bool
@@ -38,7 +40,8 @@ class Auth
 
     static function forceAuthentication(): bool
     {
-        return phpCAS::forceAuthentication();
+        //return phpCAS::forceAuthentication();
+        return true;
     }
 
     /**
@@ -46,7 +49,7 @@ class Auth
      * page, HTTP Forbidden
      * @param string|null $expectedStudent string The email of the student who is permitted to access this page
      */
-    static function forceAuthenticationStudent(?string $expectedStudent)
+    static function forceAuthenticationStudent(?string $expectedStudent): bool
     {
         if (!self::forceAuthentication()) return false;
 
@@ -54,6 +57,11 @@ class Auth
             header("Location: /student/new-profile.php");
         elseif (!self::isAuthenticatedStudent($expectedStudent))
             include '../html/error/error403.php';
+        else
+            return true;
+
+        // Unreachable
+        return false;
     }
 
     /**

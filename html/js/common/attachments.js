@@ -8,15 +8,20 @@ function displayFilePreview()
     window.open('/api/file.php?id=' + id, "_blank");
 }
 
-function cancelUpload()
+function showUploadPopup()
 {
-    $('#upload-popup').modal('hide');
     $('#file-selector').val('');
     $('#upload-file-button').addClass('disabled');
     $('#file-upload-name').addClass('hidden');
     $('#upload-progress-bar').addClass('hidden');
     $('#default-upload-text').removeClass('hidden')
     $('#upload-browse-button').removeClass('hidden')
+    $('#upload-popup').modal('show');
+}
+
+function cancelUpload()
+{
+    $('#upload-popup').modal('hide');
 }
 
 function selectFile()
@@ -194,7 +199,7 @@ $(function ()
 {
     updateAttachmentTable();
 
-    $('#upload-window-button').on('click', function() { $('#upload-popup').modal('show'); });
+    $('#upload-window-button').on('click', showUploadPopup);
     $('#file-cancel').on('click', cancelUpload);
     $('#upload-file-button').on('click', uploadFile);
 

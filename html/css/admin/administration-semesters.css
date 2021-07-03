@@ -1,0 +1,28 @@
+.semester-status-table-cell
+{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+}
+
+.hidden
+{
+    display: none !important;
+}
+
+#administration-menu
+{
+    float: left;
+    margin: 16px 0 0;
+    width: 184px;
+}
+
+#semester-administration
+{
+    display: grid;
+}
+
+.left.floated
+{
+    float: left;
+}
