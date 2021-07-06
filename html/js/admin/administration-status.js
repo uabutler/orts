@@ -1,8 +1,8 @@
-function setStatusWarning()
+function setStatusWarning(type, event)
 {
-    let select = $(this).children('select');
-    let tableCell = $(this).parent();
-    let statusIcon = tableCell.find('.semester-status-icon');
+    let select = event.children('select');
+    let tableCell = event.parent();
+    let statusIcon = tableCell.find(`.${type}-status-icon`);
 
     tableCell.removeClass('warning negative positive');
     statusIcon.removeClass('exclamation circle triangle icon');
@@ -30,40 +30,8 @@ function setStatusWarning()
         statusIcon.addClass('hidden');
     }
 
-    if ($('.semester-status-icon.icon').length)
-        $('#semester-update-button').removeClass('hidden')
+    if ($(`.${type}-status-icon.icon`).length)
+        $(`#${type}-update-button`).removeClass('hidden')
     else
-        $('#semester-update-button').addClass('hidden')
+        $(`#${type}-update-button`).addClass('hidden')
 }
-
-function updateSemesters()
-{
-    $('#semester-primary-content-display').addClass('ui loading form');
-
-    let data = [];
-
-    $('.semester-status-icon.icon').each(function()
-    {
-        let item = {};
-
-        item.id = $(this).parents('tr').data('value');
-        if ($(this).hasClass('circle'))
-            item.archive = true;
-        else if ($(this).hasClass('triangle'))
-            item.delete = true;
-
-        data.push(item);
-    });
-
-    $.ajax({
-        url: '/api/admin/semester.php',
-        method: 'PUT',
-        data: JSON.stringify(data),
-        success: function()
-        {
-            updateSemesterTable();
-            $('#semester-primary-content-display').removeClass('ui loading form');
-        }
-    })
-}
-

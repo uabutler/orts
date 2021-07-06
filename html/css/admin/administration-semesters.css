@@ -1,15 +1,3 @@
-.semester-status-table-cell
-{
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-}
-
-.hidden
-{
-    display: none !important;
-}
-
 #administration-menu
 {
     float: left;
@@ -20,9 +8,4 @@
 #semester-administration
 {
     display: grid;
-}
-
-.left.floated
-{
-    float: left;
 }

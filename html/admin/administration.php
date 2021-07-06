@@ -19,10 +19,12 @@ $minors = Minor::listActive();
     <title>ORTS - Administration</title>
     <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/administration.css">
+    <link rel="stylesheet" href="/css/admin/administration-status.css">
     <link rel="stylesheet" href="/css/admin/administration-semesters.css">
     <link rel="stylesheet" href="/css/admin/administration-faculty.css">
     <link rel="stylesheet" href="/css/admin/administration-programs.css">
     <script src="/js/admin/administration.js"></script>
+    <script src="/js/admin/administration-status.js"></script>
     <script src="/js/admin/administration-semesters.js"></script>
     <script src="/js/admin/administration-faculty.js"></script>
     <script src="/js/admin/administration-programs.js"></script>

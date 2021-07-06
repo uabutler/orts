@@ -124,10 +124,9 @@ class Major extends Program implements JsonSerializable
         $pdo = connectDB();
 
         // First, update the basic student info
-        $smt = $pdo->prepare("UPDATE $major_tbl SET major=:major active=:active WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $major_tbl SET major=:major WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":major", $this->name, PDO::PARAM_STR);
-        $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
         if (!$smt->execute()) return false;
 

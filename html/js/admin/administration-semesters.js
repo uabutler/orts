@@ -33,7 +33,7 @@ function updateSemesterTable()
                         <td>${semester.description}</td>
                         <td>${semester.semester}</td>
                         <td><button class="ui button">View</button></td>
-                        <td class="semester-status-table-cell">
+                        <td class="status-table-cell">
                             <div>
                                 <i class="semester-status-icon hidden"></i>
                             </div>`;
@@ -66,48 +66,10 @@ function updateSemesterTable()
 
             $('.ui.dropdown').dropdown();
             $('#status-info-icon').popup();
-            $('.semester-status-select').on('change', setStatusWarning);
+            $('.semester-status-select').on('change', function() { setStatusWarning('semester', $(this)) });
             $('#semester-update-button').on('click', updateSemesters);
         }
     });
-}
-
-function setStatusWarning()
-{
-    let select = $(this).children('select');
-    let tableCell = $(this).parent();
-    let statusIcon = tableCell.find('.semester-status-icon');
-
-    tableCell.removeClass('warning negative positive');
-    statusIcon.removeClass('exclamation circle triangle icon');
-
-    if (select.val() !== select.data('original'))
-    {
-        console.log(select.val());
-
-        statusIcon.removeClass('hidden');
-
-        if (select.val() === 'archive')
-        {
-            tableCell.addClass('warning')
-            statusIcon.addClass('exclamation circle icon');
-        }
-
-        if (select.val() === 'delete')
-        {
-            tableCell.addClass('negative')
-            statusIcon.addClass('exclamation triangle icon');
-        }
-    }
-    else
-    {
-        statusIcon.addClass('hidden');
-    }
-
-    if ($('.semester-status-icon.icon').length)
-        $('#semester-update-button').removeClass('hidden')
-    else
-        $('#semester-update-button').addClass('hidden')
 }
 
 function updateSemesters()

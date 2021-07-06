@@ -23,21 +23,21 @@ function updateProgramTable(type)
             {
                 table += `<tr data-value="${program.id}">
                         <td>${program.name}</td>
-                        <td class="semester-status-table-cell">
+                        <td class="status-table-cell">
                             <div>
-                                <i class="semester-status-icon hidden"></i>
+                                <i class="${type}-status-icon hidden"></i>
                             </div>`;
 
 
                 if (program.active)
                 {
-                    table +=`<select data-original="active" class="semester-status-select ui dropdown fluid">
+                    table +=`<select data-original="active" class="${type}-status-select ui dropdown fluid">
                             <option value="active">Active</option>
                             <option value="archive">Archive</option>`;
                 }
                 else
                 {
-                    table +=`<select data-original="archive" class="semester-status-select ui dropdown fluid">
+                    table +=`<select data-original="archive" class="${type}-status-select ui dropdown fluid">
                             <option value="archive">Archive</option>`;
 
                 }
@@ -50,20 +50,24 @@ function updateProgramTable(type)
 
             table += `</tbody>
                 </table>
-                <button id="semester-update-button" class="hidden ui right floated button">Update</button>`;
+                <button id="${type}-update-button" class="hidden ui right floated button">Update</button>`;
 
             $(`#${type}s-primary-content-display`).html(table);
 
             $('.ui.dropdown').dropdown();
             $('.status-info-icon').popup();
+
             // TODO: Update
-            $('.semester-status-select').on('change', setStatusWarning);
-            $('#semester-update-button').on('click', updateSemesters);
+            $(`.${type}-status-select`).on('change', function() { setStatusWarning(type, $(this)) });
+            $(`#${type}-update-button`).on('click', updateSemesters);
+
+            $('#major-update-button').on('click', function() { updatePrograms('major') });
+            $('#minor-update-button').on('click', function() { updatePrograms('minor') });
         }
     });
 }
 
-function enableSemesterPopup(enabled)
+function enableProgramPopup(enabled)
 {
     $('#program-input').prop('disabled', !enabled);
     $('#new-program-submit-button').prop('disabled', !enabled);
@@ -78,24 +82,74 @@ function showProgramPopup(type)
     $('#program-administration').data('type', lower_case_type);
     $('#new-program-popup-description').html(`Place each ${lower_case_type} on a separate line`);
 
-    enableSemesterPopup(true);
+    enableProgramPopup(true);
     $('#program-input').val('');
     $('#new-program-popup').modal('show');
-}
-
-function showMajorPopup()
-{
-    showProgramPopup('Major');
-}
-
-function showMinorPopup()
-{
-    showProgramPopup('Minor');
 }
 
 function cancelProgramPopup()
 {
     $('#new-program-popup').modal('hide');
+}
+
+function submitPrograms()
+{
+    let type = $('#program-administration').data('type');
+
+    enableProgramPopup(false);
+
+    let input = $('#program-input').val().split('\n');
+    let data = [];
+
+    for (let program of input)
+    {
+        program = program.trim();
+
+        if (program !== "")
+            data.push(program)
+    }
+
+    $.ajax({
+        url: `/api/admin/${type}s.php`,
+        method: 'POST',
+        data: JSON.stringify(data),
+        success: function()
+        {
+            updateProgramTable(type)
+            cancelProgramPopup();
+        }
+    })
+}
+
+function updatePrograms(type)
+{
+    $('#program-primary-content-display').addClass('ui loading form');
+
+    let data = [];
+
+    $(`.${type}-status-icon.icon`).each(function()
+    {
+        let item = {};
+
+        item.id = $(this).parents('tr').data('value');
+        if ($(this).hasClass('circle'))
+            item.archive = true;
+        else if ($(this).hasClass('triangle'))
+            item.delete = true;
+
+        data.push(item);
+    });
+
+    $.ajax({
+        url: `/api/admin/${type}s.php`,
+        method: 'PUT',
+        data: JSON.stringify(data),
+        success: function()
+        {
+            updateProgramTable(type)
+            $('#program-primary-content-display').removeClass('ui loading form');
+        }
+    })
 }
 
 $(function()
@@ -105,7 +159,8 @@ $(function()
     updateProgramTable('major');
     updateProgramTable('minor');
 
-    $('#new-majors-popup-button').on('click', showMajorPopup);
-    $('#new-minors-popup-button').on('click', showMinorPopup);
+    $('#new-majors-popup-button').on('click', function() { showProgramPopup('Major') });
+    $('#new-minors-popup-button').on('click', function() { showProgramPopup('Minor') });
     $('#new-program-cancel-button').on('click', cancelProgramPopup);
+    $('#new-program-submit-button').on('click', submitPrograms);
 });

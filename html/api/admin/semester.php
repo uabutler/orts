@@ -38,7 +38,7 @@ API::put(function($data)
         if (isset($update->archive) && $update->archive)
             $semester->setInactive();
 
-        $ret = $semester->storeInDB();
+        $ret = $ret && $semester->storeInDB();
 
         if (isset($update->delete) && $update->delete)
             $ret = $ret && $semester->deleteFromDB();

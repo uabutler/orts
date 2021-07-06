@@ -1,42 +1,29 @@
 <?php
-require_once '../../../php/auth.php';
-require_once '../../../php/api.php';
-require_once '../../../php/database/programs.php';
+require_once __DIR__ . '/../../../php/auth.php';
+require_once __DIR__ . '/../../../php/api.php';
+require_once __DIR__ . '/../../../php/database/programs.php';
 
-Auth::createClient();
-
-// Create new programs, either majors or minors
-API::post(function($data)
+function updateProgram($data, $type): string
 {
-    foreach ($data->programs as $program)
+    $ret = true;
+
+    foreach ($data as $update)
     {
-        if ($data->type === "major")
-            Major::build($program)->storeInDB();
-        else
-            Minor::build($program)->storeInDB();
+        $program = $type::getById($update->id);
+
+        if (isset($update->archive) && $update->archive)
+            $program->setInactive();
+
+        $ret = $ret && $program->storeInDB();
+
+        if (isset($update->delete) && $update->delete)
+            $ret = $ret && $program->deleteFromDB();
     }
-});
 
-// Set a given program to inactive
-API::delete(function()
-{
-    global $_DELETE;
-
-    if(!(isset($_DELETE['type']) && isset($_DELETE['program'])))
-        API::error(400, "Please the program and type of program");
-
-    if ($_DELETE['type'] === 'major')
-        $program = Major::get($_DELETE['program']);
+    if ($ret)
+        return 'Success';
     else
-        $program = Minor::get($_DELETE['program']);
+        return 'Uh oh';
 
-    if (is_null($program))
-        API::error(204, "No such program found");
-
-    $program->setInactive();
-
-    if ($program->storeInDB())
-        return "Success";
-    else
-        API::error(500, "Could not write to database");
-});
+    // TODO: Error Handling
+}
