@@ -19,6 +19,7 @@ $minors = Minor::listActive();
     <title>ORTS - Administration</title>
     <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/administration.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
     <script src="/js/admin/administration.js"></script>
     <script src="/js/admin/administration-status.js"></script>
     <script src="/js/admin/administration-semesters.js"></script>
@@ -35,7 +36,7 @@ $minors = Minor::listActive();
 
 <section id="administration-menu">
     <div class="ui fluid vertical pointing menu">
-        <a id="semester-menu-button" class="active administration-menu item">
+        <a id="semester-menu-button" class="administration-menu item">
             Semesters
         </a>
         <a id="faculty-menu-button" class="administration-menu item">
@@ -50,7 +51,7 @@ $minors = Minor::listActive();
     </div>
 </section>
 
-<section id="semester-administration" class="administration-section">
+<section id="semester-administration" class="administration-section hidden">
     <div id="new-semester-popup" class="ui modal">
         <div class="header">
             New Semester

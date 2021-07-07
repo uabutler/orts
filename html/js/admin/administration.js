@@ -5,6 +5,8 @@ function switchSection(newSection)
 
    $('.administration-menu.item').removeClass('active');
    $(`#${newSection}-menu-button`).addClass('active');
+
+   Cookies.set('admin-page', newSection);
 }
 
 $(function()
@@ -13,4 +15,9 @@ $(function()
    $('#faculty-menu-button').on('click', function() { switchSection('faculty') });
    $('#program-menu-button').on('click', function() { switchSection('program') });
    $('#course-menu-button').on('click', function() { switchSection('course') });
+
+   if (!Cookies.get('admin-page'))
+       Cookies.set('admin-page', 'semester');
+
+   switchSection(Cookies.get('admin-page'));
 });
