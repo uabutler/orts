@@ -78,18 +78,7 @@ function updateSemesters()
 
     let data = [];
 
-    $('.semester-status-icon.icon').each(function()
-    {
-        let item = {};
-
-        item.id = $(this).parents('tr').data('value');
-        if ($(this).hasClass('circle'))
-            item.archive = true;
-        else if ($(this).hasClass('triangle'))
-            item.delete = true;
-
-        data.push(item);
-    });
+    $('.semester-status-icon.icon').each(function() { createStatusUpdate(data, $(this)) });
 
     $.ajax({
         url: '/api/admin/semester.php',

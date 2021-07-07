@@ -78,12 +78,23 @@ class Department implements JsonSerializable
      * An array of strings representing all inactive departments
      * @return array
      */
-    public static function listInactive(): array
+    public static function list(): array
     {
         global $department_tbl;
         $pdo = connectDB();
-        $smt = $pdo->query("SELECT department FROM $department_tbl WHERE active=false");
-        return flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+
+        $smt = $pdo->query("SELECT * FROM $department_tbl");
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$data) return [];
+
+        $out = [];
+
+        foreach ($data as $row)
+            $out[] = new Department($row['department'], $row['active'], $row['id']);
+
+        return $out;
     }
 
     private function insertDB(): bool
@@ -358,7 +369,7 @@ class Course implements JsonSerializable
         $pdo = connectDB();
 
         $department_id = $this->department->getId();
-        $smt = $pdo->prepare("UPDATE $course_tbl SET department_id:department_id, course_num=:course_num, title=:title WHERE id=:id");
+        $smt = $pdo->prepare("UPDATE $course_tbl SET department_id=:department_id, course_num=:course_num, title=:title WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":department_id", $department_id, PDO::PARAM_INT);
         $smt->bindParam(":course_num", $this->course_num, PDO::PARAM_INT);
@@ -447,11 +458,12 @@ class Course implements JsonSerializable
     {
         global $course_tbl;
         $pdo = connectDB();
-        $smt = $pdo->prepare("SELECT * FROM $course_tbl WHERE active=:active");
-        $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
-        $smt->execute();
 
-        $data = $smt->fetch(PDO::FETCH_ASSOC);
+        $query = "SELECT * FROM $course_tbl" . ($active ? " WHERE active=true" : "");
+
+        $smt = $pdo->query($query);
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!$data) return [];
 
@@ -460,7 +472,7 @@ class Course implements JsonSerializable
         foreach ($data as $row)
         {
             $department = Department::getById($row['department_id']);
-            $request = new Course($department, $data['course_num'], $data['title'], $data['active'], $data['id']);
+            $request = new Course($department, $row['course_num'], $row['title'], $row['active'], $row['id']);
             $returnList[] = $request;
         }
 
@@ -480,7 +492,7 @@ class Course implements JsonSerializable
      * An array of strings representing all inactive courses
      * @return array
      */
-    public static function listInactive(): array
+    public static function list(): array
     {
         return self::listHelper(false);
     }

@@ -19,15 +19,12 @@ $minors = Minor::listActive();
     <title>ORTS - Administration</title>
     <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/administration.css">
-    <link rel="stylesheet" href="/css/admin/administration-status.css">
-    <link rel="stylesheet" href="/css/admin/administration-semesters.css">
-    <link rel="stylesheet" href="/css/admin/administration-faculty.css">
-    <link rel="stylesheet" href="/css/admin/administration-programs.css">
     <script src="/js/admin/administration.js"></script>
     <script src="/js/admin/administration-status.js"></script>
     <script src="/js/admin/administration-semesters.js"></script>
     <script src="/js/admin/administration-faculty.js"></script>
     <script src="/js/admin/administration-programs.js"></script>
+    <script src="/js/admin/administration-courses.js"></script>
     <script>
         let STATE = ""
     </script>
@@ -46,9 +43,6 @@ $minors = Minor::listActive();
         </a>
         <a id="program-menu-button" class="administration-menu item">
             Programs
-        </a>
-        <a id="student-menu-button" class="administration-menu item">
-            Students
         </a>
         <a id="course-menu-button" class="administration-menu item">
             Courses
@@ -231,24 +225,88 @@ $minors = Minor::listActive();
     </div>
 </section>
 
-<section id="student-administration" class="administration-section hidden">
-    <div>
-        <h1>Students</h1>
-    </div>
-    <div id="student-primary-content-display">
-        <div class="ui centered inline active loader"></div>
-    </div>
-</section>
-
 <section id="course-administration" class="administration-section hidden">
-    <div>
-        <h1 class="left floated">Courses</h1>
-        <button id="new-courses-popup-button" class="right floated ui labeled icon button">
-            <i class="plus icon"></i>
-            New
-        </button>
+    <div id="new-department-popup" class="ui modal">
+        <div class="header">
+            New Department
+        </div>
+        <div class="content">
+            <form class="ui form">
+                <div class="field">
+                    <label>Department Code</label>
+                    <input id="department-name" type="text" placeholder='Ex. "CS"'>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <button id="new-department-cancel-button" class="ui button">
+                Cancel
+            </button>
+            <button id="new-department-submit-button" class="ui button">
+                Submit
+            </button>
+        </div>
     </div>
-    <div id="course-primary-content-display">
+
+    <div id="new-course-popup" class="ui modal">
+        <div class="header">
+            New Course
+        </div>
+        <div class="content">
+            <form class="ui form">
+                <div class="fields">
+                    <div class="four wide field">
+                        <label>Dept.</label>
+                        <select class="ui dropdown" id="course-department-input">
+                            <option value="">Ex. "CS"</option>
+                        </select>
+                    </div>
+                    <div class="four wide field">
+                        <label>Number</label>
+                        <input id="course-number-input" class="numeric" type="text" placeholder='Ex. "180"'>
+                    </div>
+                    <div class="eight wide field">
+                        <label>Title</label>
+                        <input id="course-title-input" type="text" placeholder='Ex. "Fnd of Computer Science I"'>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <button id="new-course-cancel-button" class="ui button">
+                Cancel
+            </button>
+            <button id="new-course-submit-button" class="ui button">
+                Submit
+            </button>
+        </div>
+    </div>
+
+    <div id="course-department-primary-content-display">
+        <div>
+            <div>
+                <h1 class="left floated">Departments</h1>
+                <button id="new-department-popup-button" class="right floated ui labeled icon button">
+                    <i class="plus icon"></i>
+                    New
+                </button>
+            </div>
+            <div id="department-primary-content-display">
+                <div class="ui centered inline active loader"></div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <h1 class="left floated">Courses</h1>
+                <button id="new-course-popup-button" class="right floated ui labeled icon button">
+                    <i class="plus icon"></i>
+                    New
+                </button>
+            </div>
+            <div id="course-primary-content-display">
+                <div class="ui centered inline active loader"></div>
+            </div>
+        </div>
     </div>
 </section>
 

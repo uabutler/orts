@@ -35,3 +35,16 @@ function setStatusWarning(type, event)
     else
         $(`#${type}-update-button`).addClass('hidden')
 }
+
+function createStatusUpdate(data, event)
+{
+    let item = {};
+
+    item.id = event.parents('tr').data('value');
+    if (event.hasClass('circle'))
+        item.archive = true;
+    else if (event.hasClass('triangle'))
+        item.delete = true;
+
+    data.push(item);
+}

@@ -72,3 +72,71 @@ table .ui.button
 {
     display: none !important;
 }
+
+.status-table-cell
+{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+}
+
+.hidden
+{
+    display: none !important;
+}
+
+.left.floated
+{
+    float: left;
+}
+
+#administration-menu
+{
+    float: left;
+    margin: 16px 0 0;
+    width: 184px;
+}
+
+#semester-administration
+{
+    display: grid;
+}
+
+#faculty-administration
+{
+    display: grid;
+}
+
+#program-primary-content-display
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+#majors-primary-content-display
+{
+    clear: both;
+}
+
+#minors-primary-content-display
+{
+    clear: both;
+}
+
+#course-department-primary-content-display
+{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 20px;
+}
+
+#department-primary-content-display
+{
+    clear: both;
+}
+
+#course-primary-content-display
+{
+    clear: both;
+}
