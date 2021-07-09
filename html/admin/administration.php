@@ -139,21 +139,48 @@ $minors = Minor::listActive();
             </button>
         </div>
     </div>
+
     <div id="new-section-upload-popup" class="ui modal">
         <div class="header">
-            Please Upload Spreadsheet
+            Select a File
         </div>
         <div class="content">
+
+            <div class="ui placeholder segment">
+                <div class="ui icon header">
+                    <i class="file outline icon"></i>
+                    <span id="default-upload-text">Select a file to upload</span>
+                    <span id="file-upload-name" class="hidden"></span>
+                </div>
+
+                <div id="upload-browse-button">
+                    <input type="file" class="inputfile" id="file-selector" style="display: none;"/>
+                    <label for="file-selector" class="ui primary right labeled icon button">
+                        Browse
+                        <i class="open folder icon"></i>
+                    </label>
+                </div>
+
+                <div id="upload-progress-bar" class="ui progress hidden">
+                    <div class="bar">
+                        <div class="progress"></div>
+                    </div>
+                    <div class="label">Uploading File</div>
+                </div>
+            </div>
+
         </div>
         <div class="actions">
-            <button id="new-section-upload-cancel-button" class="ui button">
+            <div id="new-section-upload-cancel-button" class="ui black deny button">
                 Cancel
-            </button>
-            <button id="new-section-upload-submit-button" class="ui button">
-                Submit
-            </button>
+            </div>
+            <div id="new-section-upload-submit-button" class="ui disabled positive right labeled icon button">
+                Upload
+                <i class="upload icon"></i>
+            </div>
         </div>
     </div>
+
     <div>
         <h1 class="left floated" id="section-semester-header"></h1>
         <button id="new-section-popup-button" class="right floated ui labeled icon button">

@@ -67,7 +67,6 @@ function uploadFile()
 
 function completeUpload()
 {
-    // This resets the interface for us
     cancelUpload();
     updateAttachmentTable();
 }
@@ -205,7 +204,5 @@ $(function ()
 
     $('#file-selector').on('change', selectFile);
 
-    $('#upload-popup').modal({
-        closable: false,
-    });
+    $('#upload-popup').modal({ closable: false, });
 });

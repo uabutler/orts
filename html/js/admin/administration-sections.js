@@ -18,13 +18,13 @@ function openSection()
     $('.administration-section').addClass('hidden');
     $('#section-administration').removeClass('hidden');
 
-    updateSectionTable(Cookies.get('semester_id'));
+    updateSectionTable();
 }
 
 
-function updateSectionTable(semester)
+function updateSectionTable()
 {
-    let data = 'id=' + semester;
+    let data = 'id=' + Cookies.get('semester_id');
 
     $.ajax({
         url: '/api/admin/sections.php',
@@ -130,16 +130,6 @@ function cancelSectionPopup()
     $('#new-section-popup').modal('hide');
 }
 
-function showSectionUploadPopup()
-{
-    $('#new-section-upload-popup').modal('show');
-}
-
-function cancelSectionUploadPopup()
-{
-    $('#new-section-upload-popup').modal('hide');
-}
-
 function displayCourseTitle()
 {
     let data = "department=" + $('#section-department-input').val();
@@ -176,7 +166,7 @@ function submitSection()
         {
             enableSectionPopup(false);
             cancelSectionPopup();
-            updateSectionTable(Cookies.get('semester_id'));
+            updateSectionTable();
         }
     });
 }
@@ -195,10 +185,74 @@ function updateSection()
         data: JSON.stringify(data),
         success: function()
         {
-            updateSectionTable(Cookies.get('semester_id'));
+            updateSectionTable();
             $('#section-primary-content-display').removeClass('ui loading form');
         }
     })
+}
+
+function showSectionUploadPopup()
+{
+    $('#file-selector').val('');
+    $('#new-section-upload-submit-button').addClass('disabled');
+    $('#file-upload-name').addClass('hidden');
+    $('#upload-progress-bar').addClass('hidden');
+    $('#default-upload-text').removeClass('hidden')
+    $('#upload-browse-button').removeClass('hidden')
+    $('#new-section-upload-popup').modal('show');
+}
+
+function selectFile()
+{
+    $('#file-upload-name').html($('#file-selector').prop('files')[0].name);
+    $('#new-section-upload-submit-button').removeClass('disabled');
+    $('#upload-browse-button').addClass('hidden')
+    $('#default-upload-text').addClass('hidden')
+    $('#file-upload-name').removeClass('hidden');
+}
+
+function uploadStatus(event)
+{
+    let percentage = Math.floor((event.loaded / event.total) * 100)
+    $('#upload-progress-bar').progress({percent: percentage});
+}
+
+function uploadFile()
+{
+    $('#upload-progress-bar')
+        .removeClass('hidden')
+        .progress({percent: 0});
+
+    let data = new FormData();
+    data.append('semester', Cookies.get('semester_id'));
+    data.append('attachment', $('#file-selector').prop('files')[0]);
+
+    $.ajax({
+        url: '/api/admin/section-upload.php',
+        method: 'POST',
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        xhr: function()
+        {
+            let xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener("progress", uploadStatus, false);
+            return xhr;
+        },
+        success: completeUpload
+    })
+}
+
+function completeUpload()
+{
+    cancelSectionUploadPopup();
+    updateSectionTable();
+}
+
+function cancelSectionUploadPopup()
+{
+    $('#new-section-upload-popup').modal('hide');
 }
 
 $(function()
@@ -215,4 +269,8 @@ $(function()
 
     $('#section-department-input').on('change', displayCourseTitle)
     $('#section-course-input').on('keyup', displayCourseTitle);
+
+    // Upload
+    $('#file-selector').on('change', selectFile);
+    $('#new-section-upload-submit-button').on('click', uploadFile);
 });

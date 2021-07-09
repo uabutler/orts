@@ -1,25 +1,37 @@
+import traceback
 import sys
 import re
-from openpyxl import load_workbook
+import getpass
 
-if len(sys.argv) != 3:
-    sys.exit("Usage: python " + sys.argv[0] + " input output")
+try:
+    from openpyxl import load_workbook
+except ModuleNotFoundError:
+    print('openpyxl is not installed. Please install for  user "' + getpass.getuser() + '"')
+    sys.exit(1)
+
+if len(sys.argv) != 2:
+    sys.exit("Usage: python " + sys.argv[0] + " input")
 
 input_file = sys.argv[1]
-output_file = sys.argv[2]
 
-print("    Parsing excel file:" + input_file)
-wb = load_workbook(input_file)
+try:
+    wb = load_workbook(input_file)
+except Exception:
+    print(traceback.format_exc())
+    exit(-1)
 
-print("    Writing results to " + output_file)
-f = open(output_file, "w")
+out = ""
 
-for ws in wb._sheets:
-    print("    Reading sheet " + str(ws))
-    for row in ws.iter_rows(values_only=True):
-        if type(row[0]) == str or type(row[0]) == str:
-            if re.match(r'\d{4} +\w{2,4} +\d{3} +\d{2} +.+', row[0]):
-                f.write(re.sub(r'\s+', '\t', row[0], 4) + '\n')
+# If you're reading this, it probably means this function finally broke.
+# You can't repair it, don't even try. Just build a new one. Save yourself the sanity.
+try:
+    for ws in wb._sheets:
+        for row in ws.iter_rows(values_only=True):
+            if type(row[0]) == str or type(row[0]) == str:
+                if re.match(r'\d{4} +\w{2,4} +\d{3} +\d{2} +.+', row[0]):
+                    out += re.sub(r'\s+', '\t', row[0], 4) + '\n'
+except Exception:
+    print(traceback.format_exc())
+    exit(-1)
 
-print("    done; exiting")
-f.close()
+print(out)
