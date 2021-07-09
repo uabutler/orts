@@ -978,7 +978,7 @@ class Section implements JsonSerializable
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":course_id", $course_id, PDO::PARAM_INT);
         $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
-        $smt->bindParam(":section", $section, PDO::PARAM_INT);
+        $smt->bindParam(":section", $this->section, PDO::PARAM_INT);
 
         if (!$smt->execute()) return false;
 
@@ -1059,9 +1059,26 @@ class Section implements JsonSerializable
         return new Section($course, $semester, $section, $crn);
     }
 
-    private static function listHelper(): array
+    public static function list(Semester $semester): array
     {
+        global $section_tbl;
+        $pdo = connectDB();
 
+        $semester_id = $semester->getId();
+        $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE semester_id=:semester_id ORDER BY course_id");
+        $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
+        $smt->execute();
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$data) return [];
+
+        $out = [];
+
+        foreach ($data as $row)
+            $out[] = new Section(Course::getById($row['course_id']), Semester::getById($row['semester_id']), $row['section'], $row['crn'], $row['active'], $row['id']);
+
+        return $out;
     }
 
     /**

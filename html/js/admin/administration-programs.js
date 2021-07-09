@@ -33,12 +33,12 @@ function updateProgramTable(type)
                 {
                     table +=`<select data-original="active" class="${type}-status-select ui dropdown fluid">
                             <option value="active">Active</option>
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
                 }
                 else
                 {
                     table +=`<select data-original="archive" class="${type}-status-select ui dropdown fluid">
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
 
                 }
 

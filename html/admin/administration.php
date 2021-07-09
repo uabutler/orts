@@ -22,6 +22,7 @@ $minors = Minor::listActive();
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
     <script src="/js/admin/administration.js"></script>
     <script src="/js/admin/administration-status.js"></script>
+    <script src="/js/admin/administration-sections.js"></script>
     <script src="/js/admin/administration-semesters.js"></script>
     <script src="/js/admin/administration-faculty.js"></script>
     <script src="/js/admin/administration-programs.js"></script>
@@ -88,6 +89,83 @@ $minors = Minor::listActive();
         </button>
     </div>
     <div id="semester-primary-content-display">
+        <div class="ui centered inline active loader"></div>
+    </div>
+</section>
+
+<section id="section-administration" class="administration-section hidden">
+    <div id="new-section-popup" class="ui modal">
+        <div class="header">
+            New Section
+        </div>
+        <div class="content">
+            <form class="ui form">
+                <div class="field">
+                    <div class="fields">
+                        <div class="four wide field">
+                            <label>Dept.</label>
+                            <select class="ui dropdown" id="section-department-input">
+                                <option value="">Ex. "CS"</option>
+                            </select>
+                        </div>
+                        <div class="four wide field">
+                            <label>Course Number</label>
+                            <input id="section-course-input" type="text" class="numeric" placeholder='Ex. "170"'>
+                        </div>
+                        <div class="eight wide field disabled">
+                            <label>Course Title</label>
+                            <input id="section-title-input" type="text" readonly tabindex="-1" placeholder=''>
+                        </div>
+                    </div>
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Section Number</label>
+                            <input id="section-number-input" type="text" class="numeric" placeholder='Ex. "01"'>
+                        </div>
+                        <div class="field">
+                            <label>CRN</label>
+                            <input id="section-crn-input" type="text" class="numeric" placeholder='Ex. "1658"'>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <button id="new-section-cancel-button" class="ui button">
+                Cancel
+            </button>
+            <button id="new-section-submit-button" class="ui button">
+                Submit
+            </button>
+        </div>
+    </div>
+    <div id="new-section-upload-popup" class="ui modal">
+        <div class="header">
+            Please Upload Spreadsheet
+        </div>
+        <div class="content">
+        </div>
+        <div class="actions">
+            <button id="new-section-upload-cancel-button" class="ui button">
+                Cancel
+            </button>
+            <button id="new-section-upload-submit-button" class="ui button">
+                Submit
+            </button>
+        </div>
+    </div>
+    <div>
+        <h1 class="left floated" id="section-semester-header"></h1>
+        <button id="new-section-popup-button" class="right floated ui labeled icon button">
+            <i class="plus icon"></i>
+            New
+        </button>
+        <button id="new-section-upload-popup-button" class="right floated ui labeled icon button">
+            <i class="upload icon"></i>
+            Add From File
+        </button>
+    </div>
+    <div id="section-primary-content-display">
         <div class="ui centered inline active loader"></div>
     </div>
 </section>

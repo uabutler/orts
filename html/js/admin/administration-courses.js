@@ -42,12 +42,12 @@ function updateDepartmentTable()
                 {
                     table +=`<select data-original="active" class="department-status-select ui dropdown fluid">
                             <option value="active">Active</option>
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
                 }
                 else
                 {
                     table +=`<select data-original="archive" class="department-status-select ui dropdown fluid">
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
 
                 }
 
@@ -75,6 +75,7 @@ function updateDepartmentTable()
             $('#department-update-button').on('click', updateDepartments);
 
             $('#course-department-input').html(select).dropdown();
+            $('#section-department-input').html(select).dropdown();
         }
     });
 }
@@ -122,12 +123,12 @@ function updateCourseTable()
                 {
                     table +=`<select data-original="active" class="course-status-select ui dropdown fluid">
                             <option value="active">Active</option>
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
                 }
                 else
                 {
                     table +=`<select data-original="archive" class="course-status-select ui dropdown fluid">
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
 
                 }
 

@@ -19,5 +19,9 @@ $(function()
    if (!Cookies.get('admin-page'))
        Cookies.set('admin-page', 'semester');
 
-   switchSection(Cookies.get('admin-page'));
+   // Section is a special case since it requires retrieving the semester the user last viewed
+   if (Cookies.get('admin-page') === 'section')
+      openSection();
+   else
+      switchSection(Cookies.get('admin-page'));
 });

@@ -107,6 +107,11 @@ table .ui.button
     display: grid;
 }
 
+#section-administration
+{
+    display: grid;
+}
+
 #program-primary-content-display
 {
     display: grid;
@@ -132,11 +137,6 @@ table .ui.button
 }
 
 #department-primary-content-display
-{
-    clear: both;
-}
-
-#course-primary-content-display
 {
     clear: both;
 }

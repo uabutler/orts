@@ -29,10 +29,10 @@ function updateSemesterTable()
 
             for (const semester of data)
             {
-                table += `<tr data-value="${semester.id}">
+                table += `<tr data-value="${semester.id}" data-semester="${semester.description}">
                         <td>${semester.description}</td>
                         <td>${semester.semester}</td>
-                        <td><button class="ui button">View</button></td>
+                        <td><button class="view-sections-button ui button">View</button></td>
                         <td class="status-table-cell">
                             <div>
                                 <i class="semester-status-icon hidden"></i>
@@ -43,12 +43,12 @@ function updateSemesterTable()
                 {
                     table +=`<select data-original="active" class="semester-status-select ui dropdown fluid">
                             <option value="active">Active</option>
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
                 }
                 else
                 {
                     table +=`<select data-original="archive" class="semester-status-select ui dropdown fluid">
-                            <option value="archive">Archive</option>`;
+                            <option value="archive">Inactive</option>`;
 
                 }
 
@@ -68,6 +68,7 @@ function updateSemesterTable()
             $('#status-info-icon').popup();
             $('.semester-status-select').on('change', function() { setStatusWarning('semester', $(this)) });
             $('#semester-update-button').on('click', updateSemesters);
+            $('.view-sections-button').on('click', function () { switchToSection($(this)) });
         }
     });
 }
