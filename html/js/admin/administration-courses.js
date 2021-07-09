@@ -173,7 +173,11 @@ function cancelDepartmentPopup()
 
 function enableCoursePopup(enabled)
 {
-    $('#course-department-input').prop('disabled', !enabled);
+    if (enabled)
+        $('#course-department-input').parent().removeClass('disabled');
+    else
+        $('#course-department-input').parent().addClass('disabled');
+
     $('#course-number-input').prop('disabled', !enabled);
     $('#course-title-input').prop('disabled', !enabled);
     $('#new-course-submit-button').prop('disabled', !enabled);

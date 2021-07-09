@@ -35,9 +35,8 @@ API::post(function ($data)
     if (!Auth::isAuthenticatedStudent(Student::getById($data->student_id)->getEmail()))
         API::error(403, "You aren't allowed to create a request for this student " . Student::getById($data->student_id)->getEmail() . " " . Auth::getUser());
 
-    // TODO: Change default faculty in admin functions
     $request = Request::build(Student::getById($data->student_id), Section::getByCrn(Semester::getByCode($data->semester),
-                            $data->crn), Faculty::getById(1), 'Received', $data->reason, $data->explanation);
+                            $data->crn), Faculty::getDefault(), 'Received', $data->reason, $data->explanation);
 
     if($request->storeInDB())
         return $request->getId();

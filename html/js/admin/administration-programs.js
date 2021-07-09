@@ -7,6 +7,12 @@ function updateProgramTable(type)
         {
             data = JSON.parse(data);
 
+            if (data.length === 0)
+            {
+                $(`#${type}s-primary-content-display`).html("Nothing to show");
+                return;
+            }
+
             let table = `<table class="ui celled structured table">
                     <thead>
                     <tr class="center aligned">

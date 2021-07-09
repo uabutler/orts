@@ -104,7 +104,11 @@ function updateSectionTable()
 
 function enableSectionPopup(enabled)
 {
-    $('#section-department-input').prop('disabled', !enabled);
+    if (enabled)
+        $('#section-department-input').parent().removeClass('disabled');
+    else
+        $('#section-department-input').parent().addClass('disabled');
+
     $('#section-course-input').prop('disabled', !enabled);
     $('#section-title-input').prop('disabled', !enabled);
     $('#section-number-input').prop('disabled', !enabled);
@@ -248,6 +252,8 @@ function completeUpload()
 {
     cancelSectionUploadPopup();
     updateSectionTable();
+    updateDepartmentTable();
+    updateCourseTable();
 }
 
 function cancelSectionUploadPopup()

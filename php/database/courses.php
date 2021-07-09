@@ -52,7 +52,7 @@ class Department implements JsonSerializable
      */
     public function setInactive()
     {
-        $this->active = true;
+        $this->active = false;
     }
 
     private function __construct(string $department, bool $active = true, int $id = null)

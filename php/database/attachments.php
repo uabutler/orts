@@ -175,9 +175,9 @@ class Attachment implements JsonSerializable
         if (is_null($pdo)) $pdo = connectDB();
 
         $attachment = self::getById($id);
-        $ret = unlink($attachment->getPath());
+        unlink($attachment->getPath());
 
-        return $ret && deleteByIdFrom($attachment_tbl, $id, $pdo);
+        return deleteByIdFrom($attachment_tbl, $id, $pdo);
     }
 
     /**

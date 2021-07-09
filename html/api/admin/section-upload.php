@@ -33,7 +33,7 @@ $semester = Semester::getById($_POST['semester']);
 
 foreach ($out as $line)
 {
-    if($line === "") exit();
+    if ($line === "") exit();
 
     $crn = strtok($line, "\t");
     $department_prefix = strtok("\t");
@@ -41,11 +41,17 @@ foreach ($out as $line)
     $section_num = strtok("\t");
     $title = substr(strtok("\t"), 0, -1);
 
-
-    $course = Course::get(Department::get($department_prefix), $course_num);
-    if(is_null($course))
+    $department = Department::get($department_prefix);
+    if (is_null($department))
     {
-        $course = Course::build(Department::get($department_prefix), $course_num, $title);
+        $department = Department::build($department_prefix);
+        $department->storeInDB();
+    }
+
+    $course = Course::get($department, $course_num);
+    if (is_null($course))
+    {
+        $course = Course::build($department, $course_num, $title);
         $course->storeInDB();
     }
 

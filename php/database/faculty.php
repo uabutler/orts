@@ -263,6 +263,20 @@ class Faculty implements JsonSerializable
         return new Faculty($data['email'], $data['first_name'], $data['last_name'], $data['is_default'], $id);
     }
 
+    public static function getDefault(): ?Faculty
+    {
+        global $faculty_tbl;
+        $pdo = connectDB();
+
+        $smt = $pdo->query("SELECT * FROM $faculty_tbl WHERE is_default=true LIMIT 1");
+
+        $data = $smt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$data) return null;
+
+        return new Faculty($data['email'], $data['first_name'], $data['last_name'], $data['is_default'], $id);
+    }
+
     public function jsonSerialize()
     {
         return get_object_vars($this);
