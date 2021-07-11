@@ -274,7 +274,7 @@ class Faculty implements JsonSerializable
 
         if (!$data) return null;
 
-        return new Faculty($data['email'], $data['first_name'], $data['last_name'], $data['is_default'], $id);
+        return new Faculty($data['email'], $data['first_name'], $data['last_name'], $data['is_default'], $data['id']);
     }
 
     public function jsonSerialize()

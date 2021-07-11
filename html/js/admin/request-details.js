@@ -15,11 +15,11 @@ function changeStatus()
         success: function (data)
         {
             $('#status_info').html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
-            setMessage("Success", "The request status has been successfully updated", true);
+            displayStatusMessage("Success", "The request status has been successfully updated", true);
         },
         error: function ()
         {
-            setMessage("Error", "The request could not be completed", false);
+            displayStatusMessage("Error", "The request could not be completed", false);
         }
     });
 }
@@ -42,11 +42,11 @@ function changeFaculty()
             $('#faculty_info').html($('#faculty_input option:selected').text())
             $('#faculty_input').dropdown('clear');
             $('#note').val('');
-            setMessage("Success", "The request has been reassigned", true);
+            displayStatusMessage("Success", "The request has been reassigned", true);
         },
         error: function ()
         {
-            setMessage("Error", "The request could not be completed", false);
+            displayStatusMessage("Error", "The request could not be completed", false);
         }
     });
 }

@@ -1,0 +1,19 @@
+.ui.floating.compact.message
+{
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: calc(50% - 200px);
+}
+
+.ui.negative.message
+{
+    box-shadow: 0 0 0 1px #e0b4b4 inset,  2px 1px 5px grey;
+}
+
+.ui.positive.message
+{
+    box-shadow: 0 0 0 1px #a3c293 inset,  2px 1px 5px grey;
+}

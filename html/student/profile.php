@@ -28,6 +28,7 @@ $semesters = Semester::listActive();
         STUDENT_EMAIL = "<?= $student_email ?>";
     </script>
     <script src="/js/student/editable.js"></script>
+    <script src="/js/student/profile-form.js"></script>
     <script src="/js/student/profile.js"></script>
 </head>
 
@@ -63,10 +64,10 @@ $semesters = Semester::listActive();
                     <label>Name</label>
                     <div class="two fields">
                         <div class="field">
-                            <input id="first-name-input-edit" type="text" name="first_name" placeholder="First Name">
+                            <input id="first_name" type="text" name="first_name" placeholder="First Name">
                         </div>
                         <div class="field">
-                            <input id="last-name-input-edit" type="text" name="last_name" placeholder="Last Name">
+                            <input id="last_name" type="text" name="last_name" placeholder="Last Name">
                         </div>
                     </div>
                 </div>
@@ -96,7 +97,7 @@ $semesters = Semester::listActive();
             <form class="ui form">
                 <div class="field">
                     <label>Standing</label>
-                    <select id="standing-input-edit" class="ui dropdown single-form-margin-fix" name="grad_month">
+                    <select id="standing" class="ui dropdown single-form-margin-fix" name="grad_month">
                         <option value="">Standing</option>
                         <?php foreach($standings as $standing): ?>
                             <option value="<?= $standing ?>"><?= $standing ?></option>
@@ -187,7 +188,7 @@ $semesters = Semester::listActive();
             <form class="ui form">
                 <div class="field">
                     <label>Banner ID</label>
-                    <input id="banner-input-edit" class="numeric single-form-margin-fix" type="text" name="banner_id" placeholder="Banner ID">
+                    <input id="banner_id" class="numeric single-form-margin-fix" type="text" name="banner_id" placeholder="Banner ID">
                 </div>
             </form>
             <div id="banner-submit-button" class="ui right floated button" tabindex="0">Submit</div>
@@ -224,14 +225,14 @@ $semesters = Semester::listActive();
                     <label>Graduation Month</label>
                     <div class="two fields">
                         <div class="field">
-                            <select id="grad-month-input-edit" class="ui fluid dropdown" name="grad_month">
+                            <select id="grad_month" class="ui fluid dropdown" name="grad_month">
                                 <option value="">Month</option>
                                 <option value="05/">May</option>
                                 <option value="12/">December</option>
                             </select>
                         </div>
                         <div class="field">
-                            <input id="grad-year-input-edit" type="text" name="year" placeholder="Year">
+                            <input id="year" type="text" name="year" placeholder="Year">
                         </div>
                     </div>
                 </div>

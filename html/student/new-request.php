@@ -21,16 +21,19 @@ $semesters = Semester::listActive();
     <title>ORTS - New Request</title>
     <?php require '../../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
+    <link rel="stylesheet" href="/css/common/message.css">
     <script>
         STUDENT_ID = <?= $student_id ?>;
     </script>
     <script src="/js/student/course-form.js"></script>
     <script src="/js/student/new-request.js"></script>
+    <script src="/js/common/message.js"></script>
 </head>
 
 <body>
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; studentNavbar("New Request"); ?>
+<?php require_once '../../php/message.php'; ?>
 
 <section>
     <form class="ui form">

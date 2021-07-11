@@ -8,6 +8,9 @@
 .ui.message {
     grid-column: 1 / span 2;
     grid-row: 1;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 10px;
 }
 
 #orinfo {

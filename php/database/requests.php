@@ -19,6 +19,7 @@ class Request implements JsonSerializable
     private $reason;
     private $explanation;
     private $active;
+    private $error_info;
 
     /**
      * The database id. Null if it hasn't been stored
@@ -113,6 +114,16 @@ class Request implements JsonSerializable
     public function getExplanation(): string
     {
         return addslashes(htmlspecialchars($this->explanation, ENT_QUOTES));
+    }
+
+    /**
+     * Returns the error info on a failed DB write. Only set when storeInDB(0) returns false
+     * @return null If no errors have occurred
+     * @return array The error info returned from the PDOStatement
+     */
+    public function errorInfo(): ?array
+    {
+        return $this->error_info;
     }
 
     /**
@@ -220,6 +231,7 @@ class Request implements JsonSerializable
         $this->reason = $reason;
         $this->explanation = $explanation;
         $this->active = $active;
+        $this->error_info = null;
     }
 
     private function insertDB(): bool
@@ -247,7 +259,11 @@ class Request implements JsonSerializable
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
 
         $this->id = $pdo->lastInsertId();
         $this->creation_time = $timestamp;
@@ -280,7 +296,11 @@ class Request implements JsonSerializable
         $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
 
         $this->last_modified = $timestamp;
 
@@ -498,6 +518,7 @@ class Request implements JsonSerializable
 
         unset($out['justification']);
         unset($out['explanation']);
+        unset($out['error_info']);
 
         return $out;
     }

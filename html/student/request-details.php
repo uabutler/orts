@@ -24,6 +24,7 @@ $semesters = Semester::listActive();
     <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/student/request-details.css">
     <link rel="stylesheet" href="/css/student/editable.css">
+    <link rel="stylesheet" href="/css/common/message.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
     </script>
@@ -31,11 +32,13 @@ $semesters = Semester::listActive();
     <script src="/js/student/editable.js"></script>
     <script src="/js/student/request-details.js"></script>
     <script src="/js/common/attachments.js"></script>
+    <script src="/js/common/message.js"></script>
 </head>
 
 <body>
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; studentNavbar("Active Requests"); ?>
+<?php require_once '../../php/message.php'; ?>
 
 <div id="delete-confirmation" class="ui basic modal">
     <div class="ui icon header">
@@ -100,13 +103,6 @@ $semesters = Semester::listActive();
 </div>
 
 <section class="content-grid-container">
-    <div class="ui message hidden">
-        <i class="close icon"></i>
-        <div class="header">
-            TEST
-        </div>
-        <p>TEST</p>
-    </div>
     <div id="status">
         <h2 class="truman-dark-bg">Override Status</h2>
         <table class="status-table">

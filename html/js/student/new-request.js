@@ -19,10 +19,9 @@ function createRequest()
     })
     .fail(function(response)
     {
+        response = JSON.parse(response.responseText);
+        displayStatusMessage('Error', response.msg, false);
         $('form').removeClass("loading");
-        console.log("Could not add request");
-        console.log(data);
-        console.log(response);
     });
 }
 

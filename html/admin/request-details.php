@@ -16,17 +16,20 @@ if (is_null($request))
     <title>ORTS - Request Details</title>
     <?php require '../../php/common-head.php'; ?>
     <link rel="stylesheet" href="/css/admin/request-details.css">
+    <link rel="stylesheet" href="/css/common/message.css">
     <script>
         REQUEST_ID = <?= $_GET['id'] ?>;
         REQUEST_STATUS = "<?= $request->getStatus() ?>";
     </script>
     <script src="/js/admin/request-details.js"></script>
     <script src="/js/common/attachments.js"></script>
+    <script src="/js/common/message.js"></script>
 </head>
 
 <body>
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; facultyNavbar($request->isActive() ? "Current Semester" : "Archive"); ?>
+<?php require_once '../../php/message.php'; ?>
 
 <div id="delete-confirmation" class="ui basic modal">
     <div class="ui icon header">
@@ -91,13 +94,6 @@ if (is_null($request))
 </div>
 
 <section class="content-grid-container">
-    <div class="ui message hidden">
-        <i class="close icon"></i>
-        <div class="header">
-            TEST
-        </div>
-        <p>TEST</p>
-    </div>
     <div id="orinfo" class="grid-item">
         <h2 class="truman-dark-bg">Override Request Info</h2>
         <table style="padding-bottom:20px;">

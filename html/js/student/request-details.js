@@ -20,15 +20,22 @@ function changeAdditional()
         url: '/api/student/request.php',
         type: 'PUT',
         data: JSON.stringify(data),
-        success: function (data)
+        success: function()
         {
             $('#reason-display').parent().children(".text").html(reason.val());
             $('#explanation-display').html(explanation.val());
 
             $('#additional-edit').css("display", "none");
             $('#additional-display').css("display", "grid");
+
+            hideStatusMessage();
         },
-        complete: function ()
+        error: function(response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false);
+        },
+        complete: function()
         {
             $('#additional-form').removeClass('loading');
         }
@@ -55,8 +62,9 @@ function changeCourse()
         url: '/api/student/request.php',
         type: 'PUT',
         data: JSON.stringify(data),
-        success: function (data)
+        success: function()
         {
+            console.log('good?');
             $('#semester-display').html(semester.html());
 
             let section = $('#section').val();
@@ -73,6 +81,14 @@ function changeCourse()
 
             $('#course-edit').css("display", "none");
             $('#course-display').css("display", "grid");
+
+            hideStatusMessage();
+        },
+        error: function(response)
+        {
+            console.log('oops');
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false);
         },
         complete: function()
         {

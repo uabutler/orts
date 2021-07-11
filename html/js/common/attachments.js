@@ -92,12 +92,12 @@ function deleteAttachment()
                     data: 'id=' + id,
                     success: function(data)
                     {
-                        setMessage('Success', 'Attachment deleted', true);
+                        displayStatusMessage('Success', 'Attachment deleted', true);
                         updateAttachmentTable();
                     },
                     fail: function()
                     {
-                        setMessage('Error', 'Could not delete attachment', false);
+                        displayStatusMessage('Error', 'Could not delete attachment', false);
                     }
                 });
             }
@@ -176,22 +176,6 @@ function updateAttachmentTable()
             }
         }
     });
-}
-
-function setMessage(header, body, success)
-{
-    let element = $(".ui.message");
-    element.removeClass("success", "error");
-
-    if(success)
-        element.addClass("success");
-    else
-        element.addClass("error");
-
-    element.children(".header").html(header);
-    element.children("p").html(body);
-
-    element.removeClass("hidden");
 }
 
 $(function ()

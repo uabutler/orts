@@ -29,6 +29,7 @@ $semesters = Semester::listActive();
     <script>
         STUDENT_EMAIL = "<?= $student_email ?>";
     </script>
+    <script src="/js/student/profile-form.js"></script>
     <script src="/js/student/new-profile.js"></script>
 </head>
 

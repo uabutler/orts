@@ -25,12 +25,12 @@ function updateDisplay()
             // Name
             $('#first-name-input-display').val(data.first_name);
             $('#last-name-input-display').val(data.last_name);
-            $('#first-name-input-edit').val(data.first_name);
-            $('#last-name-input-edit').val(data.last_name);
+            $('#first_name').val(data.first_name);
+            $('#last_name').val(data.last_name);
 
             // Standing
             $('#standing-input-display').dropdown('set text', data.standing);
-            $('#standing-input-edit').dropdown('set selected', data.standing);
+            $('#standing').dropdown('set selected', data.standing);
 
             // Programs
             $('#major-input-display').dropdown('set exactly', majors);
@@ -40,13 +40,13 @@ function updateDisplay()
 
             // Banner
             $('#banner-input-display').val(data.banner_id);
-            $('#banner-input-edit').val(data.banner_id);
+            $('#banner_id').val(data.banner_id);
 
             // Grad month
             $('#grad-month-input-display').dropdown('set selected', month)
             $('#grad-year-input-display').val(year)
-            $('#grad-month-input-edit').dropdown('set selected', month)
-            $('#grad-year-input-edit').val(year)
+            $('#grad_month').dropdown('set selected', month)
+            $('#year').val(year)
 
             $('section').removeClass('ui loading form');
         }
@@ -74,16 +74,23 @@ function updateProfile(data, edit, display)
 
 function updateName()
 {
+    let err = validateFirstName();
+    if (!(validateLastName() && err))
+        return;
+
     let data = {};
-    data.first_name = $('#first-name-input-edit').val();
-    data.last_name = $('#last-name-input-edit').val();
+    data.first_name = $('#first_name').val();
+    data.last_name = $('#last_name').val();
     updateProfile(data, 'name-edit', 'name-display');
 }
 
 function updateStanding()
 {
+    if (!validateStanding())
+        return;
+
     let data = {};
-    data.standing = $('#standing-input-edit').val();
+    data.standing = $('#standing').val();
     updateProfile(data, 'standing-edit', 'standing-display');
 }
 
@@ -97,15 +104,22 @@ function updatePrograms()
 
 function updateBanner()
 {
+    if (!validateBannerId())
+        return false;
+
     let data = {};
-    data.banner_id = $('#banner-input-edit').val();
+    data.banner_id = $('#banner_id').val();
     updateProfile(data, 'banner-edit', 'banner-display');
 }
 
 function updateGradMonth()
 {
+    let err = validateGradMonth();
+    if (!(validateGradYear() && err))
+        return false;
+
     let data = {};
-    data.grad_month = $('#grad-month-input-edit').val() + $('#grad-year-input-edit').val() ;
+    data.grad_month = $('#grad_month').val() + $('#year').val();
     updateProfile(data, 'grad-edit', 'grad-display');
 }
 
@@ -122,6 +136,13 @@ $(function()
     $('#program-submit-button').on('click', updatePrograms);
     $('#banner-submit-button').on('click', updateBanner);
     $('#grad-submit-button').on('click', updateGradMonth);
+
+    $('#first_name').on('focusout', validateFirstName);
+    $('#last_name').on('focusout', validateLastName);
+    $('#standing').on('change', validateStanding);
+    $('#banner_id').on('focusout', validateBannerId);
+    $('#grad_month').on('change', validateGradMonth);
+    $('#year').on('focusout', validateGradYear);
 
     updateDisplay();
 })

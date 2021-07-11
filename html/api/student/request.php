@@ -30,18 +30,53 @@ API::get(function ()
 // Create a request
 API::post(function ($data)
 {
-    // TODO: Validate data
 
-    if (!Auth::isAuthenticatedStudent(Student::getById($data->student_id)->getEmail()))
-        API::error(403, "You aren't allowed to create a request for this student " . Student::getById($data->student_id)->getEmail() . " " . Auth::getUser());
+    // Validate the request was submitted correctly
+    if (!Auth::isAuthenticated())
+        API::error(401, "User not authorized");
 
-    $request = Request::build(Student::getById($data->student_id), Section::getByCrn(Semester::getByCode($data->semester),
+    if (!Auth::isAuthenticatedStudent())
+        API::error(403, "User not authorized");
+
+    if (!(isset($data->semester) && preg_match('/^\d{6}$/', $data->semester)))
+        API::error(400, "Request semester not specified properly. Please provide 6-digit code sting");
+
+    if (!(isset($data->crn) && preg_match('/^\d{4}$/', $data->crn)))
+        API::error(400, "Course CRN not specified properly. Please specify the 4-digit code string");
+
+    if (!isset($data->reason))
+        API::error(400, "Please specify reason");
+
+    if (!in_array($data->reason, Request::listReasons()))
+        API::error(400, "Invalid reason. Please choose from available list");
+
+    if (!(isset($data->explanation) && $data->explanation !== ""))
+        API::error(400, "Please provide an explanation with the request");
+
+    $request = Request::build(Student::get(Auth::getUser()), Section::getByCrn(Semester::getByCode($data->semester),
                             $data->crn), Faculty::getDefault(), 'Received', $data->reason, $data->explanation);
 
     if($request->storeInDB())
+    {
         return $request->getId();
+    }
     else
-        API::error(409, "The request could not be added");
+    {
+        $error_info = $request->errorInfo();
+
+        $error_msg = "ORTS ERROR: /api/student/request.php CREATE ";
+        $error_msg .= " User=" . Auth::getUser();
+        $error_msg .= " CRN=" . $data->crn;
+        $error_msg .= " Semester=" . $data->semester;
+        $error_msg .= " SQLSTATE=" . $error_info[0];
+        $error_msg .= " ErrorMsg=" . $error_info[2];
+        error_log($error_msg);
+
+        if ($error_info[0] === "23000")
+            API::error(409, "A request for this class has already been submitted");
+        else
+            API::error(500, "An unknown error has occurred. Please contact the system administrator");
+    }
 
     return null;
 });
@@ -56,34 +91,70 @@ API::put(function ($data)
         if (!Auth::isAuthenticatedStudent($request->getStudent()->getEmail()))
             API::error(403, "You aren't allowed to modify requests for this student");
 
-        if(isset($data->semester) || isset($data->crn))
+        if (isset($data->semester) || isset($data->crn))
         {
             if(!(isset($data->semester) && isset($data->crn)))
                 API::error(400, "Not enough information to determine class, specify semester and crn");
 
+            if (!(isset($data->semester) && preg_match('/^\d{6}$/', $data->semester)))
+                API::error(400, "Request semester not specified properly. Please provide 6-digit code sting");
+
+            if (!(isset($data->crn) && preg_match('/^\d{4}$/', $data->crn)))
+                API::error(400, "Course CRN not specified properly. Please specify the 4-digit code string");
+
             $request->setSection(Section::getByCrn(Semester::getByCode($data->semester), $data->crn));
         }
 
-        if(isset($data->reason))
-            $request->setReason($data->reason);
-
-        if(isset($data->explanation))
-            $request->setExplanation($data->explanation);
-
-        if(isset($data->active))
+        if (isset($data->reason))
         {
+            if (!in_array($data->reason, Request::listReasons()))
+                API::error(400, "Invalid reason. Please choose from available list");
+
+            $request->setReason($data->reason);
+        }
+
+        if (isset($data->explanation))
+        {
+            if ($data->explanation === "")
+                API::error(400, "Please provide an explanation with the request");
+
+            $request->setExplanation($data->explanation);
+        }
+
+        if (isset($data->active))
+        {
+            if (is_bool($data->active))
+                API::error(400, "Active status must be a boolean");
+
             if(!filter_var($data->active, FILTER_VALIDATE_BOOLEAN))
                 $request->setInactive();
         }
 
-        if($request->storeInDB())
+        if ($request->storeInDB())
+        {
             return "Success";
+        }
         else
-            API::error(500, "Could not write to database");
+        {
+            $error_info = $request->errorInfo();
+
+            $error_msg = "ORTS ERROR: /api/student/request.php UPDATE ";
+            $error_msg .= " User=" . Auth::getUser();
+            $error_msg .= " CRN=" . $data->crn;
+            $error_msg .= " Semester=" . $data->semester;
+            $error_msg .= " SQLSTATE=" . $error_info[0];
+            $error_msg .= " ErrorMsg=" . $error_info[2];
+            error_log($error_msg);
+
+            if ($error_info[0] === "23000")
+                API::error(409, "A request for this class has already been submitted");
+            else
+                API::error(500, "An unknown error has occurred. Please contact the system administrator");
+        }
     }
     else
     {
-        API::error(401, "Please specify the id of the request to modify ");
+        API::error(400, "Please specify the id of the request to modify");
     }
 
     return null;

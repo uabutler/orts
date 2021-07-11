@@ -1,26 +1,32 @@
-h2 {
+h2
+{
     font-family: nexabold, sans-serif;
     color: white;
     padding: 10px
 }
 
-input, select, textarea {
+input, select, textarea
+{
     width: 100%;
 }
 
-input, select {
+input, select
+{
     box-sizing: border-box;
 }
 
-textarea {
+textarea
+{
     resize: none;
 }
 
-td {
+td
+{
     white-space: nowrap;
     height: 40px;
 }
 
-button {
+button
+{
     float: right;
 }
