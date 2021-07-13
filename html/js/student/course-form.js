@@ -7,7 +7,7 @@ let SECTION_REGEX = /^\d{1,2}$/;
 
 function validateCourseNum() { return setError(validateRegex("course_num", COURSE_REGEX), "course_num"); }
 function validateSection() { return setError(validateRegex("section", SECTION_REGEX) && $("#section").val() > 0, "section"); }
-function validateExplanation() { return setError(validateNotEmpty("explanation"), "explanation"); }
+function validateExplanation() { return setError(validateRegex("explanation", /\S+/), "explanation"); }
 function validateDepartment() { return setError(validateNotEmpty("department"), "department"); }
 function validateReason() { return setError(validateNotEmpty("reason"), "reason"); }
 
