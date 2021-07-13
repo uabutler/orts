@@ -1,3 +1,8 @@
+function validateDepartmentName() { return setError(validateRegex('department-name', /\S+/), 'department-name'); }
+function validateCourseDepartment() { return setError(validateNotEmpty('course-department-input'), 'course-department-input'); }
+function validateCourseNumber() { return setError(validateRegex('course-number-input', /^\d{3}$/), 'course-number-input'); }
+function validateCourseTitle() { return setError(validateRegex('course-title-input', /\S+/), 'course-title-input'); }
+
 function updateDepartmentTable()
 {
     $.ajax({
@@ -162,6 +167,9 @@ function enableDepartmentPopup(enabled)
 function showDepartmentPopup()
 {
     enableDepartmentPopup(true);
+
+    setError(true, 'department-name');
+
     $('#department-name').val('');
     $('#new-department-popup').modal('show');
 }
@@ -187,6 +195,11 @@ function enableCoursePopup(enabled)
 function showCoursePopup()
 {
     enableCoursePopup(true);
+
+    setError(true, 'course-department-input');
+    setError(true, 'course-number-input');
+    setError(true, 'course-title-input');
+
     $('#course-department-input').dropdown('restore defaults');
     $('#course-number-input').val('');
     $('#course-title-input').val('');
@@ -200,6 +213,9 @@ function cancelCoursePopup()
 
 function submitDepartment()
 {
+    if (!validateDepartmentName())
+        return;
+
     enableDepartmentPopup(false);
 
     let data = {};
@@ -220,6 +236,13 @@ function submitDepartment()
 
 function submitCourse()
 {
+    let err = validateCourseDepartment();
+    err = validateCourseNumber() && err;
+    err = validateCourseTitle() && err;
+
+    if (!err)
+        return;
+
     enableCoursePopup(false);
 
     let data = {};
@@ -298,4 +321,16 @@ $(function()
     $('#new-course-popup-button').on('click', showCoursePopup);
     $('#new-course-cancel-button').on('click', cancelCoursePopup);
     $('#new-course-submit-button').on('click', submitCourse);
+
+    $('#department-name').on("input", function ()
+    {
+        this.value = this.value.replace(/[^A-Za-z]/g, '');
+        this.value = this.value.toUpperCase();
+    });
+
+    // Data Validation
+    $('#department-name').on('focusout', validateDepartmentName);
+    $('#course-department-input').on('change', validateCourseDepartment);
+    $('#course-number-input').on('focusout', validateCourseNumber);
+    $('#course-title-input').on('focusout', validateCourseTitle);
 });

@@ -1,3 +1,6 @@
+function validateSemesterDescription() { return setError(validateRegex('semester-description', /\S+/), 'semester-description'); }
+function validateSemesterCode() { return setError(validateRegex('semester-code', /^\d{6}$/), 'semester-code'); }
+
 function updateSemesterTable()
 {
     $.ajax({
@@ -104,8 +107,13 @@ function enableSemesterPopup(enabled)
 function showSemesterPopup()
 {
     enableSemesterPopup(true);
+
+    setError(true, 'semester-description');
+    setError(true, 'semester-code');
+
     $('#semester-description').val('');
     $('#semester-code').val('');
+
     $('#new-semester-popup').modal('show');
 }
 
@@ -116,7 +124,11 @@ function cancelSemesterPopup()
 
 function submitSemester()
 {
-    // TODO: Validate here
+    let err = validateSemesterDescription();
+
+    if (!(validateSemesterCode() && err))
+        return;
+
     enableSemesterPopup(false);
     let data = {};
 
@@ -143,4 +155,8 @@ $(function()
     $('#new-semester-popup-button').on('click', showSemesterPopup);
     $('#new-semester-cancel-button').on('click', cancelSemesterPopup);
     $('#new-semester-submit-button').on('click', submitSemester);
+
+    // Data validation
+    $('#semester-description').on('focusout', validateSemesterDescription);
+    $('#semester-code').on('focusout', validateSemesterCode);
 });

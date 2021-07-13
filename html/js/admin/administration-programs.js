@@ -1,3 +1,5 @@
+function validatePrograms() { return setError(validateRegex('program-input', /\S+/), 'program-input'); }
+
 function updateProgramTable(type)
 {
     $.ajax({
@@ -84,6 +86,8 @@ function showProgramPopup(type)
 {
     let lower_case_type = type.toLowerCase();
 
+    setError(true, 'program-input');
+
     $('#new-program-popup-header').html(`New ${type}s`);
     $('#program-administration').data('type', lower_case_type);
     $('#new-program-popup-description').html(`Place each ${lower_case_type} on a separate line`);
@@ -100,6 +104,9 @@ function cancelProgramPopup()
 
 function submitPrograms()
 {
+    if (!validatePrograms())
+        return;
+
     let type = $('#program-administration').data('type');
 
     enableProgramPopup(false);
@@ -129,6 +136,9 @@ function submitPrograms()
 
 function updatePrograms(type)
 {
+    if (!validatePrograms())
+        return;
+
     $('#program-primary-content-display').addClass('ui loading form');
 
     let data = [];
@@ -158,4 +168,7 @@ $(function()
     $('#new-minors-popup-button').on('click', function() { showProgramPopup('Minor') });
     $('#new-program-cancel-button').on('click', cancelProgramPopup);
     $('#new-program-submit-button').on('click', submitPrograms);
+
+    // Data validation
+    $('#program-input').on('focusout', validatePrograms);
 });

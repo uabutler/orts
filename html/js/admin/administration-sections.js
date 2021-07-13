@@ -1,3 +1,10 @@
+COURSE_REGEX = /^\d{3}$/;
+
+function validateSectionDepartment() { return setError(validateNotEmpty('section-department-input'), 'section-department-input'); }
+function validateSectionCourseNumber() { return setError(validateRegex('section-course-input', COURSE_REGEX), 'section-course-input'); }
+function validateSectionNumber() { return setError(validateRegex('section-number-input', /^\d{1,2}$/), 'section-number-input'); }
+function validateSectionCrn() { return setError(validateRegex('section-crn-input', /^\d{4}$/), 'section-crn-input'); }
+
 function switchToSection(event)
 {
     let semester_id = event.parents('tr').data('value');
@@ -120,6 +127,11 @@ function showSectionPopup()
 {
     enableSectionPopup(true);
 
+    setError(true, 'section-department-input');
+    setError(true, 'section-course-input');
+    setError(true, 'section-number-input');
+    setError(true, 'section-crn-input');
+
     $('#section-department-input').dropdown('restore defaults');
     $('#section-course-input').val('');
     $('#section-title-input').val('');
@@ -136,6 +148,9 @@ function cancelSectionPopup()
 
 function displayCourseTitle()
 {
+    if (!(validateNotEmpty('section-department-input')  && validateRegex('section-course-input', COURSE_REGEX)))
+        return;
+
     let data = "department=" + $('#section-department-input').val();
     data += "&course_num=" + $('#section-course-input').val();
 
@@ -154,6 +169,14 @@ function displayCourseTitle()
 
 function submitSection()
 {
+    let err = validateSectionDepartment();
+    err = validateSectionCourseNumber() && err;
+    err = validateSectionNumber() && err;
+    err = validateSectionCrn() && err;
+
+    if (!err)
+        return;
+
     let data = {};
 
     data.department = $('#section-department-input').val();
@@ -279,4 +302,10 @@ $(function()
     // Upload
     $('#file-selector').on('change', selectFile);
     $('#new-section-upload-submit-button').on('click', uploadFile);
+
+    // Data validation
+    $('#section-department-input').on('change', validateSectionDepartment);
+    $('#section-course-input').on('focusout', validateSectionCourseNumber);
+    $('#section-number-input').on('focusout', validateSectionNumber);
+    $('#section-crn-input').on('focusout', validateSectionCrn)
 });

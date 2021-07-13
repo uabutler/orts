@@ -1,3 +1,19 @@
+function validateFacultyFirstName() { return setError(validateRegex('faculty-first-name', /\S+/), 'faculty-first-name'); }
+function validateFacultyLastName() { return setError(validateRegex('faculty-last-name', /\S+/), 'faculty-last-name'); }
+
+function validateFacultyEmail()
+{
+    let element = $('#faculty-email');
+    let parent = element.parent().parent();
+
+    if (element.val() === '')
+        parent.addClass('error');
+    else
+        parent.removeClass('error');
+
+    return element.val() === '';
+}
+
 function updateFacultyTable()
 {
     $.ajax({
@@ -137,6 +153,11 @@ function enableFacultyPopup(enabled)
 function showFacultyPopup()
 {
     enableFacultyPopup(true);
+
+    $('#faculty-email').parent().parent().removeClass('error');
+    setError(true, 'faculty-first-name');
+    setError(true, 'faculty-last-name');
+
     $('#faculty-first-name').val('');
     $('#faculty-last-name').val('');
     $('#faculty-email').val('');
@@ -150,6 +171,13 @@ function cancelFacultyPopup()
 
 function submitFaculty()
 {
+    let err = validateFacultyFirstName();
+    err = validateFacultyLastName() && err;
+    err = validateFacultyEmail() && err;
+
+    if (!err)
+        return;
+
     enableFacultyPopup(false);
 
     let data = {};
@@ -178,4 +206,9 @@ $(function()
     $('#new-faculty-popup-button').on('click', showFacultyPopup);
     $('#new-faculty-cancel-button').on('click', cancelFacultyPopup);
     $('#new-faculty-submit-button').on('click', submitFaculty);
+
+    // Data validation
+    $('#faculty-first-name').on('focusout', validateFacultyFirstName);
+    $('#faculty-last-name').on('focusout', validateFacultyLastName);
+    $('#faculty-email').on('focusout', validateFacultyEmail);
 });
