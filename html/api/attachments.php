@@ -39,7 +39,7 @@ API::delete(function()
     if (!Auth::isAuthenticated())
         API::error(401, "User not authenticated");
 
-    if(!isset($_GET['id']))
+    if(!isset($_DELETE['id']))
         API::error(400, "Please specify the ID of the attachment you want to delete");
 
     $attachment = Attachment::getById(intval($_DELETE['id']));
