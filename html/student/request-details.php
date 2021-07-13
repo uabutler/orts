@@ -162,64 +162,68 @@ $semesters = Semester::listActive();
                     </tr>
                 </table>
             </div>
-            <div class="edit-button-container">
-                <button id="course-edit-button" class="edit"><i class="material-icons">create</i></button>
-            </div>
-        </div>
-        <div id="course-edit" class="edit">
-            <form id="course-form" class="ui form">
-                <div class="field">
-                    <label>Semester</label>
-                    <select class="ui dropdown" id="semester">
-                        <option value="<?= $request->getSection()->getSemester()->getCode() ?>"><?= $request->getSection()->getSemester()->getDescription() ?></option>
-                        <?php foreach ($semesters as $semester): ?>
-                            <?php if ($semester->getCode() !== $request->getSection()->getSemester()->getCode()): ?>
-                                <option value="<?= $semester->getCode() ?>"><?= $semester->getDescription() ?></option>
-                            <?php endif;?>
-                        <?php endforeach; ?>
-                    </select>
+            <?php if ($request->getStatus() === "Received"): ?>
+                <div class="edit-button-container">
+                    <button id="course-edit-button" class="edit"><i class="material-icons">create</i></button>
                 </div>
-                <div class="fields">
-                    <div class="five wide field">
-                        <label>Department</label>
-                        <select class="ui dropdown" id="department">
-                            <option value="<?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>"><?= $request->getSection()->getCourse()->getDepartment()->getDept() ?></option>
-                            <?php foreach ($departments as $department): ?>
-                                <?php if ($department !== $request->getSection()->getCourse()->getDepartment()->getDept()): ?>
-                                    <option value="<?= $department ?>"><?= $department ?></option>
+            <?php endif; ?>
+        </div>
+        <?php if ($request->getStatus() === "Received"): ?>
+            <div id="course-edit" class="edit">
+                <form id="course-form" class="ui form">
+                    <div class="field">
+                        <label>Semester</label>
+                        <select class="ui dropdown" id="semester">
+                            <option value="<?= $request->getSection()->getSemester()->getCode() ?>"><?= $request->getSection()->getSemester()->getDescription() ?></option>
+                            <?php foreach ($semesters as $semester): ?>
+                                <?php if ($semester->getCode() !== $request->getSection()->getSemester()->getCode()): ?>
+                                    <option value="<?= $semester->getCode() ?>"><?= $semester->getDescription() ?></option>
                                 <?php endif;?>
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="six wide field">
-                        <label>Course Number</label>
-                        <input class="numeric" type="text" id="course_num" value="<?= $request->getSection()->getCourse()->getCourseNum() ?>">
-                    </div>
-                    <div class="five wide field">
-                        <label>Section</label>
-                        <input class="numeric" type="text" placeholder="01" id="section" value="<?= $request->getSection()->getSectionNum() ?>">
-                    </div>
-                </div>
-                <div class="fields">
-                    <div class="eleven wide field">
-                        <label>Title</label>
-                        <div class="ui icon input disabled">
-                            <input type="text" id="course_title" readonly tabindex="-1" value="<?= $request->getSection()->getCourse()->getTitle() ?>">
-                            <i class="icon"></i>
+                    <div class="fields">
+                        <div class="five wide field">
+                            <label>Department</label>
+                            <select class="ui dropdown" id="department">
+                                <option value="<?= $request->getSection()->getCourse()->getDepartment()->getDept() ?>"><?= $request->getSection()->getCourse()->getDepartment()->getDept() ?></option>
+                                <?php foreach ($departments as $department): ?>
+                                    <?php if ($department !== $request->getSection()->getCourse()->getDepartment()->getDept()): ?>
+                                        <option value="<?= $department ?>"><?= $department ?></option>
+                                    <?php endif;?>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="six wide field">
+                            <label>Course Number</label>
+                            <input class="numeric" type="text" id="course_num" value="<?= $request->getSection()->getCourse()->getCourseNum() ?>">
+                        </div>
+                        <div class="five wide field">
+                            <label>Section</label>
+                            <input class="numeric" type="text" placeholder="01" id="section" value="<?= $request->getSection()->getSectionNum() ?>">
                         </div>
                     </div>
-                    <div class="five wide field">
-                        <label>CRN</label>
-                        <div class="ui icon input disabled">
-                            <input type="text" id="crn" readonly tabindex="-1" value="<?= $request->getSection()->getCrn() ?>">
-                            <i class="icon"></i>
+                    <div class="fields">
+                        <div class="eleven wide field">
+                            <label>Title</label>
+                            <div class="ui icon input disabled">
+                                <input type="text" id="course_title" readonly tabindex="-1" value="<?= $request->getSection()->getCourse()->getTitle() ?>">
+                                <i class="icon"></i>
+                            </div>
+                        </div>
+                        <div class="five wide field">
+                            <label>CRN</label>
+                            <div class="ui icon input disabled">
+                                <input type="text" id="crn" readonly tabindex="-1" value="<?= $request->getSection()->getCrn() ?>">
+                                <i class="icon"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div id="course-submit-button" class="ui right floated button" tabindex="0">Submit</div>
-                <div id="course-cancel-button" class="ui right floated button course-cancel">Cancel</div>
-            </form>
-        </div>
+                    <div id="course-submit-button" class="ui right floated button" tabindex="0">Submit</div>
+                    <div id="course-cancel-button" class="ui right floated button course-cancel">Cancel</div>
+                </form>
+            </div>
+        <?php endif; ?>
     </div>
     <div id="additional">
         <h2 class="truman-dark-bg">Additional Information</h2>

@@ -26,17 +26,17 @@ $semesters = Semester::listActive();
     <title>ORTS - New Student</title>
     <?php require '../../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/new-request.css">
-    <script>
-        STUDENT_EMAIL = "<?= $student_email ?>";
-    </script>
+    <link rel="stylesheet" href="/css/common/message.css">
     <script src="/js/student/profile-form.js"></script>
     <script src="/js/student/new-profile.js"></script>
+    <script src="/js/common/message.js"></script>
 </head>
 
 <body>
 <?php require_once '../../php/header.php'; ?>
 <!-- TODO: This person won't be have a profile at this point -->
 <?php require_once '../../php/navbar.php'; studentNavbar("Profile"); ?>
+<?php require_once '../../php/message.php'; ?>
 
 <section>
     <form class="ui form">

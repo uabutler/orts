@@ -47,8 +47,8 @@ API::post(function ($data)
     if (!isset($data->reason))
         API::error(400, "Please specify reason");
 
-    if (!in_array($data->reason, Request::listReasons()))
-        API::error(400, "Invalid reason. Please choose from available list");
+    if (!(isset($data->reason) && in_array($data->reason, Request::listReasons())))
+        API::error(400, "Reason not specified properly. Please choose from available list");
 
     if (!(isset($data->explanation) && $data->explanation !== ""))
         API::error(400, "Please provide an explanation with the request");
@@ -93,6 +93,9 @@ API::put(function ($data)
 
         if (isset($data->semester) || isset($data->crn))
         {
+            if ($request->getStatus() !== "Received")
+                API::error(405, "Cannot change course for request that's been processed");
+
             if(!(isset($data->semester) && isset($data->crn)))
                 API::error(400, "Not enough information to determine class, specify semester and crn");
 

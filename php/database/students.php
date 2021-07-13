@@ -20,6 +20,7 @@ class Student implements JsonSerializable
     private $majors;
     private $minors;
     private $last_active_sem;
+    private $error_info;
 
     private function __construct(string $email, string $first_name, string $last_name, string $banner_id,
                                  string $grad_month, string $standing, array $majors, array $minors,
@@ -35,6 +36,7 @@ class Student implements JsonSerializable
         $this->minors = $minors;
         $this->last_active_sem = $last_active_sem;
         $this->id = $id;
+        $this->error_info = null;
     }
 
     /**
@@ -116,6 +118,11 @@ class Student implements JsonSerializable
     public function getMinors(): array
     {
         return $this->minors;
+    }
+
+    public function errorInfo(): ?array
+    {
+        return $this->error_info;
     }
 
     /**
@@ -212,13 +219,21 @@ class Student implements JsonSerializable
     }
 
     // Adds the list of majors to the database
-    private function add_majors(array $majors, $pdo)
+    private function add_majors(array $majors, $pdo): bool
     {
         global $student_major_tbl, $student_tbl, $major_tbl;
         $major_str = Major::buildListString($majors);
-        $smt = $pdo->prepare("INSERT INTO $student_major_tbl (student_id, major_id) SELECT $student_tbl.id, $major_tbl.id FROM $student_tbl INNER JOIN $major_tbl WHERE $student_tbl.email=:email AND $major_tbl.major IN ($major_str)");
+        $query = "INSERT INTO $student_major_tbl (student_id, major_id) SELECT $student_tbl.id, $major_tbl.id FROM $student_tbl INNER JOIN $major_tbl WHERE $student_tbl.email=:email AND $major_tbl.major IN ($major_str)";
+        $smt = $pdo->prepare($query);
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
+
+        return true;
     }
 
     // Adds the list of minors to the database
@@ -228,27 +243,48 @@ class Student implements JsonSerializable
         $minor_str = Minor::buildListString($minors);
         $smt = $pdo->prepare("INSERT INTO $student_minor_tbl (student_id, minor_id) SELECT $student_tbl.id, $minor_tbl.id FROM $student_tbl INNER JOIN $minor_tbl WHERE $student_tbl.email=:email AND $minor_tbl.minor IN ($minor_str)");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
+
+        return true;
     }
 
     // Removes one major from the database
-    private function remove_major(string $major, $pdo)
+    private function remove_major(string $major, $pdo): bool
     {
         global $student_major_tbl, $student_tbl, $major_tbl;
         $smt = $pdo->prepare("DELETE $student_major_tbl FROM $student_major_tbl INNER JOIN $student_tbl ON $student_tbl.id=student_id INNER JOIN $major_tbl ON $major_tbl.id=major_id WHERE email=:email AND major=:major");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":major", $major, PDO::PARAM_STR);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
+
+        return true;
     }
 
     // Removes one minor from the database
-    private function remove_minor(string $minor, $pdo)
+    private function remove_minor(string $minor, $pdo): bool
     {
         global $student_minor_tbl, $student_tbl, $minor_tbl;
         $smt = $pdo->prepare("DELETE $student_minor_tbl FROM $student_minor_tbl INNER JOIN $student_tbl ON $student_tbl.id=student_id INNER JOIN $minor_tbl ON $minor_tbl.id=minor_id WHERE email=:email AND minor=:minor");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":minor", $minor, PDO::PARAM_STR);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
+
+        return true;
     }
 
     // If the student is newly created, this will create a new entry in the database
@@ -269,14 +305,21 @@ class Student implements JsonSerializable
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
 
         // get the newly created ID
         $this->id = $pdo->lastInsertId();
 
         // Insert information about majors and minors
-        $this->add_majors(Major::buildStringList($this->majors), $pdo);
-        $this->add_minors(Major::buildStringList($this->minors), $pdo);
+        if (!$this->add_majors(Major::buildStringList($this->majors), $pdo))
+            return false;
+
+        if (!$this->add_minors(Major::buildStringList($this->minors), $pdo))
+            return false;
 
         return true;
     }
@@ -300,7 +343,11 @@ class Student implements JsonSerializable
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
 
         // Next, get the majors currently stored in the database
         $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.email = :email");
@@ -319,19 +366,31 @@ class Student implements JsonSerializable
         $majors_to_add = [];
         foreach ($old_majors as $major)
             if (!in_array($major, $current_majors)) $majors_to_add[] = $major;
-        $this->add_majors($majors_to_add, $pdo);
+
+        if (!(empty($majors_to_add) || $this->add_majors($majors_to_add, $pdo)))
+            return false;
 
         $minors_to_add = [];
         foreach ($old_minors as $minor)
             if (!in_array($minor, $current_minors)) $minors_to_add[] = $minor;
-        $this->add_minors($minors_to_add, $pdo);
+
+        if (!(empty($minors_to_add) || $this->add_minors($minors_to_add, $pdo)))
+            return false;
+
+        echo '1';
 
         // If a major is in the database, but is no longer a major, remove it
         foreach ($current_majors as $major)
-            if (!in_array($major, $old_majors)) $this->remove_major($major, $pdo);
+        {
+            if (!(in_array($major, $old_majors) || $this->remove_major($major, $pdo)))
+                return false;
+        }
 
         foreach ($current_minors as $minor)
-            if (!in_array($minor, $old_minors)) $this->remove_minor($minor, $pdo);
+        {
+            if (!(in_array($minor, $old_minors) || $this->remove_minor($minor, $pdo)))
+                return false;
+        }
 
         return true;
     }

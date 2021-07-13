@@ -24,17 +24,20 @@ $semesters = Semester::listActive();
     <?php require '../../php/common-head.php';?>
     <link rel="stylesheet" href="/css/student/editable.css">
     <link rel="stylesheet" href="/css/student/profile.css">
+    <link rel="stylesheet" href="/css/common/message.css">
     <script>
         STUDENT_EMAIL = "<?= $student_email ?>";
     </script>
     <script src="/js/student/editable.js"></script>
     <script src="/js/student/profile-form.js"></script>
     <script src="/js/student/profile.js"></script>
+    <script src="/js/common/message.js"></script>
 </head>
 
 <body>
 <?php require_once '../../php/header.php'; ?>
 <?php require_once '../../php/navbar.php'; studentNavbar("Profile"); ?>
+<?php require_once '../../php/message.php'; ?>
 
 <section class="ui loading form">
     <h1>Profile</h1>

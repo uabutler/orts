@@ -39,7 +39,7 @@ foreach ($out as $line)
     $department_prefix = strtok("\t");
     $course_num = strtok("\t");
     $section_num = strtok("\t");
-    $title = substr(strtok("\t"), 0, -1);
+    $title = strtok("\t");
 
     $department = Department::get($department_prefix);
     if (is_null($department))
@@ -56,11 +56,8 @@ foreach ($out as $line)
     }
 
     $section = Section::build($course, $semester, $section_num, $crn);
-    print_r($section);
 
     $section->storeInDB();
-
-    print_r($section);
 }
 
 ?>

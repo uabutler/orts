@@ -47,8 +47,6 @@ function updateDisplay()
             $('#grad-year-input-display').val(year)
             $('#grad_month').dropdown('set selected', month)
             $('#year').val(year)
-
-            $('section').removeClass('ui loading form');
         }
     });
 }
@@ -56,8 +54,6 @@ function updateDisplay()
 function updateProfile(data, edit, display)
 {
     $('section').addClass('ui loading form');
-
-    data.email = STUDENT_EMAIL;
 
     $.ajax({
         url: '/api/student/student.php',
@@ -68,6 +64,16 @@ function updateProfile(data, edit, display)
             $(`#${edit}`).css("display", "none");
             $(`#${display}`).css("display", "grid");
             updateDisplay();
+            hideStatusMessage();
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false);
+        },
+        complete: function ()
+        {
+            $('section').removeClass('ui loading form');
         }
     })
 }
@@ -145,4 +151,6 @@ $(function()
     $('#year').on('focusout', validateGradYear);
 
     updateDisplay();
+
+    $('section').removeClass('ui loading form');
 })

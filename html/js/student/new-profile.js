@@ -19,7 +19,6 @@ function createStudent()
 
     let data = {};
 
-    data.email = STUDENT_EMAIL;
     data.first_name = $('#first_name').val();
     data.last_name = $('#last_name').val();
     data.banner_id = $('#banner_id').val();
@@ -31,13 +30,12 @@ function createStudent()
 
     $.post("/api/student/student.php", JSON.stringify(data), function(data)
     {
-        console.log("GOOD");
-        console.log(data);
         window.location.replace('/student/new-request.php');
     })
     .fail(function(response)
     {
-        console.log("BAD");
+        response = JSON.parse(response.responseText);
+        displayStatusMessage('Error', response.msg, false);
         $('form').removeClass("loading");
     });
 }
