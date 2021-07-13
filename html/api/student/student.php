@@ -33,14 +33,15 @@ API::get(function()
         API::error(204, "No student found");
     }
 
-    // This should never happen, but my compiler will wine if I omit it
+    // This should never happen, but my IDE will whine if I omit it
     return null;
 });
 
 // Create a student
 API::post(function ($data)
 {
-    Auth::forceAuthenticationStudent(null);
+    if (!Auth::isAuthenticated())
+        API::error(401, "You aren't authorized");
 
     if (!(isset($data->first_name) && is_string($data->first_name) && $data->first_name !== ""))
         API::error(400, "User first name not specified");

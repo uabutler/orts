@@ -22,7 +22,7 @@ class Auth
     {
         //return phpCAS::getUser();
         //return 'ab7890';
-        return 'ub4782';
+        return 'ab4782';
     }
 
     static function isAuthenticatedStudent(?string $expectedStudent = null): bool

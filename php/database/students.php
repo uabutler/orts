@@ -318,7 +318,7 @@ class Student implements JsonSerializable
             $info .= " LastName=" . $this->last_name;
             $info .= " GradMonth=" . $this->grad_month;
             $info .= " Standing=" . $this->standing;
-            $info .= " Sem=" . $this->last_active_sem->getCode();
+            $info .= " Sem=" . ($this->last_active_sem ? $this->last_active_sem->getCode() : "null");
 
             array_push($this->error_info, 'insertDB:"' . $info . '"');
             return false;
