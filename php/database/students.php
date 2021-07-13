@@ -230,6 +230,7 @@ class Student implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+            array_push($this->error_info, 'add_majors:"' . $major_str . '"');
             return false;
         }
 
@@ -237,7 +238,7 @@ class Student implements JsonSerializable
     }
 
     // Adds the list of minors to the database
-    private function add_minors(array $minors, $pdo)
+    private function add_minors(array $minors, $pdo): bool
     {
         global $student_minor_tbl, $student_tbl, $minor_tbl;
         $minor_str = Minor::buildListString($minors);
@@ -247,6 +248,7 @@ class Student implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+            array_push($this->error_info, 'add_minors:"' . $minor_str . '"');
             return false;
         }
 
@@ -264,6 +266,7 @@ class Student implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+            array_push($this->error_info, 'remove_major:"' . $major . '"');
             return false;
         }
 
@@ -281,6 +284,7 @@ class Student implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+            array_push($this->error_info, 'remove_minor:"' . $minor . '"');
             return false;
         }
 
@@ -308,6 +312,15 @@ class Student implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+
+            $info = "Email=" . $this->email;
+            $info .= " FirstName=" . $this->first_name;
+            $info .= " LastName=" . $this->last_name;
+            $info .= " GradMonth=" . $this->grad_month;
+            $info .= " Standing=" . $this->standing;
+            $info .= " Sem=" . $this->last_active_sem->getCode();
+
+            array_push($this->error_info, 'insertDB:"' . $info . '"');
             return false;
         }
 
@@ -346,6 +359,15 @@ class Student implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+
+            $info = "Email=" . $this->email;
+            $info .= " FirstName=" . $this->first_name;
+            $info .= " LastName=" . $this->last_name;
+            $info .= " GradMonth=" . $this->grad_month;
+            $info .= " Standing=" . $this->standing;
+            $info .= " Sem=" . $this->last_active_sem->getCode();
+
+            array_push($this->error_info, 'updateDB:"' . $info . '"');
             return false;
         }
 
@@ -376,8 +398,6 @@ class Student implements JsonSerializable
 
         if (!(empty($minors_to_add) || $this->add_minors($minors_to_add, $pdo)))
             return false;
-
-        echo '1';
 
         // If a major is in the database, but is no longer a major, remove it
         foreach ($current_majors as $major)
@@ -499,7 +519,7 @@ class Student implements JsonSerializable
         $smt->bindParam(":id", $data['id'], PDO::PARAM_INT);
         $smt->execute();
 
-        // Place off the the rows in a single array
+        // Place the the rows in a single array
         $majors = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
 
         // Then, query for the minors
@@ -557,6 +577,8 @@ class Student implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $out = get_object_vars($this);
+        unset($out['error_info']);
+        return $out;
     }
 }

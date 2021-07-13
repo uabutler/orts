@@ -11,18 +11,27 @@ Auth::createClient();
 // Retrieve a student
 API::get(function()
 {
-    if (!Auth::isAuthenticatedStudent($_GET['email']))
-        API::error(403, "You aren't allowed to request information about this student");
+    if (!Auth::isAuthenticatedStudent())
+        API::error(401, "You aren't allowed to request information about this student");
 
-    if(!isset($_GET['email']))
-        API::error(400, "Please specify email of desired student record");
-
-    $student = Student::get($_GET['email']);
+    $student = Student::get(Auth::getUser());
 
     if($student)
+    {
         return $student;
+    }
     else
+    {
+        $error_info = $student->errorInfo();
+
+        $error_msg = "ORTS ERROR: /api/student/student.php GET ";
+        $error_msg .= " User=" . Auth::getUser();
+        $error_msg .= " SQLSTATE=" . $error_info[0];
+        $error_msg .= " ErrorMsg=" . $error_info[2];
+        error_log($error_msg);
+
         API::error(204, "No student found");
+    }
 
     // This should never happen, but my compiler will wine if I omit it
     return null;

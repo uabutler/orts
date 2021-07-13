@@ -14,7 +14,7 @@ API::get(function ()
     if(!isset($_GET['id']))
         API::error(400, "Please specify the id of the desired request record");
 
-    $request = Request::getById($_GET['id']);
+    $request = Request::getById(intval($_GET['id']));
 
     if (!Auth::isAuthenticatedStudent($request->getStudent()->getEmail()))
         API::error(403, "You aren't allowed to access this request");
@@ -44,13 +44,10 @@ API::post(function ($data)
     if (!(isset($data->crn) && preg_match('/^\d{4}$/', $data->crn)))
         API::error(400, "Course CRN not specified properly. Please specify the 4-digit code string");
 
-    if (!isset($data->reason))
-        API::error(400, "Please specify reason");
-
     if (!(isset($data->reason) && in_array($data->reason, Request::listReasons())))
         API::error(400, "Reason not specified properly. Please choose from available list");
 
-    if (!(isset($data->explanation) && $data->explanation !== ""))
+    if (!(isset($data->explanation) && preg_match('/\S+/', $data->explanation)))
         API::error(400, "Please provide an explanation with the request");
 
     $request = Request::build(Student::get(Auth::getUser()), Section::getByCrn(Semester::getByCode($data->semester),
@@ -87,7 +84,6 @@ API::put(function ($data)
     {
         $request = Request::getById(intval($data->id));
 
-
         if (!Auth::isAuthenticatedStudent($request->getStudent()->getEmail()))
             API::error(403, "You aren't allowed to modify requests for this student");
 
@@ -118,7 +114,7 @@ API::put(function ($data)
 
         if (isset($data->explanation))
         {
-            if ($data->explanation === "")
+            if (preg_match('/^\s*$/', $data->explanation))
                 API::error(400, "Please provide an explanation with the request");
 
             $request->setExplanation($data->explanation);
@@ -126,9 +122,7 @@ API::put(function ($data)
 
         if (isset($data->active))
         {
-            if (is_bool($data->active))
-                API::error(400, "Active status must be a boolean");
-
+            // I don't think data validation matters here?
             if(!filter_var($data->active, FILTER_VALIDATE_BOOLEAN))
                 $request->setInactive();
         }
@@ -147,6 +141,7 @@ API::put(function ($data)
             $error_msg .= " Semester=" . $data->semester;
             $error_msg .= " SQLSTATE=" . $error_info[0];
             $error_msg .= " ErrorMsg=" . $error_info[2];
+            $error_msg .= " StudentFunc=" . $error_info[3];
             error_log($error_msg);
 
             if ($error_info[0] === "23000")

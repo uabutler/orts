@@ -8,10 +8,13 @@ Auth::createClient();
 
 API::get(function ()
 {
-   if(!isset($_GET['id']))
-       API::error(400, "Please specify the id of the request you want attachments for");
+    if (!Auth::isAuthenticated())
+        API::error(401, "User not authenticated");
 
-   $request = Request::getById($_GET['id']);
+   if(!isset($_GET['id']))
+       API::error(400, "Please specify the ID of the request you want attachments for");
+
+   $request = Request::getById(intval($_GET['id']));
 
    $authed = Auth::isAuthenticatedStudent($request->getStudent()->getEmail());
    $authed = $authed || Auth::isAuthenticatedFaculty();
@@ -33,10 +36,23 @@ API::delete(function()
 {
     global $_DELETE;
 
-    $attachment = Attachment::getById($_DELETE['id']);
+    if (!Auth::isAuthenticated())
+        API::error(401, "User not authenticated");
 
-    if (Attachment::deleteById($_DELETE['id']))
+    if(!isset($_GET['id']))
+        API::error(400, "Please specify the ID of the attachment you want to delete");
+
+    $attachment = Attachment::getById(intval($_DELETE['id']));
+
+    $authed = Auth::isAuthenticatedStudent($attachment->getRequest()->getStudent()->getEmail());
+    $authed = $authed || Auth::isAuthenticatedFaculty();
+
+    if (!$authed)
+        API::error(403, "You aren't allowed to delete this attachment");
+
+    // TODO: Improve error handling
+    if ($attachment->deleteFromDB())
         return "Success";
     else
-        API::error(400, "Could not delete attachment");
+        API::error(500, "Could not delete attachment");
 });

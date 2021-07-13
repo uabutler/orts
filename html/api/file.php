@@ -4,7 +4,7 @@ require_once '../../php/database/attachments.php';
 
 if (!isset($_GET['id']))
 {
-    http_response_code(404);
+    http_response_code(400);
 
     $response['msg'] = "Please specify an ID of an attachment to access";
     echo json_encode($response);
@@ -12,11 +12,15 @@ if (!isset($_GET['id']))
     exit();
 }
 
-$attachment = Attachment::getById($_GET['id']);
+$attachment = Attachment::getById(intval($_GET['id']));
 
-$authed = Auth::isAuthenticatedStudent($attachment->getRequest()->getStudent()->getEmail());
-$authed = $authed || Auth::isAuthenticatedFaculty();
-$authed = $authed || $attachment;
+$authed = !is_null($attachment);
+
+if ($authed)
+{
+    $authed = Auth::isAuthenticatedStudent($attachment->getRequest()->getStudent()->getEmail());
+    $authed = $authed || Auth::isAuthenticatedFaculty();
+}
 
 if (!$authed)
 {
@@ -30,7 +34,6 @@ if (!$authed)
 
 $mime_type = mime_content_type($attachment->getPath()) ?: 'application/octet-stream';
 
-// TODO: Fix this non-sense
 $filesize = filesize($attachment->getPath());
 $filename = $attachment->getName();
 
