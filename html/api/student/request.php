@@ -59,17 +59,7 @@ API::post(function ($data)
     }
     else
     {
-        $error_info = $request->errorInfo();
-
-        $error_msg = "ORTS ERROR: /api/student/request.php CREATE ";
-        $error_msg .= " User=" . Auth::getUser();
-        $error_msg .= " CRN=" . $data->crn;
-        $error_msg .= " Semester=" . $data->semester;
-        $error_msg .= " SQLSTATE=" . $error_info[0];
-        $error_msg .= " ErrorMsg=" . $error_info[2];
-        error_log($error_msg);
-
-        if ($error_info[0] === "23000")
+        if ($request->errorInfo()[0] === "23000")
             API::error(409, "A request for this class has already been submitted");
         else
             API::error(500, "An unknown error has occurred. Please contact the system administrator");
@@ -133,18 +123,7 @@ API::put(function ($data)
         }
         else
         {
-            $error_info = $request->errorInfo();
-
-            $error_msg = "ORTS ERROR: /api/student/request.php UPDATE ";
-            $error_msg .= " User=" . Auth::getUser();
-            $error_msg .= " CRN=" . $data->crn;
-            $error_msg .= " Semester=" . $data->semester;
-            $error_msg .= " SQLSTATE=" . $error_info[0];
-            $error_msg .= " ErrorMsg=" . $error_info[2];
-            $error_msg .= " StudentFunc=" . $error_info[3];
-            error_log($error_msg);
-
-            if ($error_info[0] === "23000")
+            if ($request->errorInfo()[0] === "23000")
                 API::error(409, "A request for this class has already been submitted");
             else
                 API::error(500, "An unknown error has occurred. Please contact the system administrator");

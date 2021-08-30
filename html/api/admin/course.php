@@ -74,10 +74,6 @@ API::put(function ($data)
 
         if (is_null($course))
         {
-            $error_msg = "ORTS ERROR: /api/admin/course.php UPDATE ";
-            $error_msg .= " Not Found ID=" . $update->id;
-            error_log($error_msg);
-
             $ret = false;
             continue;
         }
@@ -87,17 +83,8 @@ API::put(function ($data)
 
         $err = $course->storeInDB();
 
-        if (!$err)
-        {
-            $error_info = $course->errorInfo();
-
-            $error_msg = "ORTS ERROR: /api/admin/course.php UPDATE ";
-            $error_msg .= " ID=" . $update->id;
-            $error_msg .= " Can't Deactivate STATUS=" . ($course->isActive() ? "active" : "inactive");
-            $error_msg .= " SQLSTATE=" . $error_info[0];
-            $error_msg .= " ErrorMsg=" . $error_info[2];
-            error_log($error_msg);
-        }
+        // TODO: Log error
+        if (!$err);
 
         $ret = $ret && $err;
 

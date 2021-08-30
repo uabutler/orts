@@ -226,9 +226,14 @@ class Student implements JsonSerializable
 
         Logger::info("Adding majors for student " . $this->id);
 
+        if (!count($majors))
+        {
+            Logger::info("No majors to add... Skipping");
+            return true;
+        }
+
         $major_str = Major::buildListString($majors);
         $query = "INSERT INTO $student_major_tbl (student_id, major_id) SELECT $student_tbl.id, $major_tbl.id FROM $student_tbl INNER JOIN $major_tbl WHERE $student_tbl.email=:email AND $major_tbl.major IN ($major_str)";
-        Logger::info("Running query: $query");
         $smt = $pdo->prepare($query);
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
 
@@ -249,6 +254,15 @@ class Student implements JsonSerializable
     private function add_minors(array $minors, $pdo): bool
     {
         global $student_minor_tbl, $student_tbl, $minor_tbl;
+
+        Logger::info("Adding minors for student " . $this->id);
+
+        if (!count($minors))
+        {
+            Logger::info("No minors to add... Skipping");
+            return true;
+        }
+
         $minor_str = Minor::buildListString($minors);
         $smt = $pdo->prepare("INSERT INTO $student_minor_tbl (student_id, minor_id) SELECT $student_tbl.id, $minor_tbl.id FROM $student_tbl INNER JOIN $minor_tbl WHERE $student_tbl.email=:email AND $minor_tbl.minor IN ($minor_str)");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
@@ -308,10 +322,10 @@ class Student implements JsonSerializable
 
         $pdo = connectDB();
 
+        $pdo->beginTransaction();
+
         // Insert basic student info
         $query = "INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing, last_active_sem) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing, :last_active_sem)";
-        Logger::info("Running query: $query");
-
         $smt = $pdo->prepare($query);
         $last_active_sem_id = $this->last_active_sem ? $this->last_active_sem->getId() : null;
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
@@ -335,6 +349,7 @@ class Student implements JsonSerializable
 
             array_push($this->error_info, 'insertDB:"' . $info . '"');
             Logger::error("Student insertion failed. Error info: " . Logger::obj($this->error_info));
+            $pdo->rollBack();
             return false;
         }
 
@@ -347,14 +362,30 @@ class Student implements JsonSerializable
 
         // Insert information about majors and minors
         if (!$this->add_majors(Major::buildStringList($this->majors), $pdo))
+        {
+            $pdo->rollBack();
             return false;
+        }
 
         if (!$this->add_minors(Major::buildStringList($this->minors), $pdo))
+        {
+            $pdo->rollBack();
             return false;
+        }
 
-        Logger::info("Created student with id " . $this->id);
 
-        return true;
+        if (!$pdo->commit())
+        {
+            $this->error_info = $pdo->errorInfo();
+            Logger::error("Student insertion failed. Error info: " . Logger::obj($smt->errorInfo()));
+            return false;
+        }
+        else
+        {
+            Logger::info("Database write complete");
+            Logger::info("Inserted student ID: " . $this->getId());
+            return true;
+        }
     }
 
     // If the student already exists in the database, this will update their entry with the information from this object

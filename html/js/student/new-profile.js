@@ -45,8 +45,6 @@ function createStudent()
  */
 $(function ()
 {
-    $('.select').select2({minimumResultsForSearch: Infinity});
-
     $('#banner_id').on("focusout", validateBannerId);
     $('#year').on("focusout", validateGradYear);
     $('#first_name').on("focusout", validateFirstName);

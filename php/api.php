@@ -64,6 +64,11 @@ class API
 
     public static function error(int $code, string $msg)
     {
+        if ($code < 500)
+            Logger::warning("Request failed. Returning error $code. REASON=$msg");
+        else
+            Logger::error("Request failed. Returning error $code. REASON=$msg", Verbosity::LOW, true);
+
         global $_REQUEST_ID;
 
         http_response_code($code);

@@ -17,21 +17,9 @@ API::get(function()
     $student = Student::get(Auth::getUser());
 
     if($student)
-    {
         return $student;
-    }
     else
-    {
-        $error_info = $student->errorInfo();
-
-        $error_msg = "ORTS ERROR: /api/student/student.php GET ";
-        $error_msg .= " User=" . Auth::getUser();
-        $error_msg .= " SQLSTATE=" . $error_info[0];
-        $error_msg .= " ErrorMsg=" . $error_info[2];
-        error_log($error_msg);
-
         API::error(204, "No student found");
-    }
 
     // This should never happen, but my IDE will whine if I omit it
     return null;
@@ -97,18 +85,9 @@ API::post(function ($data)
     }
     else
     {
-        $error_info = $student->errorInfo();
-
-        $error_msg = "ORTS ERROR: /api/student/student.php CREATE ";
-        $error_msg .= " User=" . Auth::getUser();
-        $error_msg .= " BannerID=" . $data->banner_id;
-        $error_msg .= " SQLSTATE=" . $error_info[0];
-        $error_msg .= " ErrorMsg=" . $error_info[2];
-        error_log($error_msg);
-
-        if ($error_info[0] === "23000")
+        if ($student->errorInfo()[0] === "23000")
         {
-            if (strpos($error_info[2], "banner_id"))
+            if (strpos($student->errorInfo()[2], "banner_id"))
                 API::error(409, "A user with this banner ID has already been created");
             else
                 API::error(409, "A user with this email has already been created");
@@ -198,17 +177,10 @@ API::put(function ($data)
     }
     else
     {
-        $error_info = $student->errorInfo();
 
-        $error_msg = "ORTS ERROR: /api/student/student.php EDIT ";
-        $error_msg .= " User=" . Auth::getUser();
-        $error_msg .= " SQLSTATE=" . $error_info[0];
-        $error_msg .= " ErrorMsg=" . $error_info[2];
-        error_log($error_msg);
-
-        if ($error_info[0] === "23000")
+        if ($student->errorInfo()[0] === "23000")
         {
-            if (strpos($error_info[2], "banner_id"))
+            if (strpos($student->errorInfo()[2], "banner_id"))
                 API::error(409, "A user with this banner ID has already been created");
             else
                 API::error(409, "A user with this email has already been created");
