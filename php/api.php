@@ -1,4 +1,5 @@
 <?php
+require_once 'logger.php';
 
 /**
  * When I started building this application, I didn't know about any "proper" techniques, so here is my
@@ -8,22 +9,32 @@ class API
 {
     private static function paramHelper(string $method, callable $func)
     {
+        global $_REQUEST_ID;
+
         if ($_SERVER['REQUEST_METHOD'] === $method)
         {
-            $response = call_user_func($func);
+            Logger::start();
+            $response['response'] = call_user_func($func);
+            $response['request_id'] = $_REQUEST_ID;
             http_response_code(200);
             echo json_encode($response);
+            Logger::end();
             exit();
         }
     }
 
     private static function jsonHelper(string $method, callable $func)
     {
+        global $_REQUEST_ID;
+
         if ($_SERVER['REQUEST_METHOD'] === $method)
         {
+            Logger::start();
             $param = json_decode(file_get_contents('php://input'));
-            $response = call_user_func($func, $param);
+            $response['response'] = call_user_func($func, $param);
+            $response['request_id'] = $_REQUEST_ID;
             echo json_encode($response);
+            Logger::end();
             exit();
         }
     }
@@ -53,9 +64,12 @@ class API
 
     public static function error(int $code, string $msg)
     {
+        global $_REQUEST_ID;
+
         http_response_code($code);
 
         $response['msg'] = $msg;
+        $response['request_id'] = $_REQUEST_ID;
         echo json_encode($response);
 
         exit();

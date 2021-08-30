@@ -5,6 +5,7 @@ if($config = parse_ini_file(__DIR__ . '/../conf/app.ini', true, INI_SCANNER_TYPE
     define('DATABASE', $config['Database']);
     define('CAS_SERVER', $config['CAS']);
     define('SERVER', $config['Server']);
+    define('LOGGING', $config['Logging']);
 }
 else
 {

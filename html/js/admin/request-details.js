@@ -17,9 +17,9 @@ function changeStatus()
             $('#status_info').html(getStatusHtml({status:$('#status_input').val(), banner:$('#banner').is(":checked")}));
             displayStatusMessage("Success", "The request status has been successfully updated", true);
         },
-        error: function ()
+        error: function (data)
         {
-            displayStatusMessage("Error", "The request could not be completed", false);
+            displayStatusMessage("Error", "The request could not be completed", false, data.request_id);
         }
     });
 }
@@ -44,9 +44,9 @@ function changeFaculty()
             $('#note').val('');
             displayStatusMessage("Success", "The request has been reassigned", true);
         },
-        error: function ()
+        error: function (data)
         {
-            displayStatusMessage("Error", "The request could not be completed", false);
+            displayStatusMessage("Error", "The request could not be completed", false, data.request_id);
         }
     });
 }

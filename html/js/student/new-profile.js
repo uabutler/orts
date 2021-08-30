@@ -35,7 +35,7 @@ function createStudent()
     .fail(function(response)
     {
         response = JSON.parse(response.responseText);
-        displayStatusMessage('Error', response.msg, false);
+        displayStatusMessage('Error', response.msg, false, response.request_id);
         $('form').removeClass("loading");
     });
 }

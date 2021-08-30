@@ -11,10 +11,7 @@ API::get(function()
 
 API::post(function($data)
 {
-    foreach ($data as $program)
-        Major::build($program)->storeInDB();
-
-    return "Success";
+    return addPrograms($data, Major::class);
 });
 
 API::put(function($data)

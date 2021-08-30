@@ -11,6 +11,7 @@ function updateDepartmentTable()
         success: function(data)
         {
             data = JSON.parse(data);
+            data = data.response
 
             if (data.length === 0)
             {
@@ -92,7 +93,7 @@ function updateCourseTable()
         method: 'GET',
         success: function(data)
         {
-            data = JSON.parse(data);
+            data = JSON.parse(data).response;
 
             if (data.length === 0)
             {

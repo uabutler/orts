@@ -55,6 +55,8 @@ function setSection()
 
     let request = $.get("/api/truman/section.php", data, function (data, status, xhr)
     {
+        data = data.response;
+
         crn.parent().removeClass("loading");
         title.parent().removeClass("loading");
 

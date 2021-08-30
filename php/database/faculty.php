@@ -11,6 +11,7 @@ class Faculty implements JsonSerializable
     private $first_name;
     private $last_name;
     private $default;
+    private $error_info;
 
     /**
      * The database id. Null if it hasn't been stored
@@ -51,6 +52,11 @@ class Faculty implements JsonSerializable
     public function isDefault(): bool
     {
         return $this->default;
+    }
+
+    public function errorInfo(): ?array
+    {
+        return $this->error_info;
     }
 
     /**
@@ -123,7 +129,11 @@ class Faculty implements JsonSerializable
         $smt = $pdo->prepare("UPDATE $faculty_tbl SET is_default=true WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
 
-        if (!$smt->execute()) return false;
+        if(!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            return false;
+        }
 
         return true;
     }
@@ -131,23 +141,69 @@ class Faculty implements JsonSerializable
     private function insertDB(): bool
     {
         global $faculty_tbl;
-        $pdo = connectDB();
+        Logger::info("Writing new faculty to database: " . Logger::obj($this));
 
-        $smt = $pdo->prepare("INSERT INTO $faculty_tbl (email, first_name, last_name) VALUES (:email, :first_name, :last_name)");
+        $pdo = connectDB();
+        $query = "INSERT INTO $faculty_tbl
+        (
+            email,
+            first_name,
+            last_name
+        )
+        VALUES
+        (
+            :email,
+            :first_name,
+            :last_name
+        )";
+
+        $smt = $pdo->prepare($query);
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
 
+            if ($this->error_info[0] === "23000")
+            {
+                Logger::warning("Faculty already exists. Error info: " . Logger::obj($this->error_info));
+                Logger::warning("Faculty details: " . Logger::obj($this));
+            }
+            else
+            {
+                Logger::error("Faculty insertion failed. Error info: " . Logger::obj($this->error_info));
+                Logger::error("Faculty details: " . Logger::obj($this));
+            }
+
+            return false;
+        }
+
+        Logger::info("Faculty insertion complete.");
         $this->id = $pdo->lastInsertId();
+        Logger::info("Created faculty with id " . $this->getId(), Verbosity::LOW);
 
+        Logger::info("Finding default faculty...");
         $smt = $pdo->prepare("SELECT id FROM $faculty_tbl WHERE is_default=true");
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+            Logger::error("Could not retrieve faculty to determine default. Error info: " . Logger::obj($this->error_info), Verbosity::LOW, true);
+            return false;
+        }
 
         // If there is no default, or the user indicated this should be the new default
         if ($smt->rowCount() === 0 || $this->default)
+        {
+            Logger::info("No default faculty found, setting new faculty to default.");
             if (!$this->makeDefault($pdo)) return false;
+        }
+        else
+        {
+            Logger::info("Default faculty already exists. Skipping.");
+        }
 
         return true;
     }
@@ -155,15 +211,38 @@ class Faculty implements JsonSerializable
     private function updateDB(): bool
     {
         global $faculty_tbl;
-        $pdo = connectDB();
+        Logger::info("Writing updated faculty to database: " . Logger::obj($this));
 
-        $smt = $pdo->prepare("UPDATE $faculty_tbl SET email=:email, first_name=:first_name, last_name=:last_name WHERE id=:id");
+        $pdo = connectDB();
+        $query = "UPDATE $faculty_tbl SET
+            email=:email,
+            first_name=:first_name,
+            last_name=:last_name
+        WHERE id=:id";
+
+        $smt = $pdo->prepare($query);
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            $this->error_info = $smt->errorInfo();
+
+            if ($this->error_info[0] === "23000")
+            {
+                Logger::warning("Faculty already exists. Error info: " . Logger::obj($this->error_info));
+                Logger::warning("Faculty details: " . Logger::obj($this));
+            }
+            else
+            {
+                Logger::error("Faculty update failed. Error info: " . Logger::obj($this->error_info));
+                Logger::error("Faculty details: " . Logger::obj($this));
+            }
+
+            return false;
+        }
 
         if ($this->default)
             if (!$this->makeDefault($pdo)) return false;
@@ -202,6 +281,8 @@ class Faculty implements JsonSerializable
     public static function deleteById(int $id, PDO $pdo = null): bool
     {
         global $faculty_tbl;
+        Logger::info("Deleting faculty from database. ID: $id");
+
         if (is_null($pdo)) $pdo = connectDB();
 
         return deleteByIdFrom($faculty_tbl, $id, $pdo);
@@ -229,15 +310,27 @@ class Faculty implements JsonSerializable
     public static function get(string $email): ?Faculty
     {
         global $faculty_tbl;
-        $pdo = connectDB();
+        Logger::info("Retrieving faculty from database.");
 
-        $smt = $pdo->prepare("SELECT * FROM $faculty_tbl WHERE email=:email LIMIT 1");
+        $pdo = connectDB();
+        $query = "SELECT * FROM $faculty_tbl WHERE email=:email LIMIT 1";
+        $smt = $pdo->prepare($query);
         $smt->bindParam(":email", $email, PDO::PARAM_STR);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            Logger::error("Faculty retrieval failed. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Faculty email: $email");
+            return null;
+        }
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$data) return null;
+        if (!$data)
+        {
+            Logger::warning("No email found with email $email@truman.edu");
+            return null;
+        }
 
         return new Faculty($email, $data['first_name'], $data['last_name'], $data['is_default'], $data['id']);
     }
@@ -250,11 +343,17 @@ class Faculty implements JsonSerializable
     public static function getById(int $id): ?Faculty
     {
         global $faculty_tbl;
-        $pdo = connectDB();
 
+        $pdo = connectDB();
         $smt = $pdo->prepare("SELECT * FROM $faculty_tbl WHERE id=:id LIMIT 1");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            Logger::error("Faculty retrieval failed. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Faulty ID: $id");
+            return null;
+        }
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
 
@@ -279,6 +378,8 @@ class Faculty implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        $out = get_object_vars($this);
+        unset($out['error_info']);
+        return $out;
     }
 }

@@ -31,8 +31,6 @@ function getStatusHtml(request)
  */
 function validateRegex(element_name, regex)
 {
-    console.log(`Validating ${element_name} against ${regex}`);
-
     let element = $(`#${element_name}`);
 
     return regex.test(String(element.val()));
@@ -40,8 +38,6 @@ function validateRegex(element_name, regex)
 
 function validateNotEmpty(element_name)
 {
-    console.log(`Validating ${element_name} is not empty`);
-
     let element = $(`#${element_name}`);
 
     return element.val() !== "";

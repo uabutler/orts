@@ -1,3 +1,5 @@
+EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
+
 function validateFacultyFirstName() { return setError(validateRegex('faculty-first-name', /\S+/), 'faculty-first-name'); }
 function validateFacultyLastName() { return setError(validateRegex('faculty-last-name', /\S+/), 'faculty-last-name'); }
 
@@ -6,12 +8,12 @@ function validateFacultyEmail()
     let element = $('#faculty-email');
     let parent = element.parent().parent();
 
-    if (element.val() === '')
-        parent.addClass('error');
-    else
+    if (EMAIL_REGEX.test(element.val()))
         parent.removeClass('error');
+    else
+        parent.addClass('error');
 
-    return element.val() === '';
+    return EMAIL_REGEX.test(element.val());
 }
 
 function updateFacultyTable()
@@ -21,7 +23,7 @@ function updateFacultyTable()
         method: 'GET',
         success: function(data)
         {
-            data = JSON.parse(data);
+            data = JSON.parse(data).response
 
             let table = ` <table class="ui celled structured table">
                 <thead>

@@ -7,7 +7,7 @@ function updateProgramTable(type)
         method: 'GET',
         success: function(data)
         {
-            data = JSON.parse(data);
+            data = JSON.parse(data).response;
 
             if (data.length === 0)
             {

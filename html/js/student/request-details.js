@@ -33,7 +33,7 @@ function changeAdditional()
         error: function(response)
         {
             response = JSON.parse(response.responseText);
-            displayStatusMessage("Error", response.msg, false);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         },
         complete: function()
         {
@@ -86,9 +86,8 @@ function changeCourse()
         },
         error: function(response)
         {
-            console.log('oops');
             response = JSON.parse(response.responseText);
-            displayStatusMessage("Error", response.msg, false);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         },
         complete: function()
         {

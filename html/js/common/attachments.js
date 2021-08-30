@@ -95,9 +95,9 @@ function deleteAttachment()
                         displayStatusMessage('Success', 'Attachment deleted', true);
                         updateAttachmentTable();
                     },
-                    fail: function()
+                    fail: function(data)
                     {
-                        displayStatusMessage('Error', 'Could not delete attachment', false);
+                        displayStatusMessage('Error', 'Could not delete attachment', false, data.request_id);
                     }
                 });
             }

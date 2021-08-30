@@ -39,7 +39,7 @@ function updateSectionTable()
         data: data,
         success: function(data)
         {
-            data = JSON.parse(data);
+            data = JSON.parse(data).response;
 
             if (data.length === 0)
             {
@@ -160,7 +160,7 @@ function displayCourseTitle()
         data: data,
         success: function(data)
         {
-            data = JSON.parse(data);
+            data = JSON.parse(data).response;
 
             $('#section-title-input').val(data.title);
         }

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/common.php';
 require_once __DIR__ . '/courses.php';
 require_once __DIR__ . '/programs.php';
@@ -222,8 +223,12 @@ class Student implements JsonSerializable
     private function add_majors(array $majors, $pdo): bool
     {
         global $student_major_tbl, $student_tbl, $major_tbl;
+
+        Logger::info("Adding majors for student " . $this->id);
+
         $major_str = Major::buildListString($majors);
         $query = "INSERT INTO $student_major_tbl (student_id, major_id) SELECT $student_tbl.id, $major_tbl.id FROM $student_tbl INNER JOIN $major_tbl WHERE $student_tbl.email=:email AND $major_tbl.major IN ($major_str)";
+        Logger::info("Running query: $query");
         $smt = $pdo->prepare($query);
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
 
@@ -231,8 +236,11 @@ class Student implements JsonSerializable
         {
             $this->error_info = $smt->errorInfo();
             array_push($this->error_info, 'add_majors:"' . $major_str . '"');
+            Logger::error("Student majors insertion failed. Error info: " . Logger::obj($this->error_info));
             return false;
         }
+
+        Logger::info("Student majors insertion completed.");
 
         return true;
     }
@@ -296,10 +304,15 @@ class Student implements JsonSerializable
     {
         global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
+        Logger::info("Writing new student to database: " . Logger::obj($this));
+
         $pdo = connectDB();
 
         // Insert basic student info
-        $smt = $pdo->prepare("INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing, last_active_sem) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing, :last_active_sem)");
+        $query = "INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing, last_active_sem) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing, :last_active_sem)";
+        Logger::info("Running query: $query");
+
+        $smt = $pdo->prepare($query);
         $last_active_sem_id = $this->last_active_sem ? $this->last_active_sem->getId() : null;
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
@@ -321,11 +334,16 @@ class Student implements JsonSerializable
             $info .= " Sem=" . ($this->last_active_sem ? $this->last_active_sem->getCode() : "null");
 
             array_push($this->error_info, 'insertDB:"' . $info . '"');
+            Logger::error("Student insertion failed. Error info: " . Logger::obj($this->error_info));
             return false;
         }
 
+        Logger::info("Initial student write successful.");
+
         // get the newly created ID
         $this->id = $pdo->lastInsertId();
+
+        Logger::info("Student assigned id " . $this->id);
 
         // Insert information about majors and minors
         if (!$this->add_majors(Major::buildStringList($this->majors), $pdo))
@@ -333,6 +351,8 @@ class Student implements JsonSerializable
 
         if (!$this->add_minors(Major::buildStringList($this->minors), $pdo))
             return false;
+
+        Logger::info("Created student with id " . $this->id);
 
         return true;
     }
@@ -368,8 +388,13 @@ class Student implements JsonSerializable
             $info .= " Sem=" . $this->last_active_sem->getCode();
 
             array_push($this->error_info, 'updateDB:"' . $info . '"');
+
+            Logger::error("A student could not be updated: " . Logger::obj($this));
+
             return false;
         }
+
+        Logger::info("A student was updated successfully", Verbosity::HIGH);
 
         // Next, get the majors currently stored in the database
         $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.email = :email");
@@ -411,6 +436,8 @@ class Student implements JsonSerializable
             if (!(in_array($minor, $old_minors) || $this->remove_minor($minor, $pdo)))
                 return false;
         }
+
+        Logger::info("A new student was create with id" . $this->id, Verbosity::MED);
 
         return true;
     }

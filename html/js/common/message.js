@@ -1,7 +1,13 @@
-function displayStatusMessage(header, message, status)
+function displayStatusMessage(header, message, status, request_id = null)
 {
+    console.log("Message: " + message)
+    console.log("Request: " + request_id)
+
+    let content = message
+    if (request_id) content += "<small><br>Request ID: " + request_id + "</small>";
+
     $('#status-message-header').html(header);
-    $('#status-message-content').html(message);
+    $('#status-message-content').html(content);
 
     let element = $('#status-message');
     let icon = $('#status-message-icon');

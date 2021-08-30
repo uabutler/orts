@@ -215,9 +215,10 @@ class Request implements JsonSerializable
         $this->active = false;
     }
 
-    private function __construct(Student $student, ?string $creation_time, ?string $last_modified, Section $section, Faculty $faculty, string
-    $status, ?string $justification, bool $banner, string $reason, string $explanation, bool $active = true, int $id
-    = null)
+    private function __construct(Student $student, ?string $creation_time, ?string $last_modified, Section $section,
+                                 Faculty $faculty, string $status, ?string $justification, bool $banner, string $reason,
+                                 string $explanation, bool $active = true, int $id
+                                 = null)
     {
         $this->id = $id;
         $this->student = $student;
@@ -238,11 +239,44 @@ class Request implements JsonSerializable
     {
         global $request_tbl;
 
+        Logger::info("Writing new request to database: " . Logger::obj($this));
+
         $timestamp = getTimeStamp();
+
+        Logger::info("Creation time: $timestamp");
 
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("INSERT INTO $request_tbl (student_id, creation_time, last_modified, section_id, faculty_id, status, justification, banner, reason, explanation, active) VALUES (:student_id, :creation_time, :last_modified, :section_id, :faculty_id, :status, :justification, :banner, :reason, :explanation, :active)");
+        $query = "INSERT INTO $request_tbl
+        (
+            student_id,
+            creation_time,
+            last_modified,
+            section_id,
+            faculty_id,
+            status,
+            justification,
+            banner,
+            reason,
+            explanation,
+            active
+        )
+        VALUES
+        (
+            :student_id,
+            :creation_time,
+            :last_modified,
+            :section_id,
+            :faculty_id,
+            :status,
+            :justification,
+            :banner,
+            :reason,
+            :explanation,
+            :active
+        )";
+
+        $smt = $pdo->prepare($query);
 
         $studentid = $this->student->getId();
         $facultyid = $this->faculty->getId();
@@ -262,12 +296,29 @@ class Request implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+
+            // If the override requests could not be added because one for that section already exists... else...
+            if ($this->error_info[0] === "23000")
+            {
+                Logger::warning("Override request already exists. Error info: " . Logger::obj($this->error_info));
+                Logger::warning("Request details: " . Logger::obj($this));
+            }
+            else
+            {
+                Logger::error("Override request insertion failed. Error info: " . Logger::obj($this->error_info));
+                Logger::error("Request details: " . Logger::obj($this));
+            }
+
             return false;
         }
+
+        Logger::info("Override request insertion completed.");
 
         $this->id = $pdo->lastInsertId();
         $this->creation_time = $timestamp;
         $this->last_modified = $timestamp;
+
+        Logger::info("Created override request with id " . $this->getId(), Verbosity::MED);
 
         return true;
     }
@@ -276,11 +327,26 @@ class Request implements JsonSerializable
     {
         global $request_tbl;
 
+        Logger::info("Writing updated request to database: " . Logger::obj($this));
+
         $timestamp = getTimeStamp();
 
-        $pdo = connectDB();
+        Logger::info("Modification time: $timestamp");
 
-        $smt = $pdo->prepare("UPDATE $request_tbl SET student_id=:student_id, last_modified=:last_modified, section_id=:section_id, faculty_id=:faculty_id, status=:status, justification=:justification, banner=:banner, reason=:reason, explanation=:explanation WHERE id=:id");
+        $pdo = connectDB();
+        $query = "UPDATE $request_tbl SET
+            student_id=:student_id,
+            last_modified=:last_modified,
+            section_id=:section_id,
+            faculty_id=:faculty_id,
+            status=:status,
+            justification=:justification,
+            banner=:banner,
+            reason=:reason,
+            explanation=:explanation
+        WHERE id=:id";
+
+        $smt = $pdo->prepare($query);
 
         $studentid = $this->student->getId();
         $facultyid = $this->faculty->getId();
@@ -299,15 +365,20 @@ class Request implements JsonSerializable
         if (!$smt->execute())
         {
             $this->error_info = $smt->errorInfo();
+            Logger::error("Override request update failed. Error info: " . Logger::obj($this->error_info));
+            Logger::error("Request details: " . Logger::obj($this));
             return false;
         }
 
+        Logger::info("Override request initial update completed.");
+
         $this->last_modified = $timestamp;
 
-        if ($this->active)
-            return true;
-        else
-            return self::inactiveById($this->id, $pdo);
+        $ret = true;
+        if (!$this->active) $ret = !self::inactiveById($this->id, $pdo);
+        if ($ret) Logger::info("Override request update completed with ID: " . $this->getId(), Verbosity::MED);
+
+        return $ret;
     }
 
     /**
@@ -317,7 +388,7 @@ class Request implements JsonSerializable
      */
     public function storeInDB(): bool
     {
-        // The id is set only when the student is already in the database
+        // The id is set only when the request is already in the database
         if (is_null($this->id))
             return $this->insertDB();
         else
@@ -341,15 +412,29 @@ class Request implements JsonSerializable
     public static function deleteById(int $id, PDO $pdo = null): bool
     {
         global $request_tbl, $attachment_tbl;
+
+        Logger::info("Deleting request from database. ID: $id");
+
         if (is_null($pdo)) $pdo = connectDB();
 
         // TODO: Notifications?
 
         // Delete all attachments
-        $smt = $pdo->prepare("SELECT id FROM $attachment_tbl WHERE request_id=:id");
+        $query = "SELECT id FROM $attachment_tbl WHERE request_id=:id";
+        $smt = $pdo->prepare($query);
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            Logger::error("Could not retrieve attachments for request deletion. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Request ID: $id");
+            return false;
+        }
+
+        Logger::info("Retrieved attachments, starting deletions.");
         $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
+        Logger::info("Attachments to be deleted: " . Logger::obj($ids));
+
         foreach ($ids as $i) Attachment::deleteById($i, $pdo);
 
         // Delete the request
@@ -359,6 +444,9 @@ class Request implements JsonSerializable
     public static function inactiveById(int $id, PDO $pdo = null): bool
     {
         global $request_tbl;
+
+        Logger::info("Deactivating override request in database. ID: $id");
+
         if (is_null($pdo)) $pdo = connectDB();
         return inactiveByIdFrom($request_tbl, $id, $pdo);
     }
@@ -409,27 +497,36 @@ class Request implements JsonSerializable
      * @param Faculty|null $faculty Filter the results to only those assigned to a specific faculty member. Null means don't care.
      * @return array An array containing a list of the requests
      */
-    public static function get(bool $active, Student $student=null, Semester $semester=null, Faculty $faculty=null): array
+    public static function get(bool $active, Student $student = null, Semester $semester = null,
+                               Faculty $faculty = null): ?array
     {
         global $request_tbl, $section_tbl;
+
+        // Log all of the arguments to this function
+        Logger::info("Retrieving requests from database");
+        Logger::info("Adding parameter: active=" . ($active ? "true" : "false"));
+
         $pdo = connectDB();
 
         $query = "SELECT * FROM $request_tbl WHERE active=:active";
 
         if (!is_null($semester))
         {
+            Logger::info("Adding parameter: semester=" . $semester->getId());
             $query .= " AND section_id IN (SELECT id FROM $section_tbl WHERE semester_id=:semester_id)";
             $semester_id = $semester->getId();
         }
 
         if (!is_null($student))
         {
+            Logger::info("Adding parameter: student=" . $student->getId());
             $query .= " AND student_id=:student_id";
             $student_id = $student->getId();
         }
 
         if (!is_null($faculty))
         {
+            Logger::info("Adding parameter: faculty=" . $faculty->getId());
             $query .= " AND faculty_id=:faculty_id";
             $faculty_id = $faculty->getId();
         }
@@ -446,19 +543,33 @@ class Request implements JsonSerializable
         if (!is_null($faculty))
             $smt->bindParam(":faculty_id", $faculty_id, PDO::PARAM_INT);
 
-        $smt->execute();
+        if (!$smt->execute())
+        {
+            Logger::error("Request retrieval failed. Error info: " . $smt->errorInfo());
+            Logger::error("Used filter active=" . ($active) ? "true" : "false");
+
+            if (!is_null($semester)) Logger::error("Used filter semester=" . $semester->getId());
+            if (!is_null($student)) Logger::error("Used filter student=" . $student->getId());
+            if (!is_null($faculty)) Logger::error("Used filter faculty=" . $faculty->getId());
+
+            return null;
+        }
 
         $requestsList = $smt->fetchAll();
 
-        if (!$requestsList) return [];
+        Logger::info("Retrieved request list: " . Logger::obj($requestsList), Verbosity::HIGH);
+        Logger::info("Building request objects");
 
-        $returnList = array();
+        $returnList = [];
+
         foreach ($requestsList as $row)
         {
             $student = $student ?? Student::getById($row['student_id']);
             $faculty = $faculty ?? Faculty::getById($row['faculty_id']);
-            $request = new Request($student, $row['creation_time'], $row['last_modified'], Section::getById($row['section_id']), $faculty,
-                $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'], $row['active'], $row['id']);
+            $request = new Request($student, $row['creation_time'], $row['last_modified'],
+                Section::getById($row['section_id']), $faculty,
+                $row['status'], $row['justification'], $row['banner'], $row['reason'], $row['explanation'],
+                $row['active'], $row['id']);
             $returnList[] = $request;
         }
 
@@ -473,20 +584,37 @@ class Request implements JsonSerializable
     public static function getById(int $id): ?Request
     {
         global $request_tbl;
+        Logger::info("Retrieving student from database. ID: $id");
+
         $pdo = connectDB();
 
-        $smt = $pdo->prepare("SELECT * FROM $request_tbl WHERE id=:request_id LIMIT 1");
+        $query = "SELECT * FROM $request_tbl WHERE id=:request_id LIMIT 1";
+        $smt = $pdo->prepare($query);
         $smt->bindParam(":request_id", $id, PDO::PARAM_INT);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            Logger::error("Could not retrieve request from the database. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Request ID: $id");
+            return null;
+        }
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$data) return null;
+        if (!$data)
+        {
+            Logger::warning("No request with ID $id found");
+            return null;
+        }
+
+        Logger::info("Retrieved request: " . Logger::obj($data), Verbosity::HIGH);
 
         $student = Student::getById($data['student_id']);
         $section = Section::getById($data['section_id']);
-        return new Request($student, $data['creation_time'], $data['last_modified'], $section, Faculty::getById($data['faculty_id']),
-        $data['status'], $data['justification'], $data['banner'], $data['reason'], $data['explanation'], $data['active'], $data['id']);
+        return new Request($student, $data['creation_time'], $data['last_modified'], $section,
+            Faculty::getById($data['faculty_id']),
+            $data['status'], $data['justification'], $data['banner'], $data['reason'], $data['explanation'],
+            $data['active'], $data['id']);
     }
 
     public function getStatusHtml(): string

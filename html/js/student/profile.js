@@ -69,7 +69,7 @@ function updateProfile(data, edit, display)
         error: function (response)
         {
             response = JSON.parse(response.responseText);
-            displayStatusMessage("Error", response.msg, false);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         },
         complete: function ()
         {

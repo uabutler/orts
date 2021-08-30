@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/common.php';
 require_once __DIR__ . '/requests.php';
 
@@ -57,13 +58,17 @@ class Attachment implements JsonSerializable
         return $this->upload_time;
     }
 
-    private static function computeFileSize($path): string
+    private static function computeFileSize(string $path): string
     {
         $filesize = filesize($path);
         // Stolen from a random php.net comment
         $sz = 'BKMGTP';
-        $factor = (int) floor((strlen($filesize) - 1) / 3);
-        return sprintf("%.2f", $filesize / pow(1024, $factor)) . @$sz[$factor];
+        $factor = (int)floor((strlen($filesize) - 1) / 3);
+        $ret = sprintf("%.2f", $filesize / pow(1024, $factor)) . @$sz[$factor];
+
+        Logger::info("Computed size for $path as $ret");
+
+        return $ret;
     }
 
     public function getFileSize(): string
@@ -89,7 +94,8 @@ class Attachment implements JsonSerializable
         $this->path = $path;
     }
 
-    private function __construct(Request $request, ?string $upload_time, string $name, string $path, ?string $filesize, int $id = null)
+    private function __construct(Request $request, ?string $upload_time, string $name, string $path, ?string $filesize,
+                                 int $id = null)
     {
         $this->id = $id;
         $this->upload_time = $upload_time;
@@ -103,23 +109,48 @@ class Attachment implements JsonSerializable
     {
         global $attachment_tbl;
 
+        Logger::info("Writing new attachment to database: " . Logger::obj($this));
+
         $timestamp = getTimeStamp();
 
+        Logger::info("Creation time: $timestamp");
+
         $pdo = connectDB();
+        $query = "INSERT INTO $attachment_tbl
+        (
+            request_id,
+            upload_time,
+            name,
+            path
+        )
+        VALUES
+        (
+            :request_id,
+            :upload_time,
+            :name,
+            :path
+        )";
 
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Shows SQL errors
-
+        $smt = $pdo->prepare($query);
         $request_id = $this->request->getId();
-        $smt = $pdo->prepare("INSERT INTO $attachment_tbl (request_id, upload_time, name, path) VALUES (:request_id, :upload_time, :name, :path)");
         $smt->bindParam(":request_id", $request_id, PDO::PARAM_INT);
         $smt->bindParam(":upload_time", $timestamp, PDO::PARAM_STR);
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            Logger::error("Attachment database insertion failed. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Attachment details: " . Logger::obj($this));
+            return false;
+        }
+
+        Logger::info("Attachment database insertion completed.");
 
         $this->id = $pdo->lastInsertId();
         $this->filesize = $this->computeFileSize($this->path);
+
+        Logger::info("Attachment database request with id " . $this->getId());
 
         return true;
     }
@@ -127,16 +158,31 @@ class Attachment implements JsonSerializable
     private function updateDB(): bool
     {
         global $attachment_tbl;
-        $pdo = connectDB();
 
+        Logger::info("Writing updated attachment to database: " . Logger::obj($this));
+
+        $pdo = connectDB();
+        $query = "UPDATE $attachment_tbl SET
+            request_id=:request_id,
+            name=:name,
+            path=:path
+        WHERE id=:id";
+
+        $smt = $pdo->prepare($query);
         $request_id = $this->request->getId();
-        $smt = $pdo->prepare("UPDATE $attachment_tbl SET request_id=:request_id, name=:name, path=:path WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":request_id", $request_id, PDO::PARAM_INT);
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
 
-        if (!$smt->execute()) return false;
+        if (!$smt->execute())
+        {
+            Logger::error("Attachment database update failed. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Attachment details: " . Logger::obj($this));
+            return false;
+        }
+
+        Logger::info("Attachment database update completed with ID: " . $this->getId(), Verbosity::MED);
 
         return true;
     }
@@ -172,12 +218,18 @@ class Attachment implements JsonSerializable
     public static function deleteById(int $id, PDO $pdo = null): bool
     {
         global $attachment_tbl;
+        Logger::info("Deleting attachment from database. ID: $id");
+
         if (is_null($pdo)) $pdo = connectDB();
 
         $attachment = self::getById($id);
-        unlink($attachment->getPath());
 
-        return deleteByIdFrom($attachment_tbl, $id, $pdo);
+        if ($ret = unlink($attachment->getPath()))
+            Logger::info("Attachment file for $id was deleted");
+        else
+            Logger::error("The attachment for $id could not be deleted: " . $attachment->getPath(), Verbosity::LOW, true);
+
+        return $ret && deleteByIdFrom($attachment_tbl, $id, $pdo);
     }
 
     /**
@@ -197,24 +249,36 @@ class Attachment implements JsonSerializable
      * @param Request $request
      * @return array
      */
-    public static function list(Request $request): array
+    public static function list(Request $request): ?array
     {
         global $attachment_tbl;
+
+        Logger::info("Retrieving attachments from the database for request " . $request->getId());
+
         $pdo = connectDB();
 
         $request_id = $request->getId();
         $smt = $pdo->prepare("SELECT * FROM $attachment_tbl WHERE request_id=:request_id");
         $smt->bindParam(":request_id", $request_id, PDO::PARAM_INT);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            Logger::error("Attachment retrieval failed. Error info: " . $smt->errorInfo());
+            Logger::error("Request ID: $request_id");
+
+            return null;
+        }
 
         $data = $smt->fetchAll(PDO::FETCH_ASSOC);
 
-        if (!$data) return [];
+        Logger::info("Retrieved attachments list for request $request_id: " . Logger::obj($data), Verbosity::HIGH);
+        Logger::info("Building attachment list");
 
         $out = [];
 
         foreach ($data as $row)
-            $out[] = new Attachment(Request::getById($row['request_id']), $row['upload_time'], $row['name'], $row['path'], self::computeFileSize($row['path']), $row['id']);
+            $out[] = new Attachment(Request::getById($row['request_id']), $row['upload_time'], $row['name'],
+                $row['path'], self::computeFileSize($row['path']), $row['id']);
 
         return $out;
     }
@@ -227,17 +291,30 @@ class Attachment implements JsonSerializable
     public static function get(string $path): ?Attachment
     {
         global $attachment_tbl;
+
+        Logger::info("Retrieving attachment from database. Path: $path");
+
         $pdo = connectDB();
 
         $smt = $pdo->prepare("SELECT * FROM $attachment_tbl WHERE path=:path LIMIT 1");
         $smt->bindParam(":path", $path, PDO::PARAM_STR);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            Logger::error("Could not retrieve attachment from the database. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Attachment path: $path");
+            return null;
+        }
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
 
+        Logger::info("Retrieved attachments for file $path: " . Logger::obj($data), Verbosity::HIGH);
+        Logger::info("Building attachment object");
+
         if (!$data) return null;
 
-        return new Attachment(Request::getById($data['request_id']), $data['upload_time'], $data['name'], $data['path'], self::computeFileSize($data['path']), $data['id']);
+        return new Attachment(Request::getById($data['request_id']), $data['upload_time'], $data['name'],
+            $data['path'], self::computeFileSize($data['path']), $data['id']);
     }
 
     /**
@@ -248,17 +325,30 @@ class Attachment implements JsonSerializable
     public static function getById(int $id): ?Attachment
     {
         global $attachment_tbl;
+
+        Logger::info("Retrieving attachment from database. ID: $id");
+
         $pdo = connectDB();
 
         $smt = $pdo->prepare("SELECT * FROM $attachment_tbl WHERE id=:id LIMIT 1");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
-        $smt->execute();
+
+        if (!$smt->execute())
+        {
+            Logger::error("Could not retrieve attachment from the database. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Attachment ID: $id");
+            return null;
+        }
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
 
+        Logger::info("Retrieved attachments for id $id: " . Logger::obj($data), Verbosity::HIGH);
+        Logger::info("Building attachment object");
+
         if (!$data) return null;
 
-        return new Attachment(Request::getById($data['request_id']), $data['upload_time'], $data['name'], $data['path'], self::computeFileSize($data['path']), $data['id']);
+        return new Attachment(Request::getById($data['request_id']), $data['upload_time'], $data['name'], $data['path'],
+            self::computeFileSize($data['path']), $data['id']);
     }
 
     public function jsonSerialize()
