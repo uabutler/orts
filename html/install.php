@@ -4,7 +4,6 @@ require_once __DIR__ . '/../php/database/tables.php';
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-
 if(file_exists('../conf/app.ini'))
     header("Location: /index.php");
 
@@ -72,6 +71,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
         $config .= 'attachment_loc = "' . $_POST['attachment_loc'] . "\"\n";
     else
         array_push($missing, 'attachment_loc');
+
+    if(isset($_POST['webmaster']))
+        $config .= 'webmaster = "' . $_POST['webmaster'] . "\"\n";
+    else
+        array_push($missing, 'webmaster');
+
+    if(isset($_POST['verbosity']))
+        $config .= 'verbosity = ' . $_POST['verbosity'] . "\n";
+    else
+        array_push($missing, 'verbosity');
 
     if (count($missing) == 0)
     {
@@ -417,7 +426,7 @@ function populateSemester($pdo)
         <b>WARNING:</b> This site will <em>not</em> function without javascript. Please whitelist it before continuing.
     </noscript>
     <form class="ui form" method="POST" action="/install.php">
-    <h2 class="truman-dark-bg">Server Information</h2>
+        <h2 class="truman-dark-bg">Server Information</h2>
         <div class="field required">
             <label>Server Name</label>
             <input required type="text" name="name" value="https://orts.truman.edu">
@@ -425,6 +434,20 @@ function populateSemester($pdo)
         <div class="field required">
             <label>Attachment Location</label>
             <input required type="text" name="attachment_loc" value="/var/orts/attachments">
+        </div>
+        <div class="field required">
+            <label>Webmaster Email</label>
+            <input required type="text" name="webmaster" value="ulysses@uabutler.com">
+        </div>
+        <div class="field required">
+            <label>Logging Verbosity</label>
+            <select required class="ui dropdown" name="verbosity">
+                <option value="4">All</option>
+                <option value="3">High</option>
+                <option value="2">Medium</option>
+                <option value="1">Low</option>
+                <option value="0">None</option>
+            </select>
         </div>
         <h2 class="truman-dark-bg">MySQL Database</h2>
         <div class="field required">

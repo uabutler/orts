@@ -38,7 +38,7 @@ class Verbosity
 
     static function isEmitted(int $lvl): bool
     {
-        $config_lvl = intval(LOGGING['verbosity']);
+        $config_lvl = intval(SERVER['verbosity']);
         return $config_lvl && ($lvl <= $config_lvl);
     }
 }
