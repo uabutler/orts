@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../php/error/error-handling.php' ;
 include_once '../../php/database/courses.php';
 $active = Semester::listActive();
 $inactive = Semester::listInactive();

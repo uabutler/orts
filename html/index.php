@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../php/error/error-handling.php';
 
 if(!file_exists('../conf/app.ini'))
 {

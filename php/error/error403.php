@@ -21,7 +21,7 @@
         <p>
             The system doesn't think you should be allowed to access this.
             If you think this is a mistake, contact the system administrator.
-            If this isn't a mistake, field agents will be sent to apprehend you shortly.
+            If this isn't a mistake, field agents will arrive to apprehend you shortly.
         </p>
     </div>
 </div>

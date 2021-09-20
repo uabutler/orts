@@ -22,8 +22,7 @@ function getEnums(string $table, string $field): array
     if (!$smt->execute())
     {
         Logger::error("Could retrieve enum values: " . Logger::obj($smt->errorInfo()));
-        require '../../html/error/error500.php';
-        exit();
+        throw new DatabaseException("Could not retrieve enum values from database", 500, $smt->errorInfo());
     }
 
     return explode("','", substr($smt->fetch(PDO::FETCH_ASSOC)['Type'], 6, -2));

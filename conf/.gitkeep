@@ -2,5 +2,4 @@ This folder is where the configuration file will be store once the system is ins
 
 In order for the system to install correctly, the web server needs to have write permission for this directory.
 
-This can usually be accomplished by adding this directory to the group of the webserver user (it might be "www-data",
-"httpd", "apache", depending on your operating system). Then, make sure groups have write permissions to this directory
+This can usually be accomplished by setting the owner of this directory to the user of the webserver user (it might be "www-data", "httpd", "apache", depending on your operating system).

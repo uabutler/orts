@@ -1,4 +1,8 @@
-<?php http_response_code(500); ?>
+<?php
+require_once __DIR__ . '/../logger.php';
+http_response_code(500);
+$request_id = Logger::getRequestId();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +22,7 @@
 <div class="grid-item content">
     <div style="text-align: center;">
         <h1>ERROR 500</h1>
+        <p>Request ID: <?= $request_id ?></p>
         <p>That's bad. You might want to let us know this is happening...</p>
     </div>
 </div>

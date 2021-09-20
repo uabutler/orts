@@ -10,5 +10,5 @@ else
 {
     // Since the configuration file hasn't been read in, we can't use the Logger class.
     error_log("[ORTS] ERROR - Could not read configuration file. Has the system been installed?", 0);
-    include '../html/error/error500.php';
+    throw new Exception("The configuration file could not be parsed properly");
 }

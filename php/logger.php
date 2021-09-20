@@ -129,6 +129,8 @@ class Logger
 
     /**
      * Tagged as INFO. By default, only logged if verbose level is set to all
+     * @param string $msg
+     * @param int $lvl
      */
     static function info(string $msg, int $lvl = Verbosity::ALL)
     {
@@ -140,6 +142,8 @@ class Logger
 
     /**
      * Tagged as WARN. By default, only logged if verbose level is set to med
+     * @param string $msg
+     * @param int $lvl
      */
     static function warning(string $msg, int $lvl = Verbosity::MED)
     {
@@ -152,6 +156,9 @@ class Logger
     /**
      * Tagged as ERROR. By default, logged as long as logging isn't disabled.
      * In the future, this should also email the system administrator when asked
+     * @param string $msg
+     * @param int $lvl
+     * @param bool $ping
      */
     static function error(string $msg, int $lvl = Verbosity::LOW, bool $ping = false)
     {

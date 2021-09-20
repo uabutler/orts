@@ -57,7 +57,7 @@ class Auth
         if (!self::isAuthenticatedStudent(null))
             header("Location: /student/new-profile.php");
         elseif (!self::isAuthenticatedStudent($expectedStudent))
-            include '../html/error/error403.php';
+            include '../php/error/error403.php';
         else
             return true;
 
@@ -72,7 +72,7 @@ class Auth
     {
         self::forceAuthentication();
         if(is_null(Faculty::get(self::getUser())))
-            include '../html/error/error403.php';
+            include '../php/error/error403.php';
     }
 
     static function logout()

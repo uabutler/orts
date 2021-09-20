@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../php/error/error-handling.php' ;
 require_once '../../php/database/courses.php';
 require_once '../../php/database/faculty.php';
 

@@ -34,8 +34,7 @@ class PDOWrapper
         catch (PDOException $e)
         {
             Logger::error("Could not create a database connection" . Logger::obj($e), Verbosity::LOW, true);
-            require_once __DIR__ . '/../../../html/error/error500.php';
-            exit();
+            throw new DatabaseException("Unable to start database transaction", 500, $this->pdo->errorInfo());
         }
     }
 
