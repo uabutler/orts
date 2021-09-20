@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/helper/PDOWrapper.php';
+require_once __DIR__ . '/helper/DAO.php';
+require_once __DIR__ . '/helper/DAODeletable.php';
 require_once __DIR__ . '/requests.php';
 
 /**
@@ -8,9 +11,8 @@ require_once __DIR__ . '/requests.php';
  * original name of the file was. The databse does not store the file itself, that task
  * is left to the file system of the server.
  */
-class Attachment implements JsonSerializable
+class Attachment extends DAO implements JsonSerializable, DAODeletable
 {
-    private $id;
     private $request;
     private $name;
     private $upload_time;
@@ -105,17 +107,18 @@ class Attachment implements JsonSerializable
         $this->filesize = $filesize;
     }
 
-    private function insertDB(): bool
+    /**
+     * @throws DatabaseException
+     */
+    protected function insert(): void
     {
         global $attachment_tbl;
 
-        Logger::info("Writing new attachment to database: " . Logger::obj($this));
-
         $timestamp = getTimeStamp();
 
-        Logger::info("Creation time: $timestamp");
+        Logger::info("attachment creation time: $timestamp");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "INSERT INTO $attachment_tbl
         (
             request_id,
@@ -138,30 +141,18 @@ class Attachment implements JsonSerializable
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            Logger::error("Attachment database insertion failed. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Attachment details: " . Logger::obj($this));
-            return false;
-        }
-
-        Logger::info("Attachment database insertion completed.");
-
-        $this->id = $pdo->lastInsertId();
+        $this->id = PDOWrapper::insert($attachment_tbl, $smt, Logger::obj($this));
         $this->filesize = $this->computeFileSize($this->path);
-
-        Logger::info("Attachment database request with id " . $this->getId());
-
-        return true;
     }
 
-    private function updateDB(): bool
+    /**
+     * @throws DatabaseException
+     */
+    protected function update(): void
     {
         global $attachment_tbl;
 
-        Logger::info("Writing updated attachment to database: " . Logger::obj($this));
-
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "UPDATE $attachment_tbl SET
             request_id=:request_id,
             name=:name,
@@ -175,61 +166,28 @@ class Attachment implements JsonSerializable
         $smt->bindParam(":name", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":path", $this->path, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            Logger::error("Attachment database update failed. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Attachment details: " . Logger::obj($this));
-            return false;
-        }
-
-        Logger::info("Attachment database update completed with ID: " . $this->getId(), Verbosity::MED);
-
-        return true;
-    }
-
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the student has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
-    {
-        // The id is set only when the student is already in the database
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+        PDOWrapper::update($attachment_tbl, $smt, $this->id, Logger::obj($this));
     }
 
     /**
      * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
+     * @throws DatabaseException
      */
-    public function deleteFromDB(): bool
+    public function delete(): void
     {
-        return self::deleteById($this->id);
+        self::deleteById($this->id);
     }
 
     /**
      * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
+     * @throws DatabaseException
      */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $attachment_tbl;
-        Logger::info("Deleting attachment from database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
         $attachment = self::getById($id);
-
-        if ($ret = unlink($attachment->getPath()))
-            Logger::info("Attachment file for $id was deleted");
-        else
-            Logger::error("The attachment for $id could not be deleted: " . $attachment->getPath(), Verbosity::LOW, true);
-
-        return $ret && deleteByIdFrom($attachment_tbl, $id, $pdo);
+        PDOWrapper::deleteLeaf($attachment_tbl, $id);
+        PDOWrapper::markFileForDeletion($attachment->getPath());
     }
 
     /**
@@ -255,7 +213,7 @@ class Attachment implements JsonSerializable
 
         Logger::info("Retrieving attachments from the database for request " . $request->getId());
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $request_id = $request->getId();
         $smt = $pdo->prepare("SELECT * FROM $attachment_tbl WHERE request_id=:request_id");
@@ -294,7 +252,7 @@ class Attachment implements JsonSerializable
 
         Logger::info("Retrieving attachment from database. Path: $path");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $smt = $pdo->prepare("SELECT * FROM $attachment_tbl WHERE path=:path LIMIT 1");
         $smt->bindParam(":path", $path, PDO::PARAM_STR);
@@ -328,7 +286,7 @@ class Attachment implements JsonSerializable
 
         Logger::info("Retrieving attachment from database. ID: $id");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $smt = $pdo->prepare("SELECT * FROM $attachment_tbl WHERE id=:id LIMIT 1");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);

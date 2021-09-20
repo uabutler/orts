@@ -736,7 +736,7 @@ class CAS_Client
     // ########################################################################
 
     /**
-     * Ensure that this is actually a proxy object or fail with an exception
+     * Ensure that this is actually a proxy object or fail with an helper
      *
      * @throws CAS_OutOfSequenceBeforeProxyException
      *
@@ -782,7 +782,7 @@ class CAS_Client
     }
 
     /**
-     * Ensure that authentication was checked. Terminate with exception if no
+     * Ensure that authentication was checked. Terminate with helper if no
      * authentication was performed
      *
      * @throws CAS_OutOfSequenceBeforeAuthenticationCallException
@@ -812,7 +812,7 @@ class CAS_Client
 
 
     /**
-     * Ensure that authentication was checked. Terminate with exception if no
+     * Ensure that authentication was checked. Terminate with helper if no
      * authentication was performed
      *
      * @throws CAS_OutOfSequenceException
@@ -3272,7 +3272,7 @@ class CAS_Client
                 false/*$no_response*/, true/*$bad_response*/, $text_response
             );
         } else if ( $tree_response->getElementsByTagName("authenticationFailure")->length != 0) {
-            // authentication failed, extract the error code and message and throw exception
+            // authentication failed, extract the error code and message and throw helper
             $auth_fail_list = $tree_response
                 ->getElementsByTagName("authenticationFailure");
             throw new CAS_AuthenticationException(

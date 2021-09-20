@@ -40,7 +40,7 @@ API::post(function ($data)
     if (!(isset($data->banner_id) && preg_match('#^001\d{6}$#', $data->banner_id)))
         API::error(400, "User banner ID not specified properly");
 
-    if (!(isset($data->grad_month) && preg_match('#^(05|12)\/20[2-9]\d$#', $data->grad_month)))
+    if (!(isset($data->grad_month) && preg_match('#^(05|12)/20[2-9]\d$#', $data->grad_month)))
         API::error(400, "User grad month not specified properly");
 
     if (!(isset($data->standing) && in_array($data->standing, Student::listStandings())))
@@ -79,26 +79,7 @@ API::post(function ($data)
     $student = Student::build(Auth::getUser(), $data->first_name, $data->last_name, $data->banner_id,
         $data->grad_month, $data->standing, $data->majors, $data->minors);
 
-    if($student->storeInDB())
-    {
-        return $student->getId();
-    }
-    else
-    {
-        if ($student->errorInfo()[0] === "23000")
-        {
-            if (strpos($student->errorInfo()[2], "banner_id"))
-                API::error(409, "A user with this banner ID has already been created");
-            else
-                API::error(409, "A user with this email has already been created");
-        }
-        else
-        {
-            API::error(500, "An unknown error has occurred. Please contact the system administrator");
-        }
-    }
-
-    return null;
+    $student->storeInDB();
 });
 
 API::put(function ($data)
@@ -165,33 +146,13 @@ API::put(function ($data)
 
     if (isset($data->grad_month))
     {
-        if (preg_match('#^(05|12)\/20[2-9]\d$#', $data->grad_month))
+        if (preg_match('#^(05|12)/20[2-9]\d$#', $data->grad_month))
             $student->setGradMonth($data->grad_month);
         else
             API::error(400, "User grad month not specified properly");
     }
 
-    if($student->storeInDB())
-    {
-        return $student->getId();
-    }
-    else
-    {
-
-        if ($student->errorInfo()[0] === "23000")
-        {
-            if (strpos($student->errorInfo()[2], "banner_id"))
-                API::error(409, "A user with this banner ID has already been created");
-            else
-                API::error(409, "A user with this email has already been created");
-        }
-        else
-        {
-            API::error(500, "Please specify the id of the request to modify");
-        }
-    }
-
-    return null;
+    $student->storeInDB();
 });
 
 API::error(404, "Not Found");

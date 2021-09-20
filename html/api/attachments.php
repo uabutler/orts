@@ -50,9 +50,5 @@ API::delete(function()
     if (!$authed)
         API::error(403, "You aren't allowed to delete this attachment");
 
-    // TODO: Improve error handling
-    if ($attachment->deleteFromDB())
-        return "Success";
-    else
-        API::error(500, "Could not delete attachment");
+    $attachment->delete();
 });

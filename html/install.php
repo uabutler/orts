@@ -381,9 +381,12 @@ function populateSemester($pdo)
     <?php if (!$installing): ?>
     <div class="ui warning message">
         <div class="header">
-            Please ensure the database has been created before beginning
-            the installation.
+            Please ensure your system meets the following prerequisites.
         </div>
+        <p>
+            Ensure the database has been created before beginning
+            the installation.
+        </p>
         <p>
             This can be done using the following commands
         </p>
@@ -394,7 +397,16 @@ function populateSemester($pdo)
             mysql> EXIT
         </code>
         <p>
-            All fields are <em>REQUIRED</em>.
+            <code>python3</code> must be installed for semester data to be ingested using a spreadsheet.
+            Strictly speaking, this is option, but otherwise requires the user to input every section for
+            every semester manually.
+        </p>
+        <p>
+            The <code>openpyxl</code> package must be installed for user <code><?= exec('whoami') ?></code>.
+            This can be installed using pip.
+        </p>
+        <p>
+            All input fields below are <em>REQUIRED</em>.
         </p>
     </div>
     <?php if(count($missing) != 0): ?>

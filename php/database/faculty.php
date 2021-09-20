@@ -1,17 +1,18 @@
 <?php
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/helper/PDOWrapper.php';
+require_once __DIR__ . '/helper/DAO.php';
+require_once __DIR__ . '/helper/DAODeletable.php';
 
 /**
  * A class that stores a faculty member, keeps track of name and email
  */
-class Faculty implements JsonSerializable
+class Faculty extends DAO implements JsonSerializable, DAODeletable
 {
-    private $id;
     private $email;
     private $first_name;
     private $last_name;
     private $default;
-    private $error_info;
 
     /**
      * The database id. Null if it hasn't been stored
@@ -52,11 +53,6 @@ class Faculty implements JsonSerializable
     public function isDefault(): bool
     {
         return $this->default;
-    }
-
-    public function errorInfo(): ?array
-    {
-        return $this->error_info;
     }
 
     /**
@@ -103,7 +99,7 @@ class Faculty implements JsonSerializable
     public static function list(): array
     {
         global $faculty_tbl;
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $smt = $pdo->query("SELECT * FROM $faculty_tbl");
 
@@ -138,12 +134,11 @@ class Faculty implements JsonSerializable
         return true;
     }
 
-    private function insertDB(): bool
+    protected function insert(): void
     {
         global $faculty_tbl;
-        Logger::info("Writing new faculty to database: " . Logger::obj($this));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "INSERT INTO $faculty_tbl
         (
             email,
@@ -162,58 +157,35 @@ class Faculty implements JsonSerializable
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Faculty already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Faculty details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Faculty insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Faculty details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        Logger::info("Faculty insertion complete.");
-        $this->id = $pdo->lastInsertId();
-        Logger::info("Created faculty with id " . $this->getId(), Verbosity::LOW);
+        $this->id = PDOWrapper::insert($faculty_tbl, $smt, Logger::obj($this));
 
         Logger::info("Finding default faculty...");
         $smt = $pdo->prepare("SELECT id FROM $faculty_tbl WHERE is_default=true");
 
         if (!$smt->execute())
         {
-            $this->error_info = $smt->errorInfo();
-            Logger::error("Could not retrieve faculty to determine default. Error info: " . Logger::obj($this->error_info), Verbosity::LOW, true);
-            return false;
+            Logger::error("Could not retrieve faculty to determine default. Error info: " . Logger::obj($smt->errorInfo()), Verbosity::LOW, true);
+            throw new DatabaseException("A database error occurred while creating the faculty", 500, $smt->errorInfo());
         }
 
         // If there is no default, or the user indicated this should be the new default
         if ($smt->rowCount() === 0 || $this->default)
         {
             Logger::info("No default faculty found, setting new faculty to default.");
-            if (!$this->makeDefault($pdo)) return false;
+            $this->makeDefault($pdo);
         }
         else
         {
             Logger::info("Default faculty already exists. Skipping.");
         }
-
-        return true;
     }
 
-    private function updateDB(): bool
+    protected function update(): void
     {
         global $faculty_tbl;
         Logger::info("Writing updated faculty to database: " . Logger::obj($this));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "UPDATE $faculty_tbl SET
             email=:email,
             first_name=:first_name,
@@ -226,66 +198,29 @@ class Faculty implements JsonSerializable
         $smt->bindParam(":first_name", $this->first_name, PDO::PARAM_STR);
         $smt->bindParam(":last_name", $this->last_name, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Faculty already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Faculty details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Faculty update failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Faculty details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
+        PDOWrapper::update($faculty_tbl, $smt, $this->id, Logger::obj($this));
 
         if ($this->default)
-            if (!$this->makeDefault($pdo)) return false;
-
-        return true;
-    }
-
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the student has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
-    {
-        // The id is set only when the student is already in the database
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+            $this->makeDefault($pdo);
     }
 
     /**
      * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
+     * @throws DatabaseException
      */
-    public function deleteFromDB(): bool
+    public function delete(): void
     {
-        return self::deleteById($this->id);
+        self::deleteByID($this->id);
     }
 
     /**
      * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
+     * @throws DatabaseException
      */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $faculty_tbl;
-        Logger::info("Deleting faculty from database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
-        return deleteByIdFrom($faculty_tbl, $id, $pdo);
+        PDOWrapper::deleteLeaf($faculty_tbl, $id);
     }
 
 
@@ -312,7 +247,7 @@ class Faculty implements JsonSerializable
         global $faculty_tbl;
         Logger::info("Retrieving faculty from database.");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $faculty_tbl WHERE email=:email LIMIT 1";
         $smt = $pdo->prepare($query);
         $smt->bindParam(":email", $email, PDO::PARAM_STR);
@@ -344,7 +279,7 @@ class Faculty implements JsonSerializable
     {
         global $faculty_tbl;
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $smt = $pdo->prepare("SELECT * FROM $faculty_tbl WHERE id=:id LIMIT 1");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
 
@@ -365,7 +300,7 @@ class Faculty implements JsonSerializable
     public static function getDefault(): ?Faculty
     {
         global $faculty_tbl;
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $smt = $pdo->query("SELECT * FROM $faculty_tbl WHERE is_default=true LIMIT 1");
 
@@ -378,8 +313,6 @@ class Faculty implements JsonSerializable
 
     public function jsonSerialize()
     {
-        $out = get_object_vars($this);
-        unset($out['error_info']);
-        return $out;
+        return get_object_vars($this);
     }
 }

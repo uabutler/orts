@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/../logger.php';
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/helper/PDOWrapper.php';
+require_once __DIR__ . '/helper/DAO.php';
+require_once __DIR__ . '/helper/DAODeletable.php';
 require_once __DIR__ . '/courses.php';
 require_once __DIR__ . '/programs.php';
 require_once __DIR__ . '/requests.php';
@@ -9,9 +12,8 @@ require_once __DIR__ . '/requests.php';
 /**
  * This class wraps a student entry in the database
  */
-class Student implements JsonSerializable
+class Student extends DAO implements JsonSerializable, DAODeletable
 {
-    private $id;
     private $email;
     private $first_name;
     private $last_name;
@@ -21,7 +23,6 @@ class Student implements JsonSerializable
     private $majors;
     private $minors;
     private $last_active_sem;
-    private $error_info;
 
     private function __construct(string $email, string $first_name, string $last_name, string $banner_id,
                                  string $grad_month, string $standing, array $majors, array $minors,
@@ -37,7 +38,6 @@ class Student implements JsonSerializable
         $this->minors = $minors;
         $this->last_active_sem = $last_active_sem;
         $this->id = $id;
-        $this->error_info = null;
     }
 
     /**
@@ -119,11 +119,6 @@ class Student implements JsonSerializable
     public function getMinors(): array
     {
         return $this->minors;
-    }
-
-    public function errorInfo(): ?array
-    {
-        return $this->error_info;
     }
 
     /**
@@ -220,7 +215,11 @@ class Student implements JsonSerializable
     }
 
     // Adds the list of majors to the database
-    private function add_majors(array $majors, $pdo): bool
+
+    /**
+     * @throws DatabaseException
+     */
+    private function add_majors(array $majors, $pdo): void
     {
         global $student_major_tbl, $student_tbl, $major_tbl;
 
@@ -229,7 +228,7 @@ class Student implements JsonSerializable
         if (!count($majors))
         {
             Logger::info("No majors to add... Skipping");
-            return true;
+            return;
         }
 
         $major_str = Major::buildListString($majors);
@@ -239,19 +238,17 @@ class Student implements JsonSerializable
 
         if (!$smt->execute())
         {
-            $this->error_info = $smt->errorInfo();
-            array_push($this->error_info, 'add_majors:"' . $major_str . '"');
-            Logger::error("Student majors insertion failed. Error info: " . Logger::obj($this->error_info));
-            return false;
+            Logger::error("Student majors insertion failed. Error info: " . Logger::obj($smt->error_info));
+            throw new DatabaseException("One or more majors could not be added to the student.", 200, $smt->error_info);
         }
 
         Logger::info("Student majors insertion completed.");
-
-        return true;
     }
 
-    // Adds the list of minors to the database
-    private function add_minors(array $minors, $pdo): bool
+    /**
+     * @throws DatabaseException
+     */
+    private function add_minors(array $minors, $pdo): void
     {
         global $student_minor_tbl, $student_tbl, $minor_tbl;
 
@@ -260,7 +257,7 @@ class Student implements JsonSerializable
         if (!count($minors))
         {
             Logger::info("No minors to add... Skipping");
-            return true;
+            return;
         }
 
         $minor_str = Minor::buildListString($minors);
@@ -269,16 +266,17 @@ class Student implements JsonSerializable
 
         if (!$smt->execute())
         {
-            $this->error_info = $smt->errorInfo();
-            array_push($this->error_info, 'add_minors:"' . $minor_str . '"');
-            return false;
+            Logger::error("Student minors insertion failed. Error info: " . Logger::obj($smt->error_info));
+            throw new DatabaseException("One or more minors could not be added to the student.", 200, $smt->error_info);
         }
 
-        return true;
+        Logger::info("Student minors insertion completed.");
     }
 
-    // Removes one major from the database
-    private function remove_major(string $major, $pdo): bool
+    /**
+     * @throws DatabaseException
+     */
+    private function remove_major(string $major, $pdo): void
     {
         global $student_major_tbl, $student_tbl, $major_tbl;
         $smt = $pdo->prepare("DELETE $student_major_tbl FROM $student_major_tbl INNER JOIN $student_tbl ON $student_tbl.id=student_id INNER JOIN $major_tbl ON $major_tbl.id=major_id WHERE email=:email AND major=:major");
@@ -287,16 +285,15 @@ class Student implements JsonSerializable
 
         if (!$smt->execute())
         {
-            $this->error_info = $smt->errorInfo();
-            array_push($this->error_info, 'remove_major:"' . $major . '"');
-            return false;
+            Logger::error("Student majors removal failed. Error info: " . Logger::obj($smt->error_info));
+            throw new DatabaseException("One or more majors could not be removed to the student.", 200, $smt->error_info);
         }
 
-        return true;
+        Logger::info("Student majors removal completed.");
     }
 
     // Removes one minor from the database
-    private function remove_minor(string $minor, $pdo): bool
+    private function remove_minor(string $minor, $pdo): void
     {
         global $student_minor_tbl, $student_tbl, $minor_tbl;
         $smt = $pdo->prepare("DELETE $student_minor_tbl FROM $student_minor_tbl INNER JOIN $student_tbl ON $student_tbl.id=student_id INNER JOIN $minor_tbl ON $minor_tbl.id=minor_id WHERE email=:email AND minor=:minor");
@@ -305,24 +302,18 @@ class Student implements JsonSerializable
 
         if (!$smt->execute())
         {
-            $this->error_info = $smt->errorInfo();
-            array_push($this->error_info, 'remove_minor:"' . $minor . '"');
-            return false;
+            Logger::error("Student minors removal failed. Error info: " . Logger::obj($smt->error_info));
+            throw new DatabaseException("One or more minors could not be removed to the student.", 200, $smt->error_info);
         }
 
-        return true;
+        Logger::info("Student minors removal completed.");
     }
 
-    // If the student is newly created, this will create a new entry in the database
-    private function insertDB(): bool
+    protected function insert(): void
     {
-        global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
+        global $student_tbl;
 
-        Logger::info("Writing new student to database: " . Logger::obj($this));
-
-        $pdo = connectDB();
-
-        $pdo->beginTransaction();
+        $pdo = PDOWrapper::getConnection();
 
         // Insert basic student info
         $query = "INSERT INTO $student_tbl (email, first_name, last_name, banner_id, grad_month, standing, last_active_sem) VALUES (:email, :first_name, :last_name, :banner_id, :grad_month, :standing, :last_active_sem)";
@@ -336,64 +327,17 @@ class Student implements JsonSerializable
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
+        $this->id = PDOWrapper::insert($student_tbl, $smt, Logger::obj($this));
 
-            $info = "Email=" . $this->email;
-            $info .= " FirstName=" . $this->first_name;
-            $info .= " LastName=" . $this->last_name;
-            $info .= " GradMonth=" . $this->grad_month;
-            $info .= " Standing=" . $this->standing;
-            $info .= " Sem=" . ($this->last_active_sem ? $this->last_active_sem->getCode() : "null");
-
-            array_push($this->error_info, 'insertDB:"' . $info . '"');
-            Logger::error("Student insertion failed. Error info: " . Logger::obj($this->error_info));
-            $pdo->rollBack();
-            return false;
-        }
-
-        Logger::info("Initial student write successful.");
-
-        // get the newly created ID
-        $this->id = $pdo->lastInsertId();
-
-        Logger::info("Student assigned id " . $this->id);
-
-        // Insert information about majors and minors
-        if (!$this->add_majors(Major::buildStringList($this->majors), $pdo))
-        {
-            $pdo->rollBack();
-            return false;
-        }
-
-        if (!$this->add_minors(Major::buildStringList($this->minors), $pdo))
-        {
-            $pdo->rollBack();
-            return false;
-        }
-
-
-        if (!$pdo->commit())
-        {
-            $this->error_info = $pdo->errorInfo();
-            Logger::error("Student insertion failed. Error info: " . Logger::obj($smt->errorInfo()));
-            return false;
-        }
-        else
-        {
-            Logger::info("Database write complete");
-            Logger::info("Inserted student ID: " . $this->getId());
-            return true;
-        }
+        $this->add_majors(Major::buildStringList($this->majors), $pdo);
+        $this->add_minors(Major::buildStringList($this->minors), $pdo);
     }
 
-    // If the student already exists in the database, this will update their entry with the information from this object
-    private function updateDB(): bool
+    protected function update(): void
     {
         global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         // First, update the basic student info
         $last_active_sem_id = $this->last_active_sem ? $this->last_active_sem->getId() : null;
@@ -407,26 +351,11 @@ class Student implements JsonSerializable
         $smt->bindParam(":standing", $this->standing, PDO::PARAM_STR);
         $smt->bindParam(":last_active_sem", $last_active_sem_id, PDO::PARAM_INT);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            $info = "Email=" . $this->email;
-            $info .= " FirstName=" . $this->first_name;
-            $info .= " LastName=" . $this->last_name;
-            $info .= " GradMonth=" . $this->grad_month;
-            $info .= " Standing=" . $this->standing;
-            $info .= " Sem=" . $this->last_active_sem->getCode();
-
-            array_push($this->error_info, 'updateDB:"' . $info . '"');
-
-            Logger::error("A student could not be updated: " . Logger::obj($this));
-
-            return false;
-        }
+        PDOWrapper::update($student_tbl, $smt, $this->id, Logger::obj($this));
 
         Logger::info("A student was updated successfully", Verbosity::HIGH);
 
+        // TODO: We could rewrite this so that all the majors and minors are deleted using a single SQL query
         // Next, get the majors currently stored in the database
         $smt = $pdo->prepare("SELECT major FROM $student_tbl INNER JOIN $student_major_tbl ON $student_tbl.id = $student_major_tbl.student_id  INNER JOIN $major_tbl ON $student_major_tbl.major_id = $major_tbl.id WHERE $student_tbl.email = :email");
         $smt->bindParam(":email", $this->email, PDO::PARAM_STR);
@@ -445,72 +374,36 @@ class Student implements JsonSerializable
         foreach ($old_majors as $major)
             if (!in_array($major, $current_majors)) $majors_to_add[] = $major;
 
-        if (!(empty($majors_to_add) || $this->add_majors($majors_to_add, $pdo)))
-            return false;
+        if (!empty($majors_to_add))
+            $this->add_majors($majors_to_add, $pdo);
 
         $minors_to_add = [];
         foreach ($old_minors as $minor)
             if (!in_array($minor, $current_minors)) $minors_to_add[] = $minor;
 
-        if (!(empty($minors_to_add) || $this->add_minors($minors_to_add, $pdo)))
-            return false;
+        if (!empty($minors_to_add))
+            $this->add_minors($minors_to_add, $pdo);
 
         // If a major is in the database, but is no longer a major, remove it
         foreach ($current_majors as $major)
-        {
-            if (!(in_array($major, $old_majors) || $this->remove_major($major, $pdo)))
-                return false;
-        }
+            if (!in_array($major, $old_majors)) $this->remove_major($major, $pdo);
 
         foreach ($current_minors as $minor)
-        {
-            if (!(in_array($minor, $old_minors) || $this->remove_minor($minor, $pdo)))
-                return false;
-        }
+            if (!in_array($minor, $old_minors)) $this->remove_minor($minor, $pdo);
 
         Logger::info("A new student was create with id" . $this->id, Verbosity::MED);
-
-        return true;
     }
 
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the student has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
+    public function delete(): void
     {
-        // The id is set only when the student is already in the database
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+        self::deleteByID($this->id);
     }
 
-    /**
-     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
-     */
-    public function deleteFromDB(): bool
-    {
-        return self::deleteById($this->id);
-    }
-
-    /**
-     * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
-     */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $student_tbl, $student_major_tbl, $student_minor_tbl, $request_tbl;
-        if (is_null($pdo)) $pdo = connectDB();
 
-        // Delete all requests
-        $smt = $pdo->query("SELECT id FROM $request_tbl WHERE student_id=:id");
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        foreach ($ids as $id) Request::deleteById($id, $pdo);
+        $pdo = PDOWrapper::getConnection();
 
         // Delete the majors and minors
         $smt = $pdo->query("DELETE FROM $student_major_tbl WHERE student_id=:id");
@@ -521,14 +414,13 @@ class Student implements JsonSerializable
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
         $smt->execute();
 
-        // Delete the student
-        return deleteByIdFrom($student_tbl, $id, $pdo);
+        PDOWrapper::deleteWithChildren($student_tbl, $id, Request::class, $request_tbl, "student_id");
     }
 
     public static function list(): array
     {
         global $student_tbl;
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $smt = $pdo->query("SELECT * FROM $student_tbl");
         $data = $smt->fetch(PDO::FETCH_ASSOC);
@@ -601,7 +493,7 @@ class Student implements JsonSerializable
     public static function get(string $email): ?Student
     {
         global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $smt = $pdo->prepare("SELECT * FROM $student_tbl WHERE email=:email LIMIT 1");
         $smt->bindParam(":email", $email, PDO::PARAM_STR);
@@ -621,7 +513,7 @@ class Student implements JsonSerializable
     public static function getById(int $id): ?Student
     {
         global $student_tbl, $major_tbl, $minor_tbl, $student_major_tbl, $student_minor_tbl;
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $smt = $pdo->prepare("SELECT * FROM $student_tbl WHERE id=:id LIMIT 1");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);

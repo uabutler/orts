@@ -1,5 +1,14 @@
 <?php
 require_once 'logger.php';
+require_once __DIR__ . '/../php/database/helper/DatabaseException.php';
+
+function api_exception_handler($exception)
+{
+    Logger::error("A fatal error has occurred: $exception", Verbosity::LOW, true);
+    API::error(500, "An unknown error has occurred");
+}
+
+set_exception_handler('api_exception_handler');
 
 /**
  * When I started building this application, I didn't know about any "proper" techniques, so here is my
@@ -7,34 +16,52 @@ require_once 'logger.php';
  */
 class API
 {
+
     private static function paramHelper(string $method, callable $func)
     {
-        global $_REQUEST_ID;
-
         if ($_SERVER['REQUEST_METHOD'] === $method)
         {
-            Logger::start();
-            $response['response'] = call_user_func($func);
-            $response['request_id'] = $_REQUEST_ID;
+            try
+            {
+                $response['response'] = call_user_func($func);
+            }
+            catch (DatabaseException $e)
+            {
+                API::error($e->getCode(), $e->getMessage());
+            }
+            catch ( \Exception $e)
+            {
+                API::error(500, "An unknown error occurred");
+            }
+
+            $response['request_id'] = Logger::getRequestId();
             http_response_code(200);
             echo json_encode($response);
-            Logger::end();
             exit();
         }
     }
 
     private static function jsonHelper(string $method, callable $func)
     {
-        global $_REQUEST_ID;
-
         if ($_SERVER['REQUEST_METHOD'] === $method)
         {
-            Logger::start();
             $param = json_decode(file_get_contents('php://input'));
-            $response['response'] = call_user_func($func, $param);
-            $response['request_id'] = $_REQUEST_ID;
+
+            try
+            {
+                $response['response'] = call_user_func($func, $param);
+            }
+            catch (DatabaseException $e)
+            {
+                API::error($e->getCode(), $e->getMessage());
+            }
+            catch ( \Exception $e)
+            {
+                API::error(500, "An unknown error occurred");
+            }
+
+            $response['request_id'] = Logger::getRequestId();
             echo json_encode($response);
-            Logger::end();
             exit();
         }
     }
@@ -69,14 +96,20 @@ class API
         else
             Logger::error("Request failed. Returning error $code. REASON=$msg", Verbosity::LOW, true);
 
-        global $_REQUEST_ID;
-
         http_response_code($code);
 
         $response['msg'] = $msg;
-        $response['request_id'] = $_REQUEST_ID;
+        $response['request_id'] = Logger::getRequestId();
         echo json_encode($response);
 
+        exit();
+    }
+
+    public static function success(string $msg)
+    {
+        $response['msg'] = $msg;
+        $response['request_id'] = Logger::getRequestId();
+        echo json_encode($response);
         exit();
     }
 

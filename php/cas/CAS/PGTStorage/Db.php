@@ -220,7 +220,7 @@ class CAS_PGTStorage_Db extends CAS_PGTStorage_AbstractStorage
      */
     private function _setErrorMode()
     {
-        // get PDO object and enable exception error mode
+        // get PDO object and enable helper error mode
         $pdo = $this->_getPdo();
         $this->_errMode = $pdo->getAttribute(PDO::ATTR_ERRMODE);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

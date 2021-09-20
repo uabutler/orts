@@ -45,10 +45,15 @@ API::put(function($data)
                 $request->setNotInBanner();
         }
 
-        if($request->storeInDB())
-            return "Success";
-        else
-            API::error(500, "Could not write to database");
+        try
+        {
+            $request->storeInDB();
+            API::success("Update complete");
+        }
+        catch (DatabaseException $e)
+        {
+            API::error($e->getCode(), $e->getMessage());
+        }
     }
     else
     {

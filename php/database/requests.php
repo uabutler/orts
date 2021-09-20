@@ -1,13 +1,16 @@
 <?php
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/helper/PDOWrapper.php';
+require_once __DIR__ . '/helper/DAO.php';
+require_once __DIR__ . '/helper/DAODeactivatable.php';
+require_once __DIR__ . '/helper/DAODeletable.php';
 require_once __DIR__ . '/attachments.php';
 require_once __DIR__ . '/courses.php';
 require_once __DIR__ . '/students.php';
 require_once __DIR__ . '/faculty.php';
 
-class Request implements JsonSerializable
+class Request extends DAO implements JsonSerializable, DAODeactivatable, DAODeletable
 {
-    private $id;
     private $student;
     private $section;
     private $creation_time;
@@ -19,7 +22,6 @@ class Request implements JsonSerializable
     private $reason;
     private $explanation;
     private $active;
-    private $error_info;
 
     /**
      * The database id. Null if it hasn't been stored
@@ -114,16 +116,6 @@ class Request implements JsonSerializable
     public function getExplanation(): string
     {
         return addslashes(htmlspecialchars($this->explanation, ENT_QUOTES));
-    }
-
-    /**
-     * Returns the error info on a failed DB write. Only set when storeInDB(0) returns false
-     * @return null If no errors have occurred
-     * @return array The error info returned from the PDOStatement
-     */
-    public function errorInfo(): ?array
-    {
-        return $this->error_info;
     }
 
     /**
@@ -232,20 +224,20 @@ class Request implements JsonSerializable
         $this->reason = $reason;
         $this->explanation = $explanation;
         $this->active = $active;
-        $this->error_info = null;
     }
 
-    private function insertDB(): bool
+    /**
+     * @throws DatabaseException
+     */
+    protected function insert(): void
     {
         global $request_tbl;
 
-        Logger::info("Writing new request to database: " . Logger::obj($this));
-
         $timestamp = getTimeStamp();
 
-        Logger::info("Creation time: $timestamp");
+        Logger::info("Request creation time: $timestamp");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $query = "INSERT INTO $request_tbl
         (
@@ -293,47 +285,25 @@ class Request implements JsonSerializable
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            // If the override requests could not be added because one for that section already exists... else...
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Override request already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Request details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Override request insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Request details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        Logger::info("Override request insertion completed.");
+        $this->id = PDOWrapper::insert($request_tbl, $smt, Logger::obj($this));
 
         $this->id = $pdo->lastInsertId();
         $this->creation_time = $timestamp;
         $this->last_modified = $timestamp;
-
-        Logger::info("Created override request with id " . $this->getId(), Verbosity::MED);
-
-        return true;
     }
 
-    private function updateDB(): bool
+    /**
+     * @throws DatabaseException
+     */
+    protected function update(): void
     {
         global $request_tbl;
 
-        Logger::info("Writing updated request to database: " . Logger::obj($this));
-
         $timestamp = getTimeStamp();
 
-        Logger::info("Modification time: $timestamp");
+        Logger::info("Request modification time: $timestamp");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "UPDATE $request_tbl SET
             student_id=:student_id,
             last_modified=:last_modified,
@@ -362,93 +332,34 @@ class Request implements JsonSerializable
         $smt->bindParam(":reason", $this->reason, PDO::PARAM_STR);
         $smt->bindParam(":explanation", $this->explanation, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-            Logger::error("Override request update failed. Error info: " . Logger::obj($this->error_info));
-            Logger::error("Request details: " . Logger::obj($this));
-            return false;
-        }
-
-        Logger::info("Override request initial update completed.");
+        PDOWrapper::update($request_tbl, $smt, $this->id, Logger::obj($this));
 
         $this->last_modified = $timestamp;
 
-        $ret = true;
-        if (!$this->active) $ret = !self::inactiveById($this->id, $pdo);
-        if ($ret) Logger::info("Override request update completed with ID: " . $this->getId(), Verbosity::MED);
-
-        return $ret;
+        if (!$this->active)
+            self::deactivate();
     }
 
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the request has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
+    public function delete(): void
     {
-        // The id is set only when the request is already in the database
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+        self::deleteById($this->id);
     }
 
-    /**
-     * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
-     */
-    public function deleteFromDB(): bool
-    {
-        return self::deleteById($this->id);
-    }
-
-    /**
-     * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
-     */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $request_tbl, $attachment_tbl;
-
-        Logger::info("Deleting request from database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
-        // TODO: Notifications?
-
-        // Delete all attachments
-        $query = "SELECT id FROM $attachment_tbl WHERE request_id=:id";
-        $smt = $pdo->prepare($query);
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve attachments for request deletion. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Request ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved attachments, starting deletions.");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Attachments to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Attachment::deleteById($i, $pdo);
-
-        // Delete the request
-        return deleteByIdFrom($request_tbl, $id, $pdo);
+        PDOWrapper::deleteWithChildren($request_tbl, $id, Attachment::class, $attachment_tbl, "request_id");
     }
 
-    public static function inactiveById(int $id, PDO $pdo = null): bool
+    public function deactivate(): void
+    {
+        self::deactivateByID($this->id);
+    }
+
+    public static function deactivateByID(int $id): void
     {
         global $request_tbl;
-
-        Logger::info("Deactivating override request in database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-        return inactiveByIdFrom($request_tbl, $id, $pdo);
+        PDOWrapper::deactivateLeaf($request_tbl, $id);
     }
 
     /**
@@ -506,7 +417,7 @@ class Request implements JsonSerializable
         Logger::info("Retrieving requests from database");
         Logger::info("Adding parameter: active=" . ($active ? "true" : "false"));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $query = "SELECT * FROM $request_tbl WHERE active=:active";
 
@@ -586,7 +497,7 @@ class Request implements JsonSerializable
         global $request_tbl;
         Logger::info("Retrieving student from database. ID: $id");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $query = "SELECT * FROM $request_tbl WHERE id=:request_id LIMIT 1";
         $smt = $pdo->prepare($query);
@@ -617,7 +528,7 @@ class Request implements JsonSerializable
             $data['active'], $data['id']);
     }
 
-    public function getStatusHtml(): string
+    public function getStatusHtml(): ?string
     {
         switch ($this->status)
         {
@@ -637,6 +548,8 @@ class Request implements JsonSerializable
                 return '<i class="material-icons" style="color:red">cancel</i> Denied';
             case 'Requires Faculty Approval':
                 return '<i class="material-icons" style="color:orange">warning</i> Requires Faculty Approval';
+            default:
+                return null;
         }
     }
 
@@ -646,7 +559,6 @@ class Request implements JsonSerializable
 
         unset($out['justification']);
         unset($out['explanation']);
-        unset($out['error_info']);
 
         return $out;
     }

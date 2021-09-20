@@ -111,12 +111,12 @@ function updateAttachmentTable()
         url: '/api/attachments.php',
         method: 'GET',
         data: 'id=' + REQUEST_ID,
-        success: function(response)
+        success: function(data)
         {
             let display = $('#file-list-table');
-            if (response)
+            if (data)
             {
-                let data = JSON.parse(response);
+                data = JSON.parse(data)
                 let table = `
                     <table class="ui celled table">
                         <thead>
@@ -129,7 +129,7 @@ function updateAttachmentTable()
                         </thead>
                         <tbody>`;
 
-                for (const file of data)
+                for (const file of data.response)
                 {
                     table += `
                     <tr data-value="${file.id}">

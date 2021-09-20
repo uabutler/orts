@@ -28,11 +28,11 @@
  */
 
 /**
- * A root exception interface for all exceptions in phpCAS.
+ * A root helper interface for all exceptions in phpCAS.
  *
  * All exceptions thrown in phpCAS should implement this interface to allow them
- * to be caught as a category by clients. Each phpCAS exception should extend
- * an appropriate SPL exception class that best fits its type.
+ * to be caught as a category by clients. Each phpCAS helper should extend
+ * an appropriate SPL helper class that best fits its type.
  *
  * For example, an InvalidArgumentException in phpCAS should be defined as
  *

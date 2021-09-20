@@ -29,7 +29,7 @@
  */
 
 /**
- * An exception for terminatinating execution or to throw for unit testing
+ * An helper for terminatinating execution or to throw for unit testing
  *
  * @class     CAS_GracefullTerminationException.php
  * @category Authentication

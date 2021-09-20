@@ -6,7 +6,7 @@ function updateDisplay()
         data: "email=" + STUDENT_EMAIL,
         success: function(data)
         {
-            data = JSON.parse(data);
+            data = JSON.parse(data).response;
 
             // Create standing arrays
             let majors = [];

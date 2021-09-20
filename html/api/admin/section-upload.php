@@ -1,4 +1,5 @@
 <?php
+require_once '../../../php/logger.php';
 require_once '../../../php/auth.php';
 include_once '../../../php/database/courses.php';
 
@@ -16,20 +17,33 @@ if (!Auth::isAuthenticatedFaculty())
 }
 */
 
+Logger::info("Spreadsheet submitted");
+
 $excel = $_FILES['attachment']['tmp_name'];
+Logger::info("Upload: $excel");
 rename($excel, $excel . $_FILES['attachment']['name']);
 $excel .= $_FILES['attachment']['name'];
+Logger::info("Upload moved: $excel");
+Logger::info("Reading spreadsheet...");
 
 // This python script reads the spread sheets and writes the contents to a PHP friendly TSV
-exec("python ../../../script/section_xlsx2csv.py $excel", $out, $result_code);
+exec("python3 ../../../script/section_xlsx2csv.py $excel", $out, $result_code);
+
+Logger::info("Done reading");
 // The out will contain the errors if there are any. Otherwise, it contains the TSV
 if ($result_code !== 0)
 {
+    global $_REQUEST_ID;
+
+    Logger::error("Script execution failed. Output: " . Logger::obj($out));
+    echo $_REQUEST_ID;
     print_r($out);
     exit();
 }
 
 $semester = Semester::getById($_POST['semester']);
+
+Logger::info("Writing sections to semester: " . $semester->getDescription());
 
 foreach ($out as $line)
 {

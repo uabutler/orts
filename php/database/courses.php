@@ -1,17 +1,20 @@
 <?php
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/helper/PDOWrapper.php';
+require_once __DIR__ . '/helper/DAO.php';
+require_once __DIR__ . '/helper/DAODeletable.php';
+require_once __DIR__ . '/helper/DAODeactivatable.php';
+require_once __DIR__ . '/helper/DAO.php';
 require_once __DIR__ . '/programs.php';
 require_once __DIR__ . '/requests.php';
 
 /**
  * Represents a department object from the database. Essentially acts as a wrapper for the department's prefix string
  */
-class Department implements JsonSerializable
+class Department extends DAO implements JsonSerializable, DAODeletable, DAODeactivatable
 {
-    private $id;
     private $department;
     private $active;
-    private $error_info;
 
     /**
      * The database id. Null if it hasn't been stored
@@ -38,11 +41,6 @@ class Department implements JsonSerializable
     public function isActive(): bool
     {
         return $this->active;
-    }
-
-    public function errorInfo(): ?array
-    {
-        return $this->error_info;
     }
 
     /**
@@ -78,7 +76,7 @@ class Department implements JsonSerializable
 
         Logger::info("Retrieving active departments from the database");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT department FROM $department_tbl WHERE active=true";
         $smt = $pdo->query($query);
 
@@ -99,7 +97,7 @@ class Department implements JsonSerializable
 
         Logger::info("Retrieving all departments from the database");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $department_tbl";
 
         $smt = $pdo->query($query);
@@ -117,13 +115,14 @@ class Department implements JsonSerializable
         return $out;
     }
 
-    private function insertDB(): bool
+    /**
+     * @throws DatabaseException
+     */
+    protected function insert(): void
     {
         global $department_tbl;
 
-        Logger::info("Writing new department to the database: " . Logger::obj($this));
-
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "INSERT INTO $department_tbl
         (
             department,
@@ -139,147 +138,63 @@ class Department implements JsonSerializable
         $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Department already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Department details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Department insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Department details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        Logger::info("Department insertion complete.");
-        $this->id = $pdo->lastInsertId();
-        Logger::info("Created department with id " . $this->getId(), Verbosity::MED);
-
-        return true;
+        $this->id = PDOWrapper::insert($department_tbl, $smt, Logger::obj($this));
     }
 
-    private function updateDB(): bool
+    /**
+     * @throws DatabaseException
+     */
+    protected function update(): void
     {
         global $department_tbl;
-        Logger::info("Writing updated department to database: " . Logger::obj($this));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "UPDATE $department_tbl SET department=:department WHERE id=:id";
 
         $smt = $pdo->prepare($query);
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
         $smt->bindParam(":department", $this->department, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
+        PDOWrapper::update($department_tbl, $smt, $this->id, Logger::obj($this));
 
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Department already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Department details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Department insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Department details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        $ret = true;
-        if (!$this->active) $ret = !self::inactiveById($this->id, $pdo);
-        if ($ret) Logger::info("Department update completed with ID: " . $this->getId(), Verbosity::MED);
-
-        return $ret;
-    }
-
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the student has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
-    {
-        // The id is set only when the student is already in the databse
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+        if (!$this->active)
+            self::deactivate();
     }
 
     /**
      * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
+     * @throws DatabaseException
      */
-    public function deleteFromDB(): bool
+    public function delete(): void
     {
-        return self::deleteById($this->id);
+        self::deleteByID($this->id);
     }
 
     /**
      * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
+     * @throws DatabaseException
      */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $department_tbl, $course_tbl;
-        Logger::info("Deleting department from database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-        $query = "select id from $course_tbl where department_id=:id";
-        $smt = $pdo->prepare($query);
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve courses for request deletion. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Department ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved courses, starting deletions.");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Courses to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Course::deleteById($i, $pdo);
-
-        // Delete the department
-        return deleteByIdFrom($department_tbl, $id, $pdo);
+        PDOWrapper::deleteWithChildren($department_tbl, $id, Course::class, $course_tbl, "department_id");
     }
 
-    public static function inactiveById(int $id, PDO $pdo = null): bool
+    /**
+     * @throws DatabaseException
+     */
+    public function deactivate(): void
+    {
+        self::deactivateByID($this->id);
+    }
+
+    /**
+     * @throws DatabaseException
+     */
+    public static function deactivateByID(int $id): void
     {
         global $department_tbl, $course_tbl;
-        Logger::info("Deactivating department in database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
-        $smt = $pdo->prepare("SELECT id FROM $course_tbl WHERE department_id=:id");
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve courses for department deactivation. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Department ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved courses, starting deactivation. ");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Courses to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Course::inactiveById($i, $pdo);
-
-        return inactiveByIdFrom($department_tbl, $id, $pdo);
+        PDOWrapper::deactivateWithChildren($department_tbl, $id, Course::class, $course_tbl, "department_id");
     }
 
     /**
@@ -303,7 +218,7 @@ class Department implements JsonSerializable
 
         Logger::info("Retrieving department from database. Code: $department");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $department_tbl WHERE department=:department LIMIT 1";
         $smt = $pdo->prepare($query);
         $smt->bindParam(":department", $department, PDO::PARAM_STR);
@@ -336,7 +251,7 @@ class Department implements JsonSerializable
 
         Logger::info("Retrieving department from database. ID: $id");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
 
         $query = "SELECT * FROM $department_tbl WHERE id=:id LIMIT 1";
         $smt = $pdo->prepare($query);
@@ -361,23 +276,19 @@ class Department implements JsonSerializable
 
     public function jsonSerialize()
     {
-        $out = get_object_vars($this);
-        unset($out['error_info']);
-        return $out;
+        return get_object_vars($this);
     }
 }
 
 /**
  * Represents a course from the database. This holds a {@link Department}, a course number, and a course title. E.g., "CS 370 Software Engineering"
  */
-class Course implements JsonSerializable
+class Course extends DAO implements JsonSerializable, DAODeletable, DAODeactivatable
 {
-    private $id;
     private $department;
     private $course_num;
     private $title;
     private $active;
-    private $error_info;
 
     private function __construct(Department $department, int $course_num, string $title,
                                  bool $active = true, int $id = null)
@@ -434,11 +345,6 @@ class Course implements JsonSerializable
         return $this->active;
     }
 
-    public function errorInfo(): ?array
-    {
-        return $this->error_info;
-    }
-
     /**
      * @param Department $department
      */
@@ -471,14 +377,14 @@ class Course implements JsonSerializable
         $this->active = false;
     }
 
-    private function insertDB(): bool
+    /**
+     * @throws DatabaseException
+     */
+    protected function insert(): void
     {
         global $course_tbl;
 
-        Logger::info("Writing new course to database: " . Logger::obj($this));
-
-        $pdo = connectDB();
-
+        $pdo = PDOWrapper::getConnection();
         $query = "INSERT INTO $course_tbl
         (
             department_id,
@@ -501,40 +407,14 @@ class Course implements JsonSerializable
         $smt->bindParam(":title", $this->title, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Course already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Course details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Course insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Course details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        Logger::info("Course insertion complete.");
-
-        $this->id = $pdo->lastInsertId();
-
-        Logger::info("Created department with id " . $this->getId(), Verbosity::MED);
-
-        return true;
+        $this->id = PDOWrapper::insert($course_tbl, $smt, Logger::obj($this));
     }
 
-    private function updateDB(): bool
+    protected function update(): void
     {
         global $course_tbl;
 
-        Logger::info("Writing updated course to database: " . Logger::obj($this));
-
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "UPDATE $course_tbl SET
             department_id=:department_id,
             course_num=:course_num,
@@ -548,114 +428,37 @@ class Course implements JsonSerializable
         $smt->bindParam(":course_num", $this->course_num, PDO::PARAM_INT);
         $smt->bindParam(":title", $this->title, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
+        PDOWrapper::update($course_tbl, $smt, $this->id, Logger::obj($this));
 
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Course already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Course details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Course insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Course details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        if ($this->active)
-            return true;
-        else
-            return self::inactiveById($this->id);
-    }
-
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the student has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
-    {
-        // The id is set only when the student is already in the databse
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+        if (!$this->active)
+            self::deactivate();
     }
 
     /**
      * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
+     * @throws DatabaseException
      */
-    public function deleteFromDB(): bool
+    public function delete(): void
     {
-        return self::deleteById($this->id);
+        self::deleteByID($this->id);
     }
 
-    /**
-     * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
-     */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $course_tbl, $section_tbl;
-
-        Logger::info("Deleting course from the database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
-        // Delete all attachments
-        $smt = $pdo->prepare("select id from $section_tbl where course_id=:id");
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve sections for request deletion. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Course ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved sections, starting deletion.");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Sections to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Section::deleteById($i, $pdo);
-
-        // Delete the request
-        return deleteByIdFrom($course_tbl, $id, $pdo);
+        PDOWrapper::deleteWithChildren($course_tbl, $id, Section::class, $section_tbl, "course_id");
     }
 
-    public static function inactiveById(int $id, PDO $pdo = null): bool
+    public function deactivate(): void
+    {
+        self::deactivateByID($this->id);
+    }
+
+    public static function deactivateByID(int $id): void
     {
         global $course_tbl, $section_tbl;
-
-        Logger::info("Deactivating course in database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
-        $smt = $pdo->prepare("select id from $section_tbl where course_id=:id");
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve sections for request deactivation. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Course ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved sections, starting deactivation.");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Sections to be deactivated: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Section::inactiveById($i, $pdo);
-
-        return inactiveByIdFrom($course_tbl, $id, $pdo);
+        PDOWrapper::deactivateWithChildren($course_tbl, $id, Section::class, $section_tbl, "course_id");
     }
-
 
     /**
      * Creates a local course object given a {@link Department} that's already stored in the DB, course number, and title
@@ -676,7 +479,7 @@ class Course implements JsonSerializable
         Logger::info("Retrieving courses from database");
         Logger::info("Adding parameter: active" . ($active ? "true" : "false"));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $course_tbl" . ($active ? " WHERE active=true" : "");
         $smt = $pdo->query($query);
 
@@ -726,7 +529,7 @@ class Course implements JsonSerializable
         global $course_tbl;
         Logger::info("Retrieving course from database. Department=" . $department->getDept() . " Course=$course_num");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $department_id = $department->getId();
         $smt = $pdo->prepare("SELECT * FROM $course_tbl WHERE department_id=:department_id AND course_num=:course_num");
         $smt->bindParam(":department_id", $department_id, PDO::PARAM_INT);
@@ -761,7 +564,7 @@ class Course implements JsonSerializable
 
         Logger::info("Retrieving course from database. ID: $id");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $course_tbl WHERE id=:id";
         $smt = $pdo->prepare($query);
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -795,9 +598,8 @@ class Course implements JsonSerializable
 /**
  * Represents a semester. This is used to relate the semester code (e.g., "202160") to its human readable form (e.g., Fall 2021)
  */
-class Semester implements JsonSerializable
+class Semester extends DAO implements JsonSerializable, DAODeactivatable, DAODeletable
 {
-    private $id;
     private $semester;
     private $description;
     private $active;
@@ -876,12 +678,11 @@ class Semester implements JsonSerializable
         $this->active = $active;
     }
 
-    private function insertDB(): bool
+    protected function insert(): void
     {
         global $semester_tbl;
-        Logger::info("Writing new semester to database: " . Logger::obj($this));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "INSERT INTO $semester_tbl
         (
             semester,
@@ -900,37 +701,14 @@ class Semester implements JsonSerializable
         $smt->bindParam(":description", $this->description, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Semester already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Semester details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Semester insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Semester details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        Logger::info("Semester insertion complete.");
-        $this->id = $pdo->lastInsertId();
-        Logger::info("Created semester with id " . $this->getId(), Verbosity::MED);
-
-        return true;
+        $this->id = PDOWrapper::insert($semester_tbl, $smt, Logger::obj($this));
     }
 
-    private function updateDB(): bool
+    protected function update(): void
     {
         global $semester_tbl;
-        Logger::info("Writing updated department to database: " . Logger::obj($this));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "UPDATE $semester_tbl SET
             semester=:semester,
             description=:description
@@ -941,109 +719,35 @@ class Semester implements JsonSerializable
         $smt->bindParam(":semester", $this->semester, PDO::PARAM_STR);
         $smt->bindParam(":description", $this->description, PDO::PARAM_STR);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
+        PDOWrapper::update($semester_tbl, $smt, $this->id, Logger::obj($this));
 
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Semester already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Semester details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Semester update failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Semester details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        $ret = true;
-        if (!$this->active) $ret = !self::inactiveById($this->id, $pdo);
-        if ($ret) Logger::info("Semester update completed with ID: " . $this->getId(), Verbosity::MED);
-
-        return $ret;
-    }
-
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the student has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
-    {
-        // The id is set only when the student is already in the databse
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+        if (!$this->active)
+            self::deactivate();
     }
 
     /**
      * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
      */
-    public function deleteFromDB(): bool
+    public function delete(): void
     {
-        return self::deleteById($this->id);
+        self::deleteByID($this->id);
     }
 
-    /**
-     * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
-     */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $semester_tbl, $section_tbl;
-        Logger::info("Deleting semester from database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-        $query = "SELECT id FROM $section_tbl WHERE semester_id=:id";
-        $smt = $pdo->prepare($query);
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve sections for request deletion. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Course ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved sections, starting deletions.");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Sections to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Section::deleteById($i, $pdo);
-
-        return deleteByIdFrom($semester_tbl, $id, $pdo);
+        PDOWrapper::deleteWithChildren($semester_tbl, $id, Section::class, $section_tbl, "semester_id");
     }
 
-    public static function inactiveById(int $id, PDO $pdo = null): bool
+    public function deactivate(): void
+    {
+        self::deactivateByID($this->id);
+    }
+
+    public static function deactivateByID(int $id, PDO $pdo = null): void
     {
         global $semester_tbl, $section_tbl;
-        Logger::info("Deactivating semester in database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
-        $smt = $pdo->prepare("SELECT id FROM $section_tbl WHERE semester_id=:id");
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve semester for course deactivation. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Semester ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved sections, starting deletions.");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Sections to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Section::inactiveById($i, $pdo);
-
-        return inactiveByIdFrom($semester_tbl, $id, $pdo);
+        PDOWrapper::deactivateWithChildren($semester_tbl, $id, Section::class, $section_tbl, "semester_id");
     }
 
 
@@ -1053,7 +757,7 @@ class Semester implements JsonSerializable
      * @param string $description The human-readable version
      * @return Semester An object that only exists locally, isn't stored in DB
      */
-    public static function build(string $semester, string $description)
+    public static function build(string $semester, string $description): Semester
     {
         return new Semester($semester, $description);
     }
@@ -1065,7 +769,7 @@ class Semester implements JsonSerializable
         Logger::info("Retrieving semester from database");
         Logger::info("Adding parameter: active" . ($active ? "true" : "false"));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $semester_tbl WHERE active=:active";
         $smt = $pdo->prepare($query);
         $smt->bindParam(":active", $active, PDO::PARAM_BOOL);
@@ -1111,7 +815,7 @@ class Semester implements JsonSerializable
 
         Logger::info("Retrieving semester. Description:");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $semester_tbl WHERE description=:description LIMIT 1";
         $smt = $pdo->prepare($query);
         $smt->bindParam(":description", $description, PDO::PARAM_STR);
@@ -1143,7 +847,7 @@ class Semester implements JsonSerializable
     {
         global $semester_tbl;
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $semester_tbl WHERE semester=:semester LIMIT 1";
         $smt = $pdo->prepare($query);
         $smt->bindParam(":semester", $semester, PDO::PARAM_STR);
@@ -1178,7 +882,7 @@ class Semester implements JsonSerializable
     {
         global $semester_tbl;
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $semester_tbl WHERE id=:id LIMIT 1";
         $smt = $pdo->prepare($query);
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -1216,9 +920,8 @@ class Semester implements JsonSerializable
  * Represents a section, a specific course offering in a given semester. This object relates the {@link Semester} object
  * to a {@link Course} object and stores a section number and CRN
  */
-class Section implements JsonSerializable
+class Section extends DAO implements JsonSerializable, DAODeactivatable, DAODeletable
 {
-    private $id;
     private $course;
     private $semester;
     private $section;
@@ -1336,13 +1039,11 @@ class Section implements JsonSerializable
         $this->active = $active;
     }
 
-    private function insertDB(): bool
+    protected function insert(): void
     {
         global $section_tbl;
 
-        Logger::info("Writing new section to database: " . Logger::obj($this));
-
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "INSERT INTO $section_tbl
         (
             course_id,
@@ -1369,37 +1070,14 @@ class Section implements JsonSerializable
         $smt->bindParam(":crn", $this->crn, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Section already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Section details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Section insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Section details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        Logger::info("Section insertion complete.");
-        $this->id = $pdo->lastInsertId();
-        Logger::info("Created section with id " . $this->getId(), Verbosity::MED);
-
-        return true;
+        $this->id = PDOWrapper::insert($section_tbl, $smt, Logger::obj($this));
     }
 
-    private function updateDB(): bool
+    protected function update(): void
     {
         global $section_tbl;
-        Logger::info("Writing updated section to database: " . Logger::obj($this));
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "UPDATE $section_tbl SET
             course_id=:course_id,
             semester_id=:semester_id,
@@ -1414,110 +1092,35 @@ class Section implements JsonSerializable
         $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
         $smt->bindParam(":section", $this->section, PDO::PARAM_INT);
 
-        if (!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
+        PDOWrapper::update($section_tbl, $smt, $this->id, Logger::obj($this));
 
-            if ($this->error_info[0] === "23000")
-            {
-                Logger::warning("Section already exists. Error info: " . Logger::obj($this->error_info));
-                Logger::warning("Section details: " . Logger::obj($this));
-            }
-            else
-            {
-                Logger::error("Section insertion failed. Error info: " . Logger::obj($this->error_info));
-                Logger::error("Section details: " . Logger::obj($this));
-            }
-
-            return false;
-        }
-
-        $ret = true;
-        if (!$this->active) $ret = !self::inactiveById($this->id, $pdo);
-        if ($ret) Logger::info("Section update completed with ID: " . $this->getId(), Verbosity::MED);
-
-        return $ret;
-    }
-
-    /**
-     * Stores the current object in the database. If the object is newly created,
-     * a new entry into the DB is made. If the student has been stored in the DB,
-     * we update the existing entry
-     */
-    public function storeInDB(): bool
-    {
-        // The id is set only when the student is already in the databse
-        if (is_null($this->id))
-            return $this->insertDB();
-        else
-            return $this->updateDB();
+        if (!$this->active)
+            self::deactivateByID($this->id);
     }
 
     /**
      * Delete the current element from the database. This is NOT reversible (unlike setting to inactive)
-     * @return bool Did the deletion succeed?
      */
-    public function deleteFromDB(): bool
+    public function delete(): void
     {
-        return self::deleteById($this->id);
+        self::deleteByID($this->id);
     }
 
-    /**
-     * @param int $id The id of the element to be deleted
-     * @param PDO|null $pdo A connection. We can pass one if one hasn't been created, otherwise, we'll create a new one
-     * @return bool Did the deletion succeed?
-     */
-    public static function deleteById(int $id, PDO $pdo = null): bool
+    public static function deleteByID(int $id): void
     {
         global $section_tbl, $request_tbl;
-        Logger::info("Deleting section from database. ID: $id");
-
-        if (is_null($pdo)) $pdo = connectDB();
-        $query = "SELECT id FROM $request_tbl WHERE section_id=:id";
-        $smt = $pdo->prepare($query);
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve requests for request deletion. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Section ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved requests, starting deletions.");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Requests to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Request::deleteById($i, $pdo);
-
-        // Delete the section
-        return deleteByIdFrom($section_tbl, $id, $pdo);
+        PDOWrapper::deleteWithChildren($section_tbl, $id, Request::class, $request_tbl, "section_id");
     }
 
-    public static function inactiveById(int $id, PDO $pdo = null): bool
+    public function deactivate(): void
+    {
+        self::deactivateByID($this->id);
+    }
+
+    public static function deactivateByID(int $id): void
     {
         global $section_tbl, $request_tbl;
-        Logger::info("Deactivating department in database");
-
-        if (is_null($pdo)) $pdo = connectDB();
-
-        $smt = $pdo->prepare("SELECT id FROM $request_tbl WHERE section_id=:id");
-        $smt->bindParam(":id", $id, PDO::PARAM_INT);
-
-        if (!$smt->execute())
-        {
-            Logger::error("Could not retrieve requests for department deactivation. Error info: " . Logger::obj($smt->errorInfo()));
-            Logger::error("Section ID: $id");
-            return false;
-        }
-
-        Logger::info("Retrieved requests, starting deactivation. ");
-        $ids = flattenResult($smt->fetchAll(PDO::FETCH_NUM));
-        Logger::info("Requests to be deleted: " . Logger::obj($ids));
-
-        foreach ($ids as $i) Request::inactiveById($i, $pdo);
-
-        return inactiveByIdFrom($section_tbl, $id, $pdo);
+        PDOWrapper::deactivateWithChildren($section_tbl, $id, Request::class, $request_tbl, "section_id");
     }
 
     /**
@@ -1539,7 +1142,7 @@ class Section implements JsonSerializable
 
         Logger::info("Finding all sections");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $query = "SELECT * FROM $section_tbl WHERE semester_id=:semester_id ORDER BY course_id";
         $smt = $pdo->prepare($query);
         $semester_id = $semester->getId();
@@ -1576,7 +1179,7 @@ class Section implements JsonSerializable
         global $section_tbl;
         Logger::info("Retrieving section from database: Section $section of " . $course->getDepartment()->getDept() . " " . $course->getTitle() . " for " . $semester->getDescription());
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $course_id = $course->getId();
         $semester_id = $semester->getId();
         $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE course_id=:course_id AND semester_id=:semester_id AND section=:section LIMIT 1");
@@ -1609,7 +1212,7 @@ class Section implements JsonSerializable
         global $section_tbl;
         Logger::info("Retrieving section from database. Semester: " . $semester->getCode() . " CRN: $crn");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $semester_id = $semester->getId();
         $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE semester_id=:semester_id AND crn=:crn LIMIT 1");
         $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
@@ -1640,7 +1243,7 @@ class Section implements JsonSerializable
         global $section_tbl;
         Logger::info("Retrieving section from database. ID: $id");
 
-        $pdo = connectDB();
+        $pdo = PDOWrapper::getConnection();
         $smt = $pdo->prepare("SELECT * FROM $section_tbl WHERE id=:id LIMIT 1");
         $smt->bindParam(":id", $id, PDO::PARAM_INT);
 

@@ -1,26 +1,7 @@
 <?php
 require_once 'config.php';
+require_once 'auth.php';
 require_once 'database/common.php';
-
-function uuid($data = null)
-{
-    $data = $data ?? random_bytes(16);
-    assert(strlen($data) == 16);
-
-    $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
-    $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
-
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
-}
-
-// I know global variables are bad, but this is used EVERYWHERE and is only written here, so I'll give myself a pass...
-
-/**
- * When a user makes a request, a UUID is created to identify the request as this request id variable. This value is
- * then used in all logs related to this request and is sent back to the user as a JSON parameter, in the HTML metadata,
- * etc. This way, when a user experiences a problem, we can easily retrieve all the logs related to the request
- */
-$_REQUEST_ID = uuid();
 
 /**
  * Class Verbosity
@@ -49,20 +30,25 @@ class Verbosity
  * Includes tag indicating the application (ORTS), the log leven (INFO, WARN, or ERROR), a timestamp, and the function
  * or file that the log call was made from.
  *
+ * This class uses static methods that wrap around a singleton logging object. When the first log entry is written for
+ * a given program execution, an ID will be created for that request and the request ID will be logged. Every
+ * subsequent logging statement will then be associated with the request ID.
+ *
  * In the future, the option will also be given to email the sysadmin of this application when certain fatal errors occur
  */
 class Logger
 {
+    private $request_id;
     // Prefix the log entry with a timestamp and the name of the calling function
     private static function getPrefix(string $type): string
     {
-        global $_REQUEST_ID;
+        $request_id = self::getInstance()->request_id;
 
         $prefix = "[ORTS] ";
         // The timestamp might already be added to the logs by php, so this is likely redundant
         //$prefix .= getTimeStamp() . "  ";
         $prefix .= $type . " ";
-        $prefix .= $_REQUEST_ID . " ";
+        $prefix .= $request_id . " ";
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
 
@@ -78,6 +64,7 @@ class Logger
         return $prefix;
     }
 
+    // Write the message to log.
     private static function log($msg)
     {
         error_log($msg, 0);
@@ -89,16 +76,33 @@ class Logger
         // TODO
     }
 
-    static function start()
+    private static function createUUID()
     {
-        global $_REQUEST_ID;
-        $msg = "[ORTS] START $_REQUEST_ID";
+        $data = random_bytes(16);
+        assert(strlen($data) == 16);
+
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    public static function getRequestId()
+    {
+        return self::getInstance()->request_id;
+    }
+
+    private function __construct()
+    {
+        $this->request_id = self::createUUID();
+        $request_id = $this->request_id;
+
+        $msg = "[ORTS] START $request_id";
 
         if ($is_auth = Auth::isAuthenticated())
         {
             $user = Auth::getUser();
-            $user_type = Auth::isAuthenticatedFaculty() ? "Admin" : "Student";
-            $msg .= " AUTHENTICATED AS $user WITH $user_type";
+            $msg .= " AUTHENTICATED AS $user";
         }
         else
         {
@@ -109,11 +113,18 @@ class Logger
         self::log(print_r($_REQUEST, true));
     }
 
-    static function end()
+    public function __destruct()
     {
-        global $_REQUEST_ID;
-        $msg = "[ORTS] END   $_REQUEST_ID";
+        $request_id = $this->request_id;
+        $msg = "[ORTS] END   $request_id";
         self::log($msg);
+    }
+
+    private static function getInstance(): Logger
+    {
+        static $logger = null;
+        if ($logger == null) $logger = new Logger();
+        return $logger;
     }
 
     /**

@@ -16,13 +16,13 @@ API::get(function ()
 
     $request = Request::getById(intval($_GET['id']));
 
-    if (!Auth::isAuthenticatedStudent($request->getStudent()->getEmail()))
-        API::error(403, "You aren't allowed to access this request");
-
     if ($request)
         return $request;
     else
         API::error(204, "No request found");
+
+    if (!Auth::isAuthenticatedStudent($request->getStudent()->getEmail()))
+        API::error(403, "You aren't allowed to access this request");
 
     return null;
 });
@@ -53,19 +53,8 @@ API::post(function ($data)
     $request = Request::build(Student::get(Auth::getUser()), Section::getByCrn(Semester::getByCode($data->semester),
                             $data->crn), Faculty::getDefault(), 'Received', $data->reason, $data->explanation);
 
-    if($request->storeInDB())
-    {
-        return $request->getId();
-    }
-    else
-    {
-        if ($request->errorInfo()[0] === "23000")
-            API::error(409, "A request for this class has already been submitted");
-        else
-            API::error(500, "An unknown error has occurred. Please contact the system administrator");
-    }
-
-    return null;
+    $request->storeInDB();
+    return $request->getId();
 });
 
 API::put(function ($data)
@@ -117,17 +106,8 @@ API::put(function ($data)
                 $request->setInactive();
         }
 
-        if ($request->storeInDB())
-        {
-            return "Success";
-        }
-        else
-        {
-            if ($request->errorInfo()[0] === "23000")
-                API::error(409, "A request for this class has already been submitted");
-            else
-                API::error(500, "An unknown error has occurred. Please contact the system administrator");
-        }
+        $request->storeInDB();
+        return "Success";
     }
     else
     {
