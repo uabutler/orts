@@ -268,7 +268,6 @@ class Minor extends Program implements JsonSerializable
         $smt = $pdo->prepare("INSERT INTO $minor_tbl (minor, active) VALUES (:minor, :active)");
         $smt->bindParam(":minor", $this->name, PDO::PARAM_STR);
         $smt->bindParam(":active", $this->active, PDO::PARAM_BOOL);
-        $smt->execute();
 
         $this->id = PDOWrapper::insert($minor_tbl, $smt, Logger::obj($this));
     }
