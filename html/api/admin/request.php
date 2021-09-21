@@ -45,22 +45,14 @@ API::put(function($data)
                 $request->setNotInBanner();
         }
 
-        try
-        {
-            $request->storeInDB();
-            API::success("Update complete");
-        }
-        catch (DatabaseException $e)
-        {
-            API::error($e->getCode(), $e->getMessage());
-        }
+        $request->storeInDB();
     }
     else
     {
         API::error(400, "Please specify the id of the request to modify");
     }
 
-    return null;
+    return "success";
 });
 
 API::error(404, "Not Found");

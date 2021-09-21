@@ -26,6 +26,6 @@ class DatabaseException extends Exception
     {
         parent::__construct($message, $code);
         $this->error_info = $error_info;
-        PDOWrapper::getConnection()->rollBack();
+        PDOWrapper::rollBack();
     }
 }

@@ -35,27 +35,8 @@ API::post(function ($data)
 
     $course = Course::build(Department::get($data->department), intval($data->course_num), $data->title);
 
-    if ($course->storeInDB())
-    {
-        return "Success";
-    }
-    else
-    {
-        $error_info = $course->errorInfo();
-
-        $error_msg = "ORTS ERROR: /api/admin/course.php CREATE ";
-        $error_msg .= " Dept=" . $data->department;
-        $error_msg .= " Course=" . $data->course_num;
-        $error_msg .= " Title=" . $data->title;
-        $error_msg .= " SQLSTATE=" . $error_info[0];
-        $error_msg .= " ErrorMsg=" . $error_info[2];
-        error_log($error_msg);
-
-        if ($error_info[0] === "23000")
-            API::error(409, "This course has already been created");
-        else
-            API::error(500, "An unknown error has occurred. Please contact the system administrator");
-    }
+    $course->storeInDB();
+    return "success";
 });
 
 API::put(function ($data)
@@ -81,29 +62,13 @@ API::put(function ($data)
         if (isset($update->archive) && filter_var($update->archive, FILTER_VALIDATE_BOOLEAN))
             $course->setInactive();
 
-        $err = $course->storeInDB();
-
-        // TODO: Log error
-        if (!$err);
-
-        $ret = $ret && $err;
+        $course->storeInDB();
 
         if (isset($update->delete) && filter_var($update->delete, FILTER_VALIDATE_BOOLEAN))
-            $err = $course->deleteFromDB();
-
-        if (!$err)
-        {
-            $error_msg = "ORTS ERROR: /api/admin/course.php UPDATE ";
-            $error_msg .= " ID=" . $update->id;
-            $error_msg .= " Can't Delete STATUS=" . ($course->isActive() ? "active" : "inactive");
-            error_log($error_msg);
-        }
-
-        $ret = $ret && $err;
+            $course->delete();
     }
 
-    if ($ret)
-        return "Success";
-    else
-        API::error(500, "An unknown error has occurred. One or more courses were not updated. Please contact the system administrator");
+    return "success";
 });
+
+API::error(404, "Not Found");

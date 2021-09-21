@@ -16,14 +16,12 @@ API::post(function($data)
     $semester = Semester::get($data->semester);
     $section = Section::build($course, $semester, $data->section, $data->crn);
 
-    if ($section->storeInDB())
-        return "Success";
+    $section->storeInDB();
+    return "Success";
 });
 
 API::put(function($data)
 {
-    $ret = true;
-
     foreach ($data as $update)
     {
         $section = Section::getById($update->id);
@@ -31,14 +29,13 @@ API::put(function($data)
         if (isset($update->archive) && $update->archive)
             $section->setInactive();
 
-        $ret = $ret && $section->storeInDB();
+        $section->storeInDB();
 
         if (isset($update->delete) && $update->delete)
-            $ret = $ret && $section->deleteFromDB();
+            $section->delete();
     }
 
-    if ($ret)
-        return 'Success';
-
-    // TODO: Error Handling
+    return 'success';
 });
+
+API::error(404, "Not Found");

@@ -1,7 +1,9 @@
 <?php
 require_once '../../../php/logger.php';
 require_once '../../../php/auth.php';
+require_once '../../../php/api.php';
 include_once '../../../php/database/courses.php';
+include_once '../../../php/database/helper/DatabaseException.php';
 
 Auth::createClient();
 
@@ -33,45 +35,46 @@ Logger::info("Done reading");
 // The out will contain the errors if there are any. Otherwise, it contains the TSV
 if ($result_code !== 0)
 {
-    global $_REQUEST_ID;
-
     Logger::error("Script execution failed. Output: " . Logger::obj($out));
-    echo $_REQUEST_ID;
-    print_r($out);
-    exit();
+    API::error("The injection script could not be executed", 500);
 }
 
 $semester = Semester::getById($_POST['semester']);
 
 Logger::info("Writing sections to semester: " . $semester->getDescription());
 
-foreach ($out as $line)
+try
 {
-    if ($line === "") exit();
-
-    $crn = strtok($line, "\t");
-    $department_prefix = strtok("\t");
-    $course_num = strtok("\t");
-    $section_num = strtok("\t");
-    $title = strtok("\t");
-
-    $department = Department::get($department_prefix);
-    if (is_null($department))
+    foreach ($out as $line)
     {
-        $department = Department::build($department_prefix);
-        $department->storeInDB();
+        if ($line === "") exit();
+
+        $crn = strtok($line, "\t");
+        $department_prefix = strtok("\t");
+        $course_num = strtok("\t");
+        $section_num = strtok("\t");
+        $title = strtok("\t");
+
+        $department = Department::get($department_prefix);
+        if (is_null($department))
+        {
+            $department = Department::build($department_prefix);
+            $department->storeInDB();
+        }
+
+        $course = Course::get($department, $course_num);
+        if (is_null($course))
+        {
+            $course = Course::build($department, $course_num, $title);
+            $course->storeInDB();
+        }
+
+        $section = Section::build($course, $semester, $section_num, $crn);
+
+        $section->storeInDB();
     }
-
-    $course = Course::get($department, $course_num);
-    if (is_null($course))
-    {
-        $course = Course::build($department, $course_num, $title);
-        $course->storeInDB();
-    }
-
-    $section = Section::build($course, $semester, $section_num, $crn);
-
-    $section->storeInDB();
 }
-
-?>
+catch (DatabaseException $e)
+{
+    API::error(500, "Could not write one or more sections to the database");
+}

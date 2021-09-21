@@ -105,6 +105,11 @@ function updateSectionTable()
             $('#status-info-icon').popup();
             $('.section-status-select').on('change', function() { setStatusWarning('section', $(this)) });
             $('#section-update-button').on('click', updateSection);
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     });
 }
@@ -161,8 +166,12 @@ function displayCourseTitle()
         success: function(data)
         {
             data = JSON.parse(data).response;
-
             $('#section-title-input').val(data.title);
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     })
 }
@@ -189,11 +198,16 @@ function submitSection()
         url: '/api/admin/sections.php',
         method: 'POST',
         data: JSON.stringify(data),
-        success: function()
+        success: updateSectionTable,
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
+        },
+        complete: function ()
         {
             enableSectionPopup(false);
             cancelSectionPopup();
-            updateSectionTable();
         }
     });
 }
@@ -210,10 +224,12 @@ function updateSection()
         url: '/api/admin/sections.php',
         method: 'PUT',
         data: JSON.stringify(data),
-        success: function()
+        success: updateSectionTable,
+        complete: function() { $('#section-primary-content-display').removeClass('ui loading form'); },
+        error: function (response)
         {
-            updateSectionTable();
-            $('#section-primary-content-display').removeClass('ui loading form');
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     })
 }
@@ -261,19 +277,24 @@ function uploadFile()
         cache: false,
         contentType: false,
         processData: false,
-        xhr: function()
+        xhr: function ()
         {
             let xhr = new window.XMLHttpRequest();
             xhr.upload.addEventListener("progress", uploadStatus, false);
             return xhr;
         },
-        success: completeUpload
+        success: completeUpload,
+        complete: cancelSectionUploadPopup,
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
+        },
     })
 }
 
 function completeUpload()
 {
-    cancelSectionUploadPopup();
     updateSectionTable();
     updateDepartmentTable();
     updateCourseTable();

@@ -72,6 +72,11 @@ function updateSemesterTable()
             $('.semester-status-select').on('change', function() { setStatusWarning('semester', $(this)) });
             $('#semester-update-button').on('click', updateSemesters);
             $('.view-sections-button').on('click', function () { switchToSection($(this)) });
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     });
 }
@@ -88,10 +93,12 @@ function updateSemesters()
         url: '/api/admin/semester.php',
         method: 'PUT',
         data: JSON.stringify(data),
-        success: function()
+        complete: updateSemesterTable,
+        success: function() { $('#semester-primary-content-display').removeClass('ui loading form'); },
+        error: function (response)
         {
-            updateSemesterTable();
-            $('#semester-primary-content-display').removeClass('ui loading form');
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     })
 }
@@ -139,10 +146,12 @@ function submitSemester()
         url: '/api/admin/semester.php',
         method: 'POST',
         data: JSON.stringify(data),
-        success: function ()
+        success: cancelSemesterPopup,
+        complete: updateSemesterTable,
+        error: function (response)
         {
-            cancelSemesterPopup();
-            updateSemesterTable();
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     })
 }

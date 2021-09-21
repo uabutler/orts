@@ -89,6 +89,11 @@ function updateFacultyTable()
             $('.ui.dropdown').dropdown({action: 'hide'});
             $('.make-default-faculty').on('click', makeDefaultFaculty);
             $('.delete-faculty').on('click', deleteFaculty);
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     });
 }
@@ -105,13 +110,18 @@ function makeDefaultFaculty()
                 let data = {};
 
                 data.id = id;
-                data.make_default = true;
+                data.default = true;
 
                 $.ajax({
                     url: '/api/admin/faculty.php',
                     method: 'PUT',
                     data: JSON.stringify(data),
-                    success: updateFacultyTable
+                    success: updateFacultyTable,
+                    error: function (response)
+                    {
+                        response = JSON.parse(response.responseText);
+                        displayStatusMessage("Error", response.msg, false, response.request_id);
+                    }
                 })
             }
         })
@@ -136,7 +146,12 @@ function deleteFaculty()
                     url: '/api/admin/faculty.php',
                     method: 'PUT',
                     data: JSON.stringify(data),
-                    success: updateFacultyTable
+                    success: updateFacultyTable,
+                    error: function (response)
+                    {
+                        response = JSON.parse(response.responseText);
+                        displayStatusMessage("Error", response.msg, false, response.request_id);
+                    }
                 })
             }
         })
@@ -192,11 +207,13 @@ function submitFaculty()
         url: '/api/admin/faculty.php',
         method: 'POST',
         data: JSON.stringify(data),
-        success: function()
+        success: updateFacultyTable,
+        error: function (response)
         {
-            cancelFacultyPopup();
-            updateFacultyTable();
-        }
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
+        },
+        complete: cancelFacultyPopup
     })
 }
 

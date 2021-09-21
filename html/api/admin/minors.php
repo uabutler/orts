@@ -18,3 +18,5 @@ API::put(function($data)
 {
     return updateProgram($data, Minor::class);
 });
+
+API::error(404, "Not Found");

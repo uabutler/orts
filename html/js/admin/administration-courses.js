@@ -82,6 +82,11 @@ function updateDepartmentTable()
 
             $('#course-department-input').html(select).dropdown();
             $('#section-department-input').html(select).dropdown();
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     });
 }
@@ -154,6 +159,11 @@ function updateCourseTable()
             $('#status-info-icon').popup();
             $('.course-status-select').on('change', function() { setStatusWarning('course', $(this)) });
             $('#course-update-button').on('click', updateCourses);
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     });
 }
@@ -227,11 +237,13 @@ function submitDepartment()
         url: `/api/admin/department.php`,
         method: 'POST',
         data: JSON.stringify(data),
-        success: function()
+        success: updateDepartmentTable,
+        error: function (response)
         {
-            updateDepartmentTable();
-            cancelDepartmentPopup();
-        }
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
+        },
+        complete: cancelDepartmentPopup
     });
 }
 
@@ -256,11 +268,13 @@ function submitCourse()
         url: `/api/admin/course.php`,
         method: 'POST',
         data: JSON.stringify(data),
-        success: function()
+        success: updateCourseTable,
+        error: function (response)
         {
-            updateCourseTable();
-            cancelCoursePopup();
-        }
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
+        },
+        complete: cancelCoursePopup
     })
 }
 
@@ -283,6 +297,11 @@ function updateDepartments()
             updateCourseTable();
             $('#department-primary-content-display').removeClass('ui loading form');
             $('#course-primary-content-display').removeClass('ui loading form');
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     })
 }
@@ -303,6 +322,11 @@ function updateCourses()
         {
             updateCourseTable();
             $('#course-primary-content-display').removeClass('ui loading form');
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     })
 }

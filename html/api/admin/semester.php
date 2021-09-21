@@ -14,8 +14,8 @@ API::post(function($data)
 {
     $semester = Semester::build($data->semester, $data->description);
 
-    if ($semester->storeInDB())
-        return "Success";
+    $semester->storeInDB();
+    return "success";
 });
 
 /**
@@ -23,8 +23,6 @@ API::post(function($data)
  */
 API::put(function($data)
 {
-    $ret = true;
-
     foreach ($data as $update)
     {
         $semester = Semester::getById($update->id);
@@ -38,14 +36,13 @@ API::put(function($data)
         if (isset($update->archive) && $update->archive)
             $semester->setInactive();
 
-        $ret = $ret && $semester->storeInDB();
+        $semester->storeInDB();
 
         if (isset($update->delete) && $update->delete)
-            $ret = $ret && $semester->deleteFromDB();
+            $semester->delete();
     }
 
-    if ($ret)
-        return 'Success';
-
-    // TODO: Error Handling
+    return 'success';
 });
+
+API::error(404, "Not Found");

@@ -1,10 +1,12 @@
 <?php
 require_once 'logger.php';
 require_once __DIR__ . '/../php/database/helper/DatabaseException.php';
+require_once __DIR__ . '/../php/database/helper/PDOWrapper.php';
 
 function api_exception_handler($exception)
 {
     Logger::error("A fatal error has occurred: $exception", Verbosity::LOW, true);
+    PDOWrapper::rollBack();
     API::error(500, "An unknown error has occurred");
 }
 

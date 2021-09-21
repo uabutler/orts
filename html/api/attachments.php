@@ -52,3 +52,5 @@ API::delete(function()
 
     $attachment->delete();
 });
+
+API::error(404, "Not Found");

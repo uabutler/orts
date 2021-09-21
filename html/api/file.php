@@ -1,18 +1,17 @@
 <?php
 require_once '../../php/auth.php';
+require_once '../../php/api.php';
+require_once '../../php/logger.php';
 require_once '../../php/database/attachments.php';
 
 if (!isset($_GET['id']))
-{
-    http_response_code(400);
+    API::error(400, "Please specify an ID of an attachment to access");
 
-    $response['msg'] = "Please specify an ID of an attachment to access";
-    echo json_encode($response);
-
-    exit();
-}
+Logger::info(Auth::getUser() . " requsted file " . $_GET['id']);
 
 $attachment = Attachment::getById(intval($_GET['id']));
+
+Logger::info($attachment->getName() . " Location: " . $attachment->getPath());
 
 $authed = !is_null($attachment);
 
@@ -23,14 +22,7 @@ if ($authed)
 }
 
 if (!$authed)
-{
-    http_response_code(404);
-
-    $response['msg'] = "You aren't authorized to access this attachment, or one wasn't found";
-    echo json_encode($response);
-
-    exit();
-}
+    API::error(404, "You aren't authorized to access this attachment, or one wasn't found");
 
 $mime_type = mime_content_type($attachment->getPath()) ?: 'application/octet-stream';
 

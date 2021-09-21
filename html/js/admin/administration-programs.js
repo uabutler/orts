@@ -71,6 +71,11 @@ function updateProgramTable(type)
 
             $('#major-update-button').on('click', function() { updatePrograms('major') });
             $('#minor-update-button').on('click', function() { updatePrograms('minor') });
+        },
+        error: function (response)
+        {
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
         }
     });
 }
@@ -126,11 +131,13 @@ function submitPrograms()
         url: `/api/admin/${type}s.php`,
         method: 'POST',
         data: JSON.stringify(data),
-        success: function()
+        success: function() { updateProgramTable(type) },
+        error: function (response)
         {
-            updateProgramTable(type)
-            cancelProgramPopup();
-        }
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
+        },
+        complete: cancelProgramPopup
     })
 }
 
@@ -149,11 +156,13 @@ function updatePrograms(type)
         url: `/api/admin/${type}s.php`,
         method: 'PUT',
         data: JSON.stringify(data),
-        success: function()
+        success: function() { updateProgramTable(type) },
+        error: function (response)
         {
-            updateProgramTable(type)
-            $('#program-primary-content-display').removeClass('ui loading form');
-        }
+            response = JSON.parse(response.responseText);
+            displayStatusMessage("Error", response.msg, false, response.request_id);
+        },
+        complete: function () { $('#program-primary-content-display').removeClass('ui loading form'); }
     })
 }
 

@@ -18,3 +18,5 @@ API::put(function($data)
 {
     return updateProgram($data, Major::class);
 });
+
+API::error(404, "Not Found");

@@ -18,9 +18,12 @@ class PDOWrapper
 {
     private $pdo;
     private $files;
+    private $errorFlag;
 
     private function __construct()
     {
+        $errorFlag = false;
+
         $this->files = [];
 
         Logger::info("Creating database connection");
@@ -46,6 +49,12 @@ class PDOWrapper
     {
         $wrapper = self::getInstance();
 
+        if ($wrapper->errorFlag)
+        {
+            Logger::info("Rollback has been initiated, skipping commit.");
+            return;
+        }
+
         if ($wrapper->pdo->commit())
         {
             foreach ($wrapper->files as $file)
@@ -61,6 +70,12 @@ class PDOWrapper
         {
             throw new DatabaseException("An internal error has occurred. Please contact the system administrator", 500, $wrapper->pdo->errorInfo());
         }
+    }
+
+    public static function rollBack()
+    {
+        self::getInstance()->errorFlag = true;
+        self::getConnection()->rollBack();
     }
 
     public static function getConnection(): PDO
