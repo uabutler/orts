@@ -370,7 +370,7 @@ function populateSemester($pdo)
 <head>
     <title>ORTS - Main Page</title>
     <link rel="stylesheet" href="/css/root/install.css">
-    <?php require_once __DIR__ . '/../php/common-head.php' ?>
+    <?php require_once __DIR__ . '/../php/common-imports.php' ?>
     <script src="/js/root/install.js"></script>
 </head>
 
