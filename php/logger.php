@@ -110,7 +110,6 @@ class Logger
         }
 
         self::log($msg);
-        self::log(print_r($_REQUEST, true));
     }
 
     public function __destruct()

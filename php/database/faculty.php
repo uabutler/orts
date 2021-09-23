@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/common.php';
 require_once __DIR__ . '/helper/PDOWrapper.php';
+require_once __DIR__ . '/helper/DatabaseException.php';
 require_once __DIR__ . '/helper/DAO.php';
 require_once __DIR__ . '/helper/DAODeletable.php';
 
@@ -116,20 +117,30 @@ class Faculty extends DAO implements JsonSerializable, DAODeletable
     }
 
     // Ensures exactly one default
-    private function makeDefault($pdo): bool
+    private function makeDefault(): bool
     {
-        global $faculty_tbl;
+        global $faculty_tbl, $request_tbl;
 
-        $smt = $pdo->exec("UPDATE $faculty_tbl SET is_default=false WHERE is_default=true");
+        $currentDefaultFacultyId = self::getDefault()->getId();
 
+        $pdo = PDOWrapper::getConnection();
+
+        Logger::info("Unsetting current default.");
+        if ($pdo->exec("UPDATE $faculty_tbl SET is_default=false WHERE is_default=true") === false)
+            throw new DatabaseException("Could not unset current default faculty.", 500, $pdo->errorInfo());
+
+        Logger::info("Setting new default.");
         $smt = $pdo->prepare("UPDATE $faculty_tbl SET is_default=true WHERE id=:id");
         $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
 
         if(!$smt->execute())
-        {
-            $this->error_info = $smt->errorInfo();
-            return false;
-        }
+            throw new DatabaseException("Could not set faculty as default.", 500, $smt->errorInfo());
+
+        Logger::info("Moving requests");
+        $smt = $pdo->prepare("UPDATE $request_tbl SET faculty_id=:id WHERE faculty_id=$currentDefaultFacultyId AND active=true");
+        $smt->bindParam(":id", $this->id, PDO::PARAM_INT);
+        if(!$smt->execute())
+            throw new DatabaseException("Could not reassign requests.", 500, $pdo->errorInfo());
 
         return true;
     }
@@ -172,7 +183,7 @@ class Faculty extends DAO implements JsonSerializable, DAODeletable
         if ($smt->rowCount() === 0 || $this->default)
         {
             Logger::info("No default faculty found, setting new faculty to default.");
-            $this->makeDefault($pdo);
+            $this->makeDefault();
         }
         else
         {
@@ -201,7 +212,7 @@ class Faculty extends DAO implements JsonSerializable, DAODeletable
         PDOWrapper::update($faculty_tbl, $smt, $this->id, Logger::obj($this));
 
         if ($this->default)
-            $this->makeDefault($pdo);
+            $this->makeDefault();
     }
 
     /**
@@ -214,12 +225,29 @@ class Faculty extends DAO implements JsonSerializable, DAODeletable
     }
 
     /**
+     * Faculty deletion is a unique case. We have to first ensure the faculty isn't default, then move all their request
+     * to the default faculty.
      * @param int $id The id of the element to be deleted
      * @throws DatabaseException
      */
     public static function deleteByID(int $id): void
     {
-        global $faculty_tbl;
+        global $faculty_tbl, $request_tbl;
+
+        $pdo = PDOWrapper::getConnection();
+
+        $smt = $pdo->query("SELECT is_default FROM $faculty_tbl WHERE id=$id");
+
+        // If they're the default faculty
+        if ($smt->fetchColumn())
+            throw new DatabaseException("Cannot delete default faculty", 400, $smt->errorInfo());
+
+        $defaultFacultyId = Faculty::getDefault()->getId();
+
+        // Move their requests to the default faculty
+        if ($pdo->exec("UPDATE $request_tbl SET faculty_id=$defaultFacultyId WHERE faculty_id=$id") === false)
+            throw new DatabaseException("Could not reassign requests.", 500, $pdo->errorInfo());
+
         PDOWrapper::deleteLeaf($faculty_tbl, $id);
     }
 
@@ -274,6 +302,7 @@ class Faculty extends DAO implements JsonSerializable, DAODeletable
      * Retrieve a faculty member by their database id, null if not found
      * @param int $id
      * @return Faculty|null
+     * @throws DatabaseException
      */
     public static function getById(int $id): ?Faculty
     {
@@ -287,7 +316,7 @@ class Faculty extends DAO implements JsonSerializable, DAODeletable
         {
             Logger::error("Faculty retrieval failed. Error info: " . Logger::obj($smt->errorInfo()));
             Logger::error("Faulty ID: $id");
-            return null;
+            throw new DatabaseException("Could not retrieve faculty.", 500, $smt->errorInfo());
         }
 
         $data = $smt->fetch(PDO::FETCH_ASSOC);
