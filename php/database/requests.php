@@ -9,6 +9,9 @@ require_once __DIR__ . '/courses.php';
 require_once __DIR__ . '/students.php';
 require_once __DIR__ . '/faculty.php';
 
+// Regardless of what the user requests, requests will not be large than this.
+const MAX_REQUEST_PAGE_SIZE = 100;
+
 class Request extends DAO implements JsonSerializable, DAODeactivatable, DAODeletable
 {
     private $student;
@@ -561,5 +564,139 @@ class Request extends DAO implements JsonSerializable, DAODeactivatable, DAODele
         unset($out['explanation']);
 
         return $out;
+    }
+}
+
+class RequestPaginator
+{
+    // Required
+    private $semester_code;
+    private $sort;
+
+    // A string representing student information. Name or banner id. Possibly last, first?
+    private $student_search;
+
+    // Course filters
+    private $department;
+    private $course_num;
+    private $crn;
+
+    // Misc filters
+    private $faculty_id;
+    private $status;
+    private $start_range;
+    private $end_range;
+
+    // The last request id of the previous page.
+    private $last_id;
+
+    // The requested maximum number of items to return
+    private $size;
+
+    /**
+     * RequestPaginator constructor. These are the only two parameters that are required.
+     * @param string $semester_code The six digit code
+     * @param bool $sort True for ascending chronologically, based on creation time
+     */
+    public function __construct(string $semester_code, bool $sort)
+    {
+        $this->semester_code = $semester_code;
+        $this->sort = $sort;
+        $this->size = 50;
+
+        $this->student_search = null;
+        $this->department = null;
+        $this->course_num = null;
+        $this->crn = null;
+        $this->faculty_id = null;
+        $this->status = null;
+        $this->start_range = null;
+        $this->end_range = null;
+        $this->last_id = null;
+    }
+
+    /**
+     * Filter the results based on a student search. This string will be "intelligently" matched to the student name or
+     * banner id.
+     *
+     * In the case of a banner id, the banner ID must exactly match the banner id of one of the students. It's assumed
+     * that any search that starts with a numerical value will be for a banner id.
+     *
+     * @param string $student_search
+     * @return $this
+     */
+    public function studentSearch(string $student_search): RequestPaginator
+    {
+        $this->student_search = $student_search;
+        return $this;
+    }
+
+    /**
+     * Filter by the given course. Cannot be used when searching for CRN
+     * @param string $department
+     * @param int $course_num
+     * @return $this
+     */
+    public function course(string $department, int $course_num): RequestPaginator
+    {
+        $this->crn = null;
+        $this->department = $department;
+        $this->course_num = $course_num;
+        return $this;
+    }
+
+    /**
+     * Filter by the given course. Cannot be used when searching by dept and course number
+     * @param string $crn
+     * @return $this
+     */
+    public function crn(string $crn): RequestPaginator
+    {
+        $this->crn = $crn;
+        $this->department = null;
+        $this->course_num = null;
+        return $this;
+    }
+
+    public function faculty(int $faculty_id): RequestPaginator
+    {
+        $this->faculty_id = $faculty_id;
+        return $this;
+    }
+
+    public function status(string $status): RequestPaginator
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function start(string $start): RequestPaginator
+    {
+        $this->start_range = $start;
+        return $this;
+    }
+
+    public function end(string $end): RequestPaginator
+    {
+        $this->end_range = $end;
+        return $this;
+    }
+
+    public function previousId(string $id): RequestPaginator
+    {
+        $this->last_id = $id;
+        return $this;
+    }
+
+    public function maxSize(int $size): RequestPaginator
+    {
+        $this->size = $size;
+        return $this;
+    }
+
+    public function getPage(): array
+    {
+        // TODO
+        return [];
     }
 }
