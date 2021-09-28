@@ -30,5 +30,5 @@ function getEnums(string $table, string $field): array
 
 function getTimeStamp(): string
 {
-    return (new DateTime('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+    return (new DateTime('now', new DateTimeZone("America/Chicago")))->format('Y-m-d H:i:s');
 }

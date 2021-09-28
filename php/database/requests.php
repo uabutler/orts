@@ -570,48 +570,55 @@ class Request extends DAO implements JsonSerializable, DAODeactivatable, DAODele
 class RequestPaginator
 {
     // Required
-    private $semester_code;
-    private $sort;
+    private $semester_filter;
+    private $semester;
 
     // A string representing student information. Name or banner id. Possibly last, first?
-    private $student_search;
-
-    // Course filters
-    private $department;
-    private $course_num;
-    private $crn;
+    private $student;
 
     // Misc filters
-    private $faculty_id;
+    private $faculty;
     private $status;
     private $start_range;
     private $end_range;
 
     // The last request id of the previous page.
     private $last_id;
+    private $last_id_filter;
 
     // The requested maximum number of items to return
     private $size;
+    private $sort;
+
+    private $result;
 
     /**
      * RequestPaginator constructor. These are the only two parameters that are required.
      * @param string $semester_code The six digit code
-     * @param bool $sort True for ascending chronologically, based on creation time
      */
-    public function __construct(string $semester_code, bool $sort)
+    public function __construct(string $semester_code)
     {
-        $this->semester_code = $semester_code;
-        $this->sort = $sort;
-        $this->size = 50;
+        $this->size = "LIMIT 50";
+        $this->sort = "ASC";
+        $this->result = null;
 
-        $this->student_search = null;
-        $this->department = null;
-        $this->course_num = null;
-        $this->crn = null;
-        $this->faculty_id = null;
-        $this->status = null;
-        $this->start_range = null;
-        $this->end_range = null;
+        $this->semester = Semester::getByCode($semester_code);
+
+        if (is_null($this->semester))
+        {
+            $result = [];
+            return;
+        }
+
+        global $section_tbl;
+        $semester_id = $this->semester->getId();
+        $this->semester_filter = "section_id IN (SELECT id FROM $section_tbl WHERE semester_id=$semester_id)";
+
+        $this->student =
+        $this->faculty =
+        $this->status =
+        $this->start_range =
+        $this->end_range =
         $this->last_id = null;
     }
 
@@ -627,7 +634,7 @@ class RequestPaginator
      */
     public function studentSearch(string $student_search): RequestPaginator
     {
-        $this->student_search = $student_search;
+        $this->student = $student_search;
         return $this;
     }
 
@@ -639,9 +646,17 @@ class RequestPaginator
      */
     public function course(string $department, int $course_num): RequestPaginator
     {
-        $this->crn = null;
-        $this->department = $department;
-        $this->course_num = $course_num;
+        $sections = Section::getByCourse($this->semester, Course::get(Department::get($department), $course_num));
+        $ids = [];
+
+        foreach ($sections as $section)
+            $ids[] = $section->getId();
+
+        if (!sizeof($sections))
+            $this->result = [];
+        else
+            $filter[] = "section_id IN (" . implode(',', $ids) . ")";
+
         return $this;
     }
 
@@ -652,51 +667,95 @@ class RequestPaginator
      */
     public function crn(string $crn): RequestPaginator
     {
-        $this->crn = $crn;
-        $this->department = null;
-        $this->course_num = null;
+        $section = Section::getByCrn($this->semester, $crn);
+
+        if (is_null($section))
+            $this->result = [];
+        else
+            $semester = "section_id=" . $section->getId();
+
         return $this;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function faculty(int $faculty_id): RequestPaginator
     {
-        $this->faculty_id = $faculty_id;
+        $faculty = Faculty::getById($faculty_id);
+        if (is_null($faculty))
+            $this->result = [];
+        else
+            $this->faculty = "faculty_id=" . $faculty->getId();
+
         return $this;
     }
 
     public function status(string $status): RequestPaginator
     {
-        $this->status = $status;
+        $this->status = "status=$status";
         return $this;
     }
 
     public function start(string $start): RequestPaginator
     {
-        $this->start_range = $start;
+        $this->start_range = "creation_time>$start";
         return $this;
     }
 
     public function end(string $end): RequestPaginator
     {
-        $this->end_range = $end;
+        $this->start_range = "creation_time<$end";
         return $this;
+    }
+
+    private function constructIdConditional(): ?string
+    {
+        if (is_null($this->last_id))
+            return null;
+
+        if ($this->sort == "DESC")
+            return "id>" . $this->last_id;
+        else
+            return "id<" . $this->last_id;
     }
 
     public function previousId(string $id): RequestPaginator
     {
         $this->last_id = $id;
+        $this->last_id_filter = $this->constructIdConditional();
+        return $this;
+    }
+
+    public function asc(): RequestPaginator
+    {
+        $this->sort = "ASC";
+        $this->last_id_filter = $this->constructIdConditional();
+        return $this;
+    }
+
+    public function desc(): RequestPaginator
+    {
+        $this->sort = "DESC";
+        $this->last_id_filter = $this->constructIdConditional();
         return $this;
     }
 
     public function maxSize(int $size): RequestPaginator
     {
-        $this->size = $size;
+        $max = min($size, MAX_REQUEST_PAGE_SIZE);
+        $this->size = "LIMIT $max";
         return $this;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function getPage(): array
     {
-        // TODO
+        if (!is_null($this->result))
+            return $this->result;
+
         return [];
     }
 }

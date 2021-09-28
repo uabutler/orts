@@ -1167,6 +1167,37 @@ class Section extends DAO implements JsonSerializable, DAODeactivatable, DAODele
         return $out;
     }
 
+    public static function getByCourse(Semester $semester, Course $course): ?array
+    {
+        global $section_tbl;
+
+        Logger::info("Finding all sections");
+
+        $pdo = PDOWrapper::getConnection();
+        $query = "SELECT * FROM $section_tbl WHERE semester_id=:semester_id AND course_id=:course_id ORDER BY course_id";
+        $smt = $pdo->prepare($query);
+        $semester_id = $semester->getId();
+        $course_id = $course->getId();
+        $smt->bindParam(":semester_id", $semester_id, PDO::PARAM_INT);
+        $smt->bindParam(":course_id", $course_id, PDO::PARAM_INT);
+
+        if (!$smt->execute())
+        {
+            Logger::error("Section retrieval failed. Error info: " . Logger::obj($smt->errorInfo()));
+            Logger::error("Could not retrieve sections from " . $semester->getDescription());
+            return null;
+        }
+
+        $data = $smt->fetchAll(PDO::FETCH_ASSOC);
+
+        $out = [];
+
+        foreach ($data as $row)
+            $out[] = new Section(Course::getById($row['course_id']), Semester::getById($row['semester_id']), $row['section'], $row['crn'], $row['active'], $row['id']);
+
+        return $out;
+    }
+
     /**
      * Retrieve a section given the course, semester, and section number from the DB, or null if it can't be found.
      * @param Course $course Must be stored in the database
